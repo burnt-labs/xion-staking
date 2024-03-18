@@ -11,7 +11,7 @@ export const rpcEndpoint = "https://rpc.xion-testnet.forbole.com";
 
 // This only exists on testnet.
 export const faucetContractAddress =
-  "xion1jq7ltz3vkaqmzhapvh6fnam5nxu2ptg8s202q2wp98w43zszcjzs6rt6da";
+  "xion1z8gr3jn7rd5leyvz7z3zmelxmrz6q8lv7flc3a4u8kltwj6leags8u64qx";
 
 export const basePath =
   process.env.NEXT_PUBLIC_IS_DEPLOYMENT === "true" ? "/xion-staking" : "";
