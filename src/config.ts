@@ -25,7 +25,7 @@ export const BASE_PATH = getEnvBooleanOrThrow(
 
 // The contract address for the faucet
 export const FAUCET_CONTRACT_ADDRESS =
-  "xion132dxh4k3dpyalq6tfq7006h8kpk3m30f4mwc5dgqefy6akudm50s96mn6q";
+  "xion1mczdpmlc2lcng2ktly3fapdc24zqhxsyn5eek8uu3egmrd97c73qqtss3u";
 
 const NETWORK_TYPE = getEnvStringOrThrow(
   "NEXT_PUBLIC_NETWORK_TYPE",
