@@ -33,3 +33,14 @@ const NETWORK_TYPE = getEnvStringOrThrow(
 );
 
 export const IS_TESTNET = NETWORK_TYPE === "testnet";
+
+export interface NavItem {
+  href: string;
+  label: string;
+  isRootLink?: boolean;
+}
+
+export const mainNavItems: NavItem[] = [
+  { href: "/staking", label: "Staking", isRootLink: true },
+  { href: "/governance", label: "Governance" },
+];

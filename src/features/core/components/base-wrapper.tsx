@@ -3,9 +3,10 @@
 import { Abstraxion, useModal } from "@burnt-labs/abstraxion";
 import Link from "next/link";
 
-import { BASE_PATH, IS_TESTNET } from "@/config";
+import { BASE_PATH, IS_TESTNET, mainNavItems } from "@/config";
 
 import NavAccount from "./nav-account";
+import NavLink from "./nav-link";
 
 export default function RootLayout({
   children,
@@ -37,12 +38,9 @@ export default function RootLayout({
             </Link>
           </div>
           <div className="hidden flex-1 flex-row items-center justify-center md:flex">
-            <Link href="/" className="mx-4">
-              Staking
-            </Link>
-            <Link href="/governance" className="mx-4">
-              Governance
-            </Link>
+            {mainNavItems.map((item) => (
+              <NavLink key={item.href} {...item} />
+            ))}
           </div>
           <div className="flex w-[200px] items-center justify-end">
             <NavAccount />
