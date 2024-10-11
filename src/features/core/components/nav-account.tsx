@@ -7,6 +7,8 @@ import {
 } from "@burnt-labs/abstraxion";
 
 import { mainNavItems } from "@/config";
+import { useCore } from "@/features/core/context/hooks";
+import { setPopupOpenId } from "@/features/core/context/reducer";
 import AddressShort from "@/features/staking/components/address-short";
 
 import { wallet } from "../lib/icons";
@@ -23,6 +25,11 @@ const NavAccount = () => {
   const [, setShowAbstraxion] = useModal();
   const { data, isConnected } = useAbstraxionAccount();
   const { logout } = useAbstraxionSigningClient();
+  const { core } = useCore();
+
+  const closeDropdown = () => {
+    core.dispatch(setPopupOpenId(null));
+  };
 
   return (
     <div className="cursor-pointer">
@@ -46,7 +53,7 @@ const NavAccount = () => {
             </div>
             <div className="relative inline-flex flex-col items-center gap-8 px-0">
               {mainNavItems.map((item) => (
-                <NavLink key={item.href} {...item} />
+                <NavLink key={item.href} onClick={closeDropdown} {...item} />
               ))}
             </div>
             <Button

@@ -60,3 +60,21 @@ export interface PaginationParams {
   count_total?: boolean;
   reverse?: boolean;
 }
+
+export enum ProposalStatus {
+  PROPOSAL_STATUS_UNSPECIFIED = "PROPOSAL_STATUS_UNSPECIFIED",
+  PROPOSAL_STATUS_DEPOSIT_PERIOD = "PROPOSAL_STATUS_DEPOSIT_PERIOD",
+  PROPOSAL_STATUS_VOTING_PERIOD = "PROPOSAL_STATUS_VOTING_PERIOD",
+  PROPOSAL_STATUS_PASSED = "PROPOSAL_STATUS_PASSED",
+  PROPOSAL_STATUS_REJECTED = "PROPOSAL_STATUS_REJECTED",
+  PROPOSAL_STATUS_FAILED = "PROPOSAL_STATUS_FAILED",
+}
+
+export const ProposalStatusColor: Record<ProposalStatus, string> = {
+  [ProposalStatus.PROPOSAL_STATUS_UNSPECIFIED]: "#808080", // Default gray color for unspecified status
+  [ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD]: "#808080", // Using gray for deposit period as well
+  [ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD]: "#caf033",
+  [ProposalStatus.PROPOSAL_STATUS_PASSED]: "#03c600",
+  [ProposalStatus.PROPOSAL_STATUS_REJECTED]: "#d64406",
+  [ProposalStatus.PROPOSAL_STATUS_FAILED]: "#d64406", // Using the same color as rejected for failed status
+};

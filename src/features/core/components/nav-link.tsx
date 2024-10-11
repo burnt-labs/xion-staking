@@ -5,6 +5,7 @@ import { NavItem } from "@/config";
 
 type NavLinkProps = NavItem & {
   className?: string;
+  onClick?: () => void;
 };
 
 const NavLink: React.FC<NavLinkProps> = ({
@@ -12,6 +13,7 @@ const NavLink: React.FC<NavLinkProps> = ({
   label,
   isRootLink,
   className = "",
+  onClick,
 }) => {
   const pathname = usePathname();
 
@@ -24,6 +26,7 @@ const NavLink: React.FC<NavLinkProps> = ({
         isActive ? "border-b-2 border-white" : ""
       } ${className}`}
       href={href}
+      onClick={onClick}
     >
       {label}
     </Link>
