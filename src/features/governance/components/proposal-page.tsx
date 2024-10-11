@@ -6,12 +6,15 @@ import { LoadingBanner, Title } from "@/features/core/components/base";
 
 import { useProposal } from "../context/hooks";
 import { BreadCrumbNav } from "./bread-crumb";
+import { ProposalOverview } from "./proposal-overview";
 
 export default function ProposalPage() {
   const searchParams = useSearchParams();
   const proposalId = searchParams.get("proposal_id");
 
   const { data: proposal, isLoading } = useProposal(proposalId ?? "");
+
+  console.log({ proposal });
 
   if (isLoading) {
     return <LoadingBanner />;
@@ -40,10 +43,7 @@ export default function ProposalPage() {
   return (
     <div className="page-container flex flex-col gap-6 px-[12px] pb-[24px] pt-[40px] md:px-[24px]">
       <BreadCrumbNav proposalId={proposalId} />
-      <Title>Proposal {proposal.id}</Title>
-      <div>
-        <h2>{proposal.title}</h2>
-      </div>
+      <ProposalOverview proposal={proposal} />
     </div>
   );
 }

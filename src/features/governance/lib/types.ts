@@ -78,3 +78,10 @@ export const ProposalStatusColor: Record<ProposalStatus, string> = {
   [ProposalStatus.PROPOSAL_STATUS_REJECTED]: "#d64406",
   [ProposalStatus.PROPOSAL_STATUS_FAILED]: "#d64406", // Using the same color as rejected for failed status
 };
+
+export enum VoteType {
+  Yes = "yes",
+  No = "no",
+  NoWithVeto = "no_with_veto",
+  Abstain = "abstain",
+}

@@ -1,7 +1,8 @@
 import React from "react";
 
-import { Proposal, ProposalStatusColor } from "../lib/types";
+import { Proposal } from "../lib/types";
 import { formatProposalDate, getProposalStatus } from "../lib/utils";
+import ProposalStatusPill from "./proposal-status-pill";
 
 interface ProposalCardProps {
   proposal: Proposal;
@@ -9,22 +10,11 @@ interface ProposalCardProps {
 
 export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
   const status = getProposalStatus(proposal.status);
-  const statusColor = ProposalStatusColor[status];
 
   return (
     <div className="relative h-[277px] w-[368px] rounded-[16px] bg-bg-600">
       <div className="absolute left-[24px] top-[27px] inline-flex h-[66px] flex-col items-start justify-start gap-4">
-        <div
-          className="inline-flex items-center justify-center gap-1 rounded border px-2 py-1"
-          style={{
-            backgroundColor: statusColor,
-            borderColor: `${statusColor}20`,
-          }}
-        >
-          <div className="text-xs font-bold uppercase leading-[14px] tracking-wide text-black">
-            {status.replace("PROPOSAL_STATUS_", "")}
-          </div>
-        </div>
+        <ProposalStatusPill status={status} />
         <div className="text-2xl font-bold leading-7 text-white">
           <span
             title={proposal.title}
