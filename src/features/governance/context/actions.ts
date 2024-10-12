@@ -5,7 +5,7 @@ import { REST_URL } from "@/constants";
 import { GOVERNANCE_PAGE_LIMIT } from "../config";
 import { PaginationParams, Proposal, ProposalsResponse } from "../lib/types";
 
-// Add this type for the sort order
+// add type for the sort order
 type SortOrder = "ASC" | "DESC";
 
 /**

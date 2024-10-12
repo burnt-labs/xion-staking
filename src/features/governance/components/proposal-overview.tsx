@@ -35,7 +35,7 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
         <div className="flex-grow">
           <div className="mb-4">
             <ProposalStatusPill status={status} />
-            <h2 className="font-['Akkurat LL'] mt-2 text-[32px] font-bold leading-9 text-white">
+            <h2 className="font-['Akkurat LL'] mb-[7px] mt-2 text-[32px] font-bold leading-9 text-white">
               {title}
             </h2>
             <p className="font-['Akkurat LL'] text-sm font-normal leading-tight text-white opacity-40">

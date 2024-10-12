@@ -11,6 +11,7 @@ import CommonModal, {
 } from "@/features/core/components/common-modal";
 
 import { VoteType } from "../lib/types";
+import { getReadableVoteType } from "../lib/utils";
 
 interface ProposalVoteModalProps {
   isOpen: boolean;
@@ -18,21 +19,6 @@ interface ProposalVoteModalProps {
   onConfirm: () => Promise<void>;
   voteType: VoteType;
 }
-
-const getReadableVoteType = (voteType: VoteType): string => {
-  switch (voteType) {
-    case VoteType.Yes:
-      return "Yes";
-    case VoteType.No:
-      return "No";
-    case VoteType.NoWithVeto:
-      return "No With Veto";
-    case VoteType.Abstain:
-      return "Abstain";
-    default:
-      return "Unknown";
-  }
-};
 
 enum Step {
   Review = "review",
