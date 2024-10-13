@@ -7,6 +7,7 @@ import {
   GovVoteResponse,
   GovVotingParamsResponse,
   Proposal,
+  StakingPoolResponse,
 } from "../lib/types";
 
 export const GOVERNANCE_ENDPOINTS = {
@@ -42,6 +43,10 @@ export const GOVERNANCE_ENDPOINTS = {
     url: (proposalId: string, voterAddress: string) =>
       `/cosmos/gov/v1/proposals/${proposalId}/votes/${voterAddress}`,
     responseType: {} as GovVoteResponse,
+  },
+  STAKING_POOL: {
+    url: "/cosmos/staking/v1beta1/pool",
+    responseType: {} as StakingPoolResponse,
   },
 } as const;
 

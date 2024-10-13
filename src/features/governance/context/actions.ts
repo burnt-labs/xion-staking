@@ -129,7 +129,9 @@ export const fetchVote = async (
 };
 
 export const fetchStakingPool = async (): Promise<StakingPoolResponse> => {
-  return fetchFromAPI<StakingPoolResponse>("/cosmos/staking/v1beta1/pool");
+  return fetchFromAPI<StakingPoolResponse>(
+    GOVERNANCE_ENDPOINTS.STAKING_POOL.url,
+  );
 };
 
 export const calcTallies = (
