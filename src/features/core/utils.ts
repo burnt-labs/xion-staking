@@ -1,4 +1,7 @@
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import BigNumber from "bignumber.js";
+
+import { REST_URL } from "@/constants";
 
 export const sortUtil = (a: unknown, b: unknown, isAsc: boolean) => {
   if (typeof a !== typeof b) {
@@ -25,3 +28,21 @@ export const sortUtil = (a: unknown, b: unknown, isAsc: boolean) => {
 
   return 0;
 };
+
+export async function fetchFromAPI<T>(
+  endpoint: string,
+  config: AxiosRequestConfig = {},
+): Promise<T> {
+  try {
+    const response: AxiosResponse<T> = await axios.get(
+      `${REST_URL}${endpoint}`,
+      {
+        ...config,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to fetch from API: ${endpoint}`, error);
+    throw error;
+  }
+}

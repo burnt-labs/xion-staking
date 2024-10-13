@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import React, { useState } from "react";
 
 import { LoadingBanner, Title } from "@/features/core/components/base";
 
@@ -8,7 +9,7 @@ import { useProposals } from "../context/hooks";
 import { ProposalCard } from "./proposal-card";
 
 export default function GovernancePage() {
-  const { data, isLoading } = useProposals();
+  const { data: proposals, isLoading } = useProposals();
 
   return (
     <>
@@ -20,7 +21,7 @@ export default function GovernancePage() {
           <LoadingBanner />
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {data?.map((proposal) => (
+            {proposals?.map((proposal) => (
               <Link
                 key={proposal.id}
                 href={`/governance/proposal?proposal_id=${proposal.id}`}
