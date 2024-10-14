@@ -136,7 +136,7 @@ export const fetchStakingPool = async (): Promise<StakingPoolResponse> => {
 
 export const calcTallies = (
   tally: ProposalTallyResult,
-  { quorum, threshold }: GovTallyParams,
+  { quorum }: GovTallyParams,
   pool: StakingPool,
 ) => {
   const getTallyItem = (option: VoteType) => {
@@ -175,9 +175,6 @@ export const calcTallies = (
     16,
   ).toNumber();
   const isBelowQuorum = new BigNumber(quorumValue).gt(ratio);
-  const flag = isBelowQuorum
-    ? { x: quorumValue, type: "quorum" as const }
-    : { x: threshold, type: "threshold" as const };
 
   const yesRatio = list[0].ratio.byVoted;
   const noRatio = list.slice(2, 4).map(({ ratio }) => ratio.byVoted);
@@ -185,16 +182,9 @@ export const calcTallies = (
   const isPassing =
     !isBelowQuorum && new BigNumber(noRatio[0]).plus(noRatio[1]).lte(yesRatio);
 
-  const determinantThreshold = new BigNumber(
-    Buffer.from(threshold).toString("hex"),
-    16,
-  ).toNumber();
-
   return {
     list,
-    determinantThreshold,
     total: { ...total, ratio },
-    flag,
     tallies,
     isPassing,
   };

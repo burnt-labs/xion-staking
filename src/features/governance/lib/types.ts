@@ -206,8 +206,8 @@ export interface StakingPoolResponse {
 export const ProposalStatusColor: Record<ProposalStatus, string> = {
   [ProposalStatus.PROPOSAL_STATUS_UNSPECIFIED]: "#808080",
   [ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD]: "#808080",
-  [ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD]: "#03c600",
-  [ProposalStatus.PROPOSAL_STATUS_PASSED]: "#03c600",
+  [ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD]: "#CAF033",
+  [ProposalStatus.PROPOSAL_STATUS_PASSED]: "#04C700",
   [ProposalStatus.PROPOSAL_STATUS_REJECTED]: "#d64406",
   [ProposalStatus.PROPOSAL_STATUS_FAILED]: "#d64406",
 };

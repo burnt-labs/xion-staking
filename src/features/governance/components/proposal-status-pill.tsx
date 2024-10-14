@@ -15,8 +15,6 @@ export const ProposalStatusPill: React.FC<ProposalStatusPillProps> = ({
 }) => {
   const statusColor = ProposalStatusColor[status];
 
-  console.log({ statusColor, status, ProposalStatusColor });
-
   return (
     <div
       className="inline-flex items-center justify-center rounded border px-2 py-1"

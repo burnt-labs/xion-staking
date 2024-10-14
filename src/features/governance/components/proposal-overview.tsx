@@ -6,8 +6,6 @@ import ProposalStatusPill from "./proposal-status-pill";
 import ProposalTallyBar from "./proposal-tally-bar";
 import VoteWidget from "./proposal-vote-widget";
 
-// Make sure to import this type
-
 interface ProposalOverviewProps {
   proposalDetails: ProposalDetailsResult;
 }
@@ -15,7 +13,7 @@ interface ProposalOverviewProps {
 export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
   proposalDetails,
 }) => {
-  const { title, submittedDate, endsDate } = proposalDetails.info;
+  const { title, submittedDate } = proposalDetails.info;
   const { progressData } = proposalDetails;
 
   const getVoteAmount = (type: VoteType): number => {
@@ -30,6 +28,7 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
 
   const getVotePercentage = (type: VoteType): number => {
     const amount = getVoteAmount(type);
+    console.log({ type, amount, totalVotes });
     return totalVotes > 0 ? (amount / totalVotes) * 100 : 0;
   };
 
@@ -37,6 +36,13 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
   const noPercentage = getVotePercentage(VoteType.No);
   const abstainPercentage = getVotePercentage(VoteType.Abstain);
   const noWithVetoPercentage = getVotePercentage(VoteType.NoWithVeto);
+
+  console.log({
+    yesPercentage,
+    noPercentage,
+    abstainPercentage,
+    noWithVetoPercentage,
+  });
 
   const status = getProposalStatus(proposalDetails.info.status);
 

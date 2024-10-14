@@ -30,7 +30,7 @@ export const ProposalTallyBar: React.FC<ProposalTallyBarProps> = ({
     <div className="relative w-full">
       {!allZero && (
         <div className="font-['Akkurat LL'] mb-2 flex text-[10px] font-normal uppercase leading-3 tracking-wider">
-          {yesPercentage > 0 && <span className="text-[#03c600]">YES</span>}
+          {yesPercentage > 0 && <span className="text-success">YES</span>}
           {abstainPercentage > 0 && (
             <span
               className="absolute text-[#949494]"
@@ -88,7 +88,7 @@ export const ProposalTallyBar: React.FC<ProposalTallyBarProps> = ({
           <>
             {yesPercentage > 0 && (
               <div
-                className="absolute left-0 top-0 h-full bg-[#03c600]"
+                className="absolute left-0 top-0 h-full bg-success"
                 style={{ width: `${scaledYes}%` }}
               />
             )}

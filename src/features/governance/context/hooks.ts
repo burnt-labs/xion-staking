@@ -220,7 +220,8 @@ export const useProposalDetails = (
   const { data: depositParams } = useDepositParams();
   const { data: voteData } = useVote(
     proposalId,
-    abstraxionAccount?.bech32Address ?? "",
+    "",
+    //abstraxionAccount?.bech32Address ?? "",
   );
 
   return useMemo(() => {
@@ -243,17 +244,9 @@ export const useProposalDetails = (
 
     const depositPercent = calculateDepositPercent(total_deposit, min_deposit);
 
-    const { tallies, list, flag, total } = calcTallies(
-      {
-        yes_count: tally.tally.yes_count,
-        abstain_count: tally.tally.abstain_count,
-        no_count: tally.tally.no_count,
-        no_with_veto_count: tally.tally.no_with_veto_count,
-      },
-      {
-        ...tallyParams.params,
-        vetoThreshold: tallyParams.params.veto_threshold,
-      } as GovTallyParams,
+    const { tallies, list, total } = calcTallies(
+      tally.tally,
+      tallyParams?.params as GovTallyParams,
       pool.pool,
     );
 
@@ -298,7 +291,7 @@ export const useProposalDetails = (
       },
       proposal,
       labelOverride: inDepositPeriod ? depositPercent : undefined,
-      threshold: Number(flag.x) * 100,
+      threshold: parseFloat(tallyParams.params.threshold),
       progressData,
       total,
       quorum,

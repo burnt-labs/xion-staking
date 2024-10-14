@@ -40,15 +40,15 @@ export const getProposalStatus = (status: string): ProposalStatus => {
 export const getReadableVoteType = (voteType: VoteType): string => {
   switch (voteType) {
     case VoteType.Yes:
-      return "yes";
+      return "Yes";
     case VoteType.No:
-      return "no";
+      return "No";
     case VoteType.NoWithVeto:
-      return "noWithVeto";
+      return "No with veto";
     case VoteType.Abstain:
-      return "abstain";
+      return "Abstain";
     default:
-      return "unknown";
+      return "Unknown";
   }
 };
 
