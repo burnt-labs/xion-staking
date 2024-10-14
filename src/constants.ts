@@ -6,8 +6,7 @@ const TESTNET_RPC_URL = "https://testnet-rpc.xion-api.com:443";
 const TESTNET_REST_URL = "https://testnet-api.xion-api.com:443";
 
 export const RPC_URL = IS_TESTNET ? TESTNET_RPC_URL : MAINNET_RPC_URL;
-//export const REST_URL = IS_TESTNET ? TESTNET_REST_URL : MAINNET_REST_URL;
-export const REST_URL = "https://lcd-kava.tfl.foundation";
+export const REST_URL = IS_TESTNET ? TESTNET_REST_URL : MAINNET_REST_URL;
 
 export const XION_TO_USD = 10;
 
