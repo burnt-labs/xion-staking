@@ -1,6 +1,10 @@
 import React from "react";
 
 import { Proposal } from "../lib/types";
+import {
+  getProposalMessageType,
+  getProposalMessageTypeName,
+} from "../lib/types";
 import { formatProposalDate, getProposalStatus } from "../lib/utils";
 import ProposalStatusPill from "./proposal-status-pill";
 
@@ -10,6 +14,7 @@ interface ProposalCardProps {
 
 export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
   const status = getProposalStatus(proposal.status);
+  console.log({ proposal });
 
   return (
     <div className="flex h-[277px] min-w-[352px] flex-col gap-5 rounded-[16px]  bg-bg-600 p-6">
@@ -37,7 +42,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
         <div className="flex items-start justify-between">
           <div className="text-sm font-bold leading-none text-white">Type</div>
           <div className="text-right text-sm font-normal leading-tight text-white">
-            {proposal.messages[0]["@type"].split(".").pop()}
+            {getProposalMessageTypeName(getProposalMessageType(proposal))}
           </div>
         </div>
         <div className="flex items-start justify-between">

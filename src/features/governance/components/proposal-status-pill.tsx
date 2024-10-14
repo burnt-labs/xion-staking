@@ -1,6 +1,10 @@
 import React from "react";
 
-import { ProposalStatus, ProposalStatusColor } from "../lib/types";
+import {
+  ProposalStatus,
+  ProposalStatusColor,
+  toStatusLabel,
+} from "../lib/types";
 
 interface ProposalStatusPillProps {
   status: ProposalStatus;
@@ -11,6 +15,8 @@ export const ProposalStatusPill: React.FC<ProposalStatusPillProps> = ({
 }) => {
   const statusColor = ProposalStatusColor[status];
 
+  console.log({ statusColor, status, ProposalStatusColor });
+
   return (
     <div
       className="inline-flex items-center justify-center rounded border px-2 py-1"
@@ -20,7 +26,7 @@ export const ProposalStatusPill: React.FC<ProposalStatusPillProps> = ({
       }}
     >
       <div className="font-['Akkurat LL'] text-xs font-bold uppercase leading-[14px] tracking-wide text-black">
-        {status.replace("PROPOSAL_STATUS_", "")}
+        {toStatusLabel[status]}
       </div>
     </div>
   );

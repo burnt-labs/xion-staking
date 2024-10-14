@@ -40,7 +40,7 @@ export interface PaginationParams {
 // Governance related interfaces
 
 export interface ProposalMessage {
-  "@type": string;
+  "@type": ProposalMessageType;
   "authority": string;
   "params"?: {
     [key: string]: string;
@@ -89,7 +89,7 @@ export interface ProposalTallyTotal {
 
 export interface ProposalDetailsResult {
   info: {
-    status: string;
+    status: ProposalStatus;
     metaText: string;
     title: string;
     submittedDate: string;
@@ -106,7 +106,10 @@ export interface ProposalDetailsResult {
     amount: string;
   }>;
   total: ProposalTallyTotal;
+  quorum: number;
+  quorumReached: boolean;
 }
+
 export interface GovProposalsResponse {
   proposals: Proposal[];
   pagination: PaginationResponse;
@@ -203,7 +206,7 @@ export interface StakingPoolResponse {
 export const ProposalStatusColor: Record<ProposalStatus, string> = {
   [ProposalStatus.PROPOSAL_STATUS_UNSPECIFIED]: "#808080",
   [ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD]: "#808080",
-  [ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD]: "#caf033",
+  [ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD]: "#03c600",
   [ProposalStatus.PROPOSAL_STATUS_PASSED]: "#03c600",
   [ProposalStatus.PROPOSAL_STATUS_REJECTED]: "#d64406",
   [ProposalStatus.PROPOSAL_STATUS_FAILED]: "#d64406",
@@ -224,3 +227,17 @@ export const toStatusLabel: Record<ProposalStatus, string> = {
   [ProposalStatus.PROPOSAL_STATUS_REJECTED]: "Rejected",
   [ProposalStatus.PROPOSAL_STATUS_FAILED]: "Failed",
 };
+
+export type ProposalMessageType = string;
+
+export function getProposalMessageType(
+  proposal: Proposal,
+): ProposalMessageType {
+  return proposal.messages.length > 0 ? proposal.messages[0]["@type"] : "";
+}
+
+export function getProposalMessageTypeName(
+  messageType: ProposalMessageType,
+): string {
+  return messageType.split(".").pop() || "";
+}

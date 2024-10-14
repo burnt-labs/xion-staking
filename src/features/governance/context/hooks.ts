@@ -257,6 +257,9 @@ export const useProposalDetails = (
       pool.pool,
     );
 
+    const quorum = parseFloat(tallyParams.params.quorum);
+    const quorumReached = total.ratio >= quorum;
+
     const progressData = inDepositPeriod
       ? [
           {
@@ -265,17 +268,25 @@ export const useProposalDetails = (
             amount: `${toInput(getAmount(total_deposit[0], total_deposit[0].denom), 6).toFixed(2)} ${total_deposit[0].denom}`,
           },
         ]
-      : list.map(({ option, ratio }) => ({
-          type: toProgressLabel[option as VoteType],
-          percent: readPercent(ratio.byVoted),
-          percentStaked: readPercent(ratio.byStaked),
-          amount: tallies[option as keyof typeof tallies],
-        }));
+      : [
+          {
+            type: "quorum",
+            percent: readPercent(total.ratio),
+            percentStaked: readPercent(quorum),
+            amount: total.voted,
+          },
+          ...list.map(({ option, ratio }) => ({
+            type: toProgressLabel[option as VoteType],
+            percent: readPercent(ratio.byVoted),
+            percentStaked: readPercent(ratio.byStaked),
+            amount: tallies[option as keyof typeof tallies],
+          })),
+        ];
 
     return {
       info: {
-        status: toStatusLabel[proposal.status],
-        metaText: `${proposalId} | ${getProposalType(proposal.messages[0]["@type"])}`,
+        status: proposal.status,
+        metaText: `${proposalId} | ${proposal.messages.length && getProposalType(proposal.messages[0]["@type"])}`,
         title: proposal.title,
         submittedDate: formatProposalDate(
           (voting_start_time ?? submit_time).toString(),
@@ -290,6 +301,8 @@ export const useProposalDetails = (
       threshold: Number(flag.x) * 100,
       progressData,
       total,
+      quorum,
+      quorumReached,
     };
   }, [
     proposal,

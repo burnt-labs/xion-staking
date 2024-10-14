@@ -12,49 +12,7 @@ import {
 } from "../context/hooks";
 import { BreadCrumbNav } from "./bread-crumb";
 import { ProposalOverview } from "./proposal-overview";
-
-export function TallyParams() {
-  const { data: tallyParams, isLoading: isTallyLoading } = useTallyParams();
-
-  if (isTallyLoading) {
-    return <LoadingBanner />;
-  }
-  return (
-    <div>
-      <Title>Tally Parameters</Title>
-      {JSON.stringify(tallyParams)}
-    </div>
-  );
-}
-
-export function VotingParams() {
-  const { data: votingParams, isLoading: isVotingLoading } = useVotingParams();
-
-  if (isVotingLoading) {
-    return <LoadingBanner />;
-  }
-  return (
-    <div>
-      <Title>Voting Parameters</Title>
-      {JSON.stringify(votingParams)}
-    </div>
-  );
-}
-
-export function DepositParams() {
-  const { data: depositParams, isLoading: isDepositLoading } =
-    useDepositParams();
-
-  if (isDepositLoading) {
-    return <LoadingBanner />;
-  }
-  return (
-    <div>
-      <Title>Deposit Parameters</Title>
-      {JSON.stringify(depositParams)}
-    </div>
-  );
-}
+import { TallyingProcedure } from "./tallying-procedure";
 
 export default function ProposalPage() {
   const searchParams = useSearchParams();
@@ -62,8 +20,6 @@ export default function ProposalPage() {
 
   const { data: proposal, isLoading } = useProposal(proposalId ?? "");
   const proposalDetails = useProposalDetails(proposalId ?? "");
-
-  console.log({ proposal, proposalDetails });
 
   if (isLoading) {
     return <LoadingBanner />;
@@ -92,10 +48,12 @@ export default function ProposalPage() {
   return (
     <div className="page-container flex flex-col gap-6 px-[12px] pb-[24px] pt-[40px] md:px-[24px]">
       <BreadCrumbNav proposalId={proposalId} />
-      <ProposalOverview proposal={proposal} />
-      <VotingParams />
-      <DepositParams />
-      <TallyParams />
+      {proposalDetails && (
+        <>
+          <ProposalOverview proposalDetails={proposalDetails} />
+          <TallyingProcedure proposalDetails={proposalDetails} />
+        </>
+      )}
     </div>
   );
 }
