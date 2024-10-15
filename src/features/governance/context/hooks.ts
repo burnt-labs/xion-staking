@@ -1,8 +1,17 @@
-import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
-import { UseQueryResult, useQuery } from "@tanstack/react-query";
+import {
+  useAbstraxionAccount,
+  useAbstraxionSigningClient,
+} from "@burnt-labs/abstraxion";
+import {
+  UseQueryResult,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import {
+  ExecuteVoteParams,
   GovDepositParamsResponse,
   GovProposalDepositsResponse,
   GovTallyParams,
@@ -16,7 +25,6 @@ import {
   StakingPoolResponse,
   VoteType,
   toProgressLabel,
-  toStatusLabel,
 } from "../lib/types";
 import {
   calculateDepositPercent,
@@ -38,6 +46,7 @@ import {
   fetchTallyParams,
   fetchVote,
   fetchVotingParams,
+  submitVote,
 } from "./actions";
 
 const RefetchOptions = {
@@ -307,4 +316,39 @@ export const useProposalDetails = (
     voteData,
     proposalId,
   ]);
+};
+
+/**
+ * Hook for interacting with the governance module.
+ * @returns The governance context.
+ */
+export const useGovernanceTx = () => {
+  const { client } = useAbstraxionSigningClient();
+  const { data: account, isConnected } = useAbstraxionAccount();
+  const queryClient = useQueryClient();
+
+  const address = account?.bech32Address;
+
+  const voteMutation = useMutation({
+    mutationFn: (params: ExecuteVoteParams) =>
+      submitVote({
+        ...params,
+        client: client!,
+        voter: address!,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vote"] });
+      queryClient.invalidateQueries({ queryKey: ["tally"] });
+    },
+  });
+
+  return {
+    account,
+    address,
+    client: isConnected ? client : undefined,
+    isConnected,
+    submitVote: voteMutation.mutate,
+    isVoting: voteMutation.isLoading,
+    voteError: voteMutation.error,
+  };
 };

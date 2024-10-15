@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import GovernancePage from "@/features/governance/components/governance-page";
+import GovernancePage from "@/features/governance/components/GovernancePage";
 
 export const metadata: Metadata = {
   title: "XION Governance",

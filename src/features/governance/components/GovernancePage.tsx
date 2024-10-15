@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { LoadingBanner, Title } from "@/features/core/components/base";
 
 import { useProposals } from "../context/hooks";
-import { ProposalCard } from "./proposal-card";
+import { ProposalCard } from "./ProposalCard";
 
 export default function GovernancePage() {
   const { data: proposals, isLoading } = useProposals();

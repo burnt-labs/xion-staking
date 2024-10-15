@@ -1,5 +1,7 @@
 import { Coin } from "@cosmjs/proto-signing";
 
+import { AbstraxionSigningClient } from "@/features/staking/lib/core/client";
+
 // Enums
 export enum OrderByOptions {
   ORDER_BY_UNSPECIFIED = "ORDER_BY_UNSPECIFIED",
@@ -201,6 +203,14 @@ export interface StakingPool {
 export interface StakingPoolResponse {
   pool: StakingPool;
 }
+
+export type ExecuteVoteParams = {
+  proposalId: string;
+  voter: string;
+  option: number;
+  client: NonNullable<AbstraxionSigningClient>;
+  memo?: string;
+};
 
 // Constants
 export const ProposalStatusColor: Record<ProposalStatus, string> = {

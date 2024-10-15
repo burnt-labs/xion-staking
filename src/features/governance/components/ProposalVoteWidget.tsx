@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import { useGovernanceTx } from "../context/hooks";
 import { VoteType } from "../lib/types";
-import ProposalVoteModal from "./proposal-vote-modal";
+import ProposalVoteModal from "./ProposalVoteModal";
 
 const VotePopover: React.FC<{
   onClose: () => void;
@@ -28,11 +29,17 @@ const VotePopover: React.FC<{
   );
 };
 
-export const VoteWidget: React.FC = () => {
+interface VoteWidgetProps {
+  proposalId: string;
+}
+
+export const VoteWidget: React.FC<VoteWidgetProps> = ({ proposalId }) => {
   const [showPopover, setShowPopover] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedVote, setSelectedVote] = useState<VoteType | null>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const { submitVote, isVoting, voteError, client, address } =
+    useGovernanceTx();
 
   // listen for clicks outside the popover
   useEffect(() => {
@@ -60,11 +67,25 @@ export const VoteWidget: React.FC = () => {
 
   // handle confirming vote
   const handleConfirmVote = async () => {
-    if (selectedVote) {
-      console.log(`Submitting vote: ${selectedVote}`);
+    if (selectedVote && proposalId) {
+      const voteOption = {
+        [VoteType.Yes]: 1,
+        [VoteType.Abstain]: 2,
+        [VoteType.No]: 3,
+        [VoteType.NoWithVeto]: 4,
+      }[selectedVote];
 
-      // temp mock vote submission
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      try {
+        await submitVote({
+          proposalId,
+          option: voteOption,
+          client: client!,
+          voter: address!,
+        });
+        setShowModal(false);
+      } catch (error) {
+        console.error("Error submitting vote:", error);
+      }
     }
   };
 

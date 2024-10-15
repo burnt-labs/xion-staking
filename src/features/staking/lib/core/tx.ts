@@ -42,19 +42,20 @@ const getUxionAmount = (coin: Coin) => {
   throw new Error("Invalid coin denom");
 };
 
-const getTxVerifier = (eventType: string) => (result: DeliverTxResponse) => {
-  // eslint-disable-next-line no-console
-  console.log("debug: base.ts: result", result);
+export const getTxVerifier =
+  (eventType: string) => (result: DeliverTxResponse) => {
+    // eslint-disable-next-line no-console
+    console.log("debug: base.ts: result", result);
 
-  if (!result.events.find((e) => e.type === eventType)) {
-    console.error(result);
-    throw new Error("Out of gas");
-  }
+    if (!result.events.find((e) => e.type === eventType)) {
+      console.error(result);
+      throw new Error("Out of gas");
+    }
 
-  return result;
-};
+    return result;
+  };
 
-const handleTxError = (err: unknown) => {
+export const handleTxError = (err: unknown) => {
   // eslint-disable-next-line no-console
   console.error(err);
 

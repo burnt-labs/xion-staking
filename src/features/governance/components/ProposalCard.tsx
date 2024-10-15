@@ -6,7 +6,7 @@ import {
   getProposalMessageTypeName,
 } from "../lib/types";
 import { formatProposalDate, getProposalStatus } from "../lib/utils";
-import ProposalStatusPill from "./proposal-status-pill";
+import ProposalStatusPill from "./ProposalStatusPill";
 
 interface ProposalCardProps {
   proposal: Proposal;

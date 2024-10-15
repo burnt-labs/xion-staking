@@ -2,9 +2,9 @@ import React from "react";
 
 import { ProposalDetailsResult, ProposalStatus, VoteType } from "../lib/types";
 import { formatProposalDate, getProposalStatus } from "../lib/utils";
-import ProposalStatusPill from "./proposal-status-pill";
-import ProposalTallyBar from "./proposal-tally-bar";
-import VoteWidget from "./proposal-vote-widget";
+import ProposalStatusPill from "./ProposalStatusPill";
+import ProposalTallyBar from "./ProposalTallyBar";
+import VoteWidget from "./ProposalVoteWidget";
 
 interface ProposalOverviewProps {
   proposalDetails: ProposalDetailsResult;
@@ -14,7 +14,8 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
   proposalDetails,
 }) => {
   const { title, submittedDate } = proposalDetails.info;
-  const { progressData } = proposalDetails;
+  const { progressData, proposal } = proposalDetails;
+  const proposalId = proposal.id;
 
   const getVoteAmount = (type: VoteType): number => {
     const voteData = progressData.find((data) => data.type === type);
@@ -28,7 +29,6 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
 
   const getVotePercentage = (type: VoteType): number => {
     const amount = getVoteAmount(type);
-    console.log({ type, amount, totalVotes });
     return totalVotes > 0 ? (amount / totalVotes) * 100 : 0;
   };
 
@@ -36,13 +36,6 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
   const noPercentage = getVotePercentage(VoteType.No);
   const abstainPercentage = getVotePercentage(VoteType.Abstain);
   const noWithVetoPercentage = getVotePercentage(VoteType.NoWithVeto);
-
-  console.log({
-    yesPercentage,
-    noPercentage,
-    abstainPercentage,
-    noWithVetoPercentage,
-  });
 
   const status = getProposalStatus(proposalDetails.info.status);
 
@@ -71,7 +64,7 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
         </div>
 
         <div className="mt-8 flex w-full flex-col justify-end lg:mt-0 lg:w-[303px] lg:flex-shrink-0">
-          <VoteWidget />
+          <VoteWidget proposalId={proposalId} />
         </div>
       </div>
     </div>

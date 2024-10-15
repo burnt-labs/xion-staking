@@ -10,9 +10,9 @@ import {
   useTallyParams,
   useVotingParams,
 } from "../context/hooks";
-import { BreadCrumbNav } from "./bread-crumb";
-import { ProposalOverview } from "./proposal-overview";
-import { TallyingProcedure } from "./tallying-procedure";
+import { BreadCrumbNav } from "./BreadCrumb";
+import { ProposalOverview } from "./ProposalOverview";
+import { TallyingProcedure } from "./TallyingStatus";
 
 export default function ProposalPage() {
   const searchParams = useSearchParams();

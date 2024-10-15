@@ -1,10 +1,14 @@
 import BigNumber from "bignumber.js";
+import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 
 import { fetchFromAPI } from "@/features/core/utils";
+import { getCosmosFee } from "@/features/staking/lib/core/fee";
+import { getTxVerifier, handleTxError } from "@/features/staking/lib/core/tx";
 
 import { GOVERNANCE_ENDPOINTS } from "../config/api";
 import { GOVERNANCE_PAGE_LIMIT } from "../config/constants";
 import {
+  ExecuteVoteParams,
   GovDepositParamsResponse,
   GovProposalDepositsResponse,
   GovProposalsResponse,
@@ -188,4 +192,34 @@ export const calcTallies = (
     tallies,
     isPassing,
   };
+};
+
+export const submitVote = async ({
+  proposalId,
+  voter,
+  option,
+  client,
+  memo = "",
+}: ExecuteVoteParams) => {
+  const msg = MsgVote.fromPartial({
+    proposalId: BigInt(proposalId),
+    voter,
+    option,
+  });
+
+  const messageWrapper = {
+    typeUrl: "/cosmos.gov.v1beta1.MsgVote",
+    value: msg,
+  };
+
+  const fee = await getCosmosFee({
+    address: voter,
+    memo,
+    msgs: [messageWrapper],
+  });
+
+  return await client
+    .signAndBroadcast(voter, [messageWrapper], fee, memo)
+    .then(getTxVerifier("vote"))
+    .catch(handleTxError);
 };
