@@ -13,7 +13,7 @@ interface ProposalOverviewProps {
 export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
   proposalDetails,
 }) => {
-  const { title, submittedDate } = proposalDetails.info;
+  const { title, submittedDate, voteValue } = proposalDetails.info;
   const { progressData, proposal } = proposalDetails;
   const proposalId = proposal.id;
 
@@ -23,7 +23,7 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
   };
 
   const totalVotes = progressData.reduce(
-    (sum, data) => sum + Number(data.amount),
+    (sum, data) => (data.type !== "quorum" ? sum + Number(data.amount) : sum),
     0,
   );
 
@@ -38,6 +38,8 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
   const noWithVetoPercentage = getVotePercentage(VoteType.NoWithVeto);
 
   const status = getProposalStatus(proposalDetails.info.status);
+
+  console.log({ status });
 
   return (
     <div className="rounded-lg bg-white/10 p-6 text-white shadow-lg">
@@ -64,7 +66,9 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
         </div>
 
         <div className="mt-8 flex w-full flex-col justify-end lg:mt-0 lg:w-[303px] lg:flex-shrink-0">
-          <VoteWidget proposalId={proposalId} />
+          {status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD && (
+            <VoteWidget proposalId={proposalId} userVote={voteValue} />
+          )}
         </div>
       </div>
     </div>

@@ -5,14 +5,9 @@ import { useSearchParams } from "next/navigation";
 import { LoadingBanner, Title } from "@/features/core/components/base";
 
 import { useProposal, useProposalDetails } from "../context/hooks";
-import {
-  useDepositParams,
-  useTallyParams,
-  useVotingParams,
-} from "../context/hooks";
-import { BreadCrumbNav } from "./BreadCrumb";
+import { BreadCrumbNav } from "./BreadCrumbNav";
 import { ProposalOverview } from "./ProposalOverview";
-import { TallyingProcedure } from "./TallyingStatus";
+import { ProposalTallyingStatus } from "./ProposalTallyingStatus";
 
 export default function ProposalPage() {
   const searchParams = useSearchParams();
@@ -51,7 +46,7 @@ export default function ProposalPage() {
       {proposalDetails && (
         <>
           <ProposalOverview proposalDetails={proposalDetails} />
-          <TallyingProcedure proposalDetails={proposalDetails} />
+          <ProposalTallyingStatus proposalDetails={proposalDetails} />
         </>
       )}
     </div>

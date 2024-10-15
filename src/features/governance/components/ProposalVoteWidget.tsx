@@ -31,9 +31,13 @@ const VotePopover: React.FC<{
 
 interface VoteWidgetProps {
   proposalId: string;
+  userVote: VoteType | undefined;
 }
 
-export const VoteWidget: React.FC<VoteWidgetProps> = ({ proposalId }) => {
+export const VoteWidget: React.FC<VoteWidgetProps> = ({
+  proposalId,
+  userVote,
+}) => {
   const [showPopover, setShowPopover] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedVote, setSelectedVote] = useState<VoteType | null>(null);
@@ -92,7 +96,7 @@ export const VoteWidget: React.FC<VoteWidgetProps> = ({ proposalId }) => {
   return (
     <div className="w-full">
       <p className="font-['Akkurat LL'] mb-4 text-sm font-bold leading-none text-white">
-        Vote for
+        {userVote ? `You voted {voteValue}` : `Vote for`}
       </p>
       <button
         className="font-['Akkurat LL'] mb-4 h-16 w-full rounded-lg border border-[#03c600] bg-[#03c600]/5 text-sm font-normal uppercase leading-tight text-[#03c600]"

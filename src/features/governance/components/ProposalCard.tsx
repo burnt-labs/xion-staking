@@ -14,7 +14,6 @@ interface ProposalCardProps {
 
 export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
   const status = getProposalStatus(proposal.status);
-  console.log({ proposal });
 
   return (
     <div className="flex h-[277px] min-w-[352px] flex-col gap-5 rounded-[16px]  bg-bg-600 p-6">

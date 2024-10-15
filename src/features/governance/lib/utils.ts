@@ -106,3 +106,21 @@ export function calculateDepositPercent(
       Number(getAmount(minDeposit[0], minDeposit[0].denom)),
   );
 }
+
+export function calculateRemainingDays(endTime: string): number {
+  const now = new Date();
+  const end = new Date(endTime);
+  const diffTime = end.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.max(0, diffDays);
+}
+
+export function calculateVotingProgress(endTime: string): number {
+  const now = new Date();
+  const end = new Date(endTime);
+  const totalDuration = 14 * 24 * 60 * 60 * 1000; // Assuming 14 days voting period
+  const startTime = new Date(end.getTime() - totalDuration);
+  const elapsedTime = now.getTime() - startTime.getTime();
+  const progress = (elapsedTime / totalDuration) * 100;
+  return Math.min(100, Math.max(0, progress));
+}

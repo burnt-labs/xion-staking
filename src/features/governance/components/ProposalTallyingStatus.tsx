@@ -3,13 +3,20 @@ import React from "react";
 import { TooltipPopover } from "@/features/core/components/TooltipPopover";
 
 import { ProposalDetailsResult } from "../lib/types";
+import {
+  calculateRemainingDays,
+  calculateVotingProgress,
+  formatProposalDate,
+} from "../lib/utils";
 
-export const TallyingProcedure = ({
+export const ProposalTallyingStatus = ({
   proposalDetails,
 }: {
   proposalDetails: ProposalDetailsResult;
 }) => {
-  const { progressData, quorum, quorumReached, threshold } = proposalDetails;
+  const { progressData, quorum, quorumReached, threshold, proposal } =
+    proposalDetails;
+  const votingEndTime = proposal.voting_end_time;
 
   const quorumData = progressData.find((data) => data.type === "quorum");
   const yesData = progressData.find((data) => data.type === "yes");
@@ -19,6 +26,10 @@ export const TallyingProcedure = ({
   const quorumValue = quorumReached
     ? `Reached ${quorumPercentage.toFixed(2)}%`
     : `${quorumPercentage.toFixed(2)}%`;
+
+  const remainingDays = calculateRemainingDays(votingEndTime);
+  const votingPeriodValue =
+    remainingDays > 0 ? `${remainingDays} Days Left` : "Voting Ended";
 
   return (
     <div className="w-full max-w-[1119px] rounded-lg bg-white/10 p-4 text-white shadow-lg">
@@ -34,7 +45,7 @@ export const TallyingProcedure = ({
         <TallyCard
           title="Threshold"
           value={`${yesData?.percent || "0"} Yes`}
-          infoTooltip="Minimum percentage of 'Yes' votes required for the proposal to pass"
+          infoTooltip="Minimum percentage of 'Yes' votes required for the proposal to pass, excluding abstain."
           isPositive={parseFloat(yesData?.percent || "0") > 50}
         >
           <ThresholdBar
@@ -45,11 +56,14 @@ export const TallyingProcedure = ({
         </TallyCard>
         <TallyCard
           title="Voting Period"
-          value="3 Days Left"
+          value={votingPeriodValue}
           infoTooltip="Time remaining for voting on this proposal"
-          isPositive={true}
+          isPositive={remainingDays > 0}
         >
-          <VotingPeriodBar percentage={30} />
+          <VotingPeriodBar
+            percentage={calculateVotingProgress(votingEndTime)}
+            endDate={votingEndTime}
+          />
         </TallyCard>
       </div>
     </div>
@@ -186,25 +200,26 @@ const ThresholdBar = ({
     </div>
   );
 };
-const VotingPeriodBar = ({ percentage }: { percentage: number }) => (
+
+const VotingPeriodBar = ({
+  percentage,
+  endDate,
+}: {
+  percentage: number;
+  endDate: string;
+}) => (
   <div className="flex flex-col space-y-2">
     <div className="text-center text-xs text-[#666666]">
-      <span>{percentage}%</span>
+      <span>{percentage.toFixed(0)}%</span>
     </div>
     <div className="relative h-4 w-full border border-white/20">
       <div
-        className="absolute h-full bg-[#434040]"
+        className="absolute h-full bg-white"
         style={{ width: `${percentage}%` }}
-      >
-        <div className="h-full bg-white" style={{ width: `${80}%` }} />
-      </div>
-      <div
-        className="absolute h-full w-0.5 bg-[#666666]"
-        style={{ left: `${percentage}%` }}
       />
     </div>
     <div className="text-xs text-[#666666]">
-      End on Jul 22 2024 13:21:37 UTC-04:00
+      End on {formatProposalDate(endDate, "utc")}
     </div>
   </div>
 );
