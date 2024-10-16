@@ -26,10 +26,8 @@ import {
 } from "../lib/types";
 import { StakingPoolResponse } from "../lib/types";
 
-// Add this type definition and export it
 export type SortOrder = "ASC" | "DESC";
 
-// Add this type definition and export it
 export interface FetchProposalsOptions {
   paginationParams?: PaginationParams;
   sortOrder?: SortOrder;
