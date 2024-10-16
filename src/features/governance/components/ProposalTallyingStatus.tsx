@@ -1,6 +1,7 @@
 import React from "react";
 
 import { TooltipPopover } from "@/features/core/components/TooltipPopover";
+import { Title } from "@/features/core/components/base";
 
 import { ProposalDetailsResult } from "../lib/types";
 import {
@@ -21,6 +22,16 @@ export const ProposalTallyingStatus = ({
   const quorumData = progressData.find((data) => data.type === "quorum");
   const yesData = progressData.find((data) => data.type === "yes");
   const noData = progressData.find((data) => data.type === "no");
+  const noWithVetoData = progressData.find(
+    (data) => data.type === "no_with_veto",
+  );
+
+  const yesPercentage = parseFloat(yesData?.percent || "0");
+  const noPercentage = parseFloat(noData?.percent || "0");
+  const noWithVetoPercentage = parseFloat(noWithVetoData?.percent || "0");
+  const totalVotes = yesPercentage + noPercentage + noWithVetoPercentage;
+  const thresholdMetPercentage =
+    totalVotes > 0 ? (yesPercentage / totalVotes) * 100 : 0;
 
   const quorumPercentage = parseFloat(quorumData?.percent || "0");
   const quorumValue = quorumReached
@@ -32,39 +43,43 @@ export const ProposalTallyingStatus = ({
     remainingDays > 0 ? `${remainingDays} Days Left` : "Voting Ended";
 
   return (
-    <div className="w-full max-w-[1119px] rounded-lg bg-white/10 p-4 text-white shadow-lg">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <TallyCard
-          title="Quorum"
-          value={quorumValue}
-          infoTooltip={`Minimum participation required for the proposal to be valid. Quorum %: ${quorumPercentage.toFixed(2)}%`}
-          isPositive={quorumReached}
-        >
-          <QuorumBar percentage={quorumPercentage} quorum={quorum * 100} />
-        </TallyCard>
-        <TallyCard
-          title="Threshold"
-          value={`${yesData?.percent || "0"} Yes`}
-          infoTooltip="Minimum percentage of 'Yes' votes required for the proposal to pass, excluding abstain."
-          isPositive={parseFloat(yesData?.percent || "0") > 50}
-        >
-          <ThresholdBar
-            threshold={threshold * 100}
-            yesPercentage={parseFloat(yesData?.percent || "0")}
-            noPercentage={parseFloat(noData?.percent || "0")}
-          />
-        </TallyCard>
-        <TallyCard
-          title="Voting Period"
-          value={votingPeriodValue}
-          infoTooltip="Time remaining for voting on this proposal"
-          isPositive={remainingDays > 0}
-        >
-          <VotingPeriodBar
-            percentage={calculateVotingProgress(votingEndTime)}
-            endDate={votingEndTime}
-          />
-        </TallyCard>
+    <div>
+      <div className="mb-6">
+        <Title>Proposal Tallying Status</Title>
+      </div>
+      <div className="w-full max-w-[1119px] rounded-lg bg-white/10 p-4 text-white shadow-lg">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <TallyCard
+            title="Quorum"
+            value={quorumValue}
+            infoTooltip={`Minimum participation required for the proposal to be valid. Quorum %: ${quorumPercentage.toFixed(2)}%`}
+            isPositive={quorumReached}
+          >
+            <QuorumBar percentage={quorumPercentage} quorum={quorum * 100} />
+          </TallyCard>
+          <TallyCard
+            title="Threshold"
+            value={`${thresholdMetPercentage.toFixed(2)}% Yes`}
+            infoTooltip="Minimum percentage of 'Yes' votes required for the proposal to pass, excluding abstain."
+            isPositive={thresholdMetPercentage > threshold * 100}
+          >
+            <ThresholdBar
+              threshold={threshold * 100}
+              thresholdMetPercentage={thresholdMetPercentage}
+            />
+          </TallyCard>
+          <TallyCard
+            title="Voting Period"
+            value={votingPeriodValue}
+            infoTooltip="Time remaining for voting on this proposal"
+            isPositive={remainingDays > 0}
+          >
+            <VotingPeriodBar
+              percentage={calculateVotingProgress(votingEndTime)}
+              endDate={votingEndTime}
+            />
+          </TallyCard>
+        </div>
       </div>
     </div>
   );
@@ -149,12 +164,10 @@ const QuorumBar = ({
 
 const ThresholdBar = ({
   threshold,
-  yesPercentage,
-  noPercentage,
+  thresholdMetPercentage,
 }: {
   threshold: number;
-  yesPercentage: number;
-  noPercentage: number;
+  thresholdMetPercentage: number;
 }) => {
   return (
     <div className="flex flex-col space-y-2">
@@ -168,33 +181,16 @@ const ThresholdBar = ({
 
       {/* bar */}
       <div className="relative h-4 w-full border border-[#1C1C1C]">
-        {/* percent yes votes */}
+        {/* percent threshold met */}
         <div
-          className="absolute h-full bg-[#03c600]"
-          style={{ width: `${yesPercentage}%` }}
+          className="absolute h-full bg-success"
+          style={{ width: `${thresholdMetPercentage.toFixed(0)}%` }}
         />
-
-        {/* delta between yes votes and threshold */}
-        {yesPercentage < threshold && (
-          <div
-            className="absolute h-full bg-success"
-            style={{
-              left: `${yesPercentage}%`,
-              width: `${threshold - yesPercentage}%`,
-            }}
-          />
-        )}
 
         {/* threshold marker */}
         <div
           className="absolute h-full w-0.5 bg-[#666666]"
           style={{ left: `${threshold}%` }}
-        />
-
-        {/* percent no votes */}
-        <div
-          className="absolute h-full bg-[#f00]"
-          style={{ width: `${noPercentage}%` }}
         />
       </div>
     </div>

@@ -19,8 +19,6 @@ export const ProposalTallyBar: React.FC<ProposalTallyBarProps> = ({
   // edge case by which percentages do not add up to 100 (e.g. all 0)
   const scale = totalPercentage === 0 ? 1 : 100 / totalPercentage;
 
-  console.log({ totalPercentage });
-
   const scaledYes = yesPercentage * scale;
   const scaledNo = noPercentage * scale;
   const scaledAbstain = abstainPercentage * scale;

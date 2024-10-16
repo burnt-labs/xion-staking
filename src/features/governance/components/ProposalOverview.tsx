@@ -39,8 +39,6 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
 
   const status = getProposalStatus(proposalDetails.info.status);
 
-  console.log({ status });
-
   return (
     <div className="rounded-lg bg-white/10 p-6 text-white shadow-lg">
       <div className="flex flex-col lg:flex-row lg:justify-between lg:space-x-6">

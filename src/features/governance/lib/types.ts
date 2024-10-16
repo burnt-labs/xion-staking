@@ -54,6 +54,17 @@ export interface ProposalMessage {
     info: string;
     upgraded_client_state: null;
   };
+  "content": {
+    "@type": string;
+    "title": string;
+    "description": string;
+    "changes"?: Array<{
+      subspace: string;
+      key: string;
+      value: string;
+    }>;
+    [key: string]: any;
+  };
 }
 
 export interface ProposalTallyResult {

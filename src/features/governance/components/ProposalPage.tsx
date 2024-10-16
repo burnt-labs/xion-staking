@@ -6,6 +6,7 @@ import { LoadingBanner, Title } from "@/features/core/components/base";
 
 import { useProposal, useProposalDetails } from "../context/hooks";
 import { BreadCrumbNav } from "./BreadCrumbNav";
+import { ProposalDetails } from "./ProposalDetails";
 import { ProposalOverview } from "./ProposalOverview";
 import { ProposalTallyingStatus } from "./ProposalTallyingStatus";
 
@@ -47,6 +48,7 @@ export default function ProposalPage() {
         <>
           <ProposalOverview proposalDetails={proposalDetails} />
           <ProposalTallyingStatus proposalDetails={proposalDetails} />
+          <ProposalDetails proposalDetails={proposalDetails} />
         </>
       )}
     </div>

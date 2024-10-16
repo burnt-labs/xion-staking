@@ -1,1 +1,1 @@
-export const GOVERNANCE_PAGE_LIMIT = 100;
+export const GOVERNANCE_PAGE_LIMIT = 10;

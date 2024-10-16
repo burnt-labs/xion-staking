@@ -229,8 +229,7 @@ export const useProposalDetails = (
   const { data: depositParams } = useDepositParams();
   const { data: voteData } = useVote(
     proposalId,
-    "",
-    //abstraxionAccount?.bech32Address ?? "",
+    abstraxionAccount?.bech32Address ?? "",
   );
 
   return useMemo(() => {
