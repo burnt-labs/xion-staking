@@ -1,4 +1,3 @@
-import { RPC_URL } from "@/constants";
 import type { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import type { Registry } from "@cosmjs/proto-signing";
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
@@ -19,7 +18,7 @@ import {
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 
-
+import { RPC_URL } from "@/constants";
 
 export type AbstraxionSigningClient = NonNullable<
   ReturnType<typeof useAbstraxionSigningClient>["client"]
