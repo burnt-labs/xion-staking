@@ -3,10 +3,17 @@ on:
   push:
     branches:
       - "main"
+  pull_request:
+    branches:
+      - main
 
 jobs:
   Lint:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_IS_DEPLOYMENT: true
+      NEXT_PUBLIC_NETWORK_TYPE: "testnet"
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3

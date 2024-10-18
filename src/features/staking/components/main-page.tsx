@@ -2,6 +2,7 @@
 
 import { memo, useState } from "react";
 
+import { IS_TESTNET } from "@/config";
 import { Title } from "@/features/core/components/base";
 
 import { useStaking } from "../context/hooks";
@@ -13,7 +14,6 @@ import Faucet from "./faucet";
 import StakingModals from "./staking-modals";
 import StakingOverview from "./staking-overview";
 import ValidatorsTable from "./validators-table";
-import { IS_TESTNET } from "@/config";
 
 function StakingPage() {
   const { staking } = useStaking();
