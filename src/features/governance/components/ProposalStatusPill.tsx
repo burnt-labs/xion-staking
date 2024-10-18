@@ -1,10 +1,7 @@
 import React from "react";
 
-import {
-  ProposalStatus,
-  ProposalStatusColor,
-  toStatusLabel,
-} from "../lib/types";
+import type { ProposalStatus } from "../lib/types";
+import { ProposalStatusColor, toStatusLabel } from "../lib/types";
 
 interface ProposalStatusPillProps {
   status: ProposalStatus;

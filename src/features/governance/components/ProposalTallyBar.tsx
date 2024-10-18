@@ -1,17 +1,17 @@
 import React from "react";
 
 interface ProposalTallyBarProps {
-  yesPercentage: number;
-  noPercentage: number;
   abstainPercentage: number;
+  noPercentage: number;
   vetoPercentage: number;
+  yesPercentage: number;
 }
 
 export const ProposalTallyBar: React.FC<ProposalTallyBarProps> = ({
-  yesPercentage,
-  noPercentage,
   abstainPercentage,
+  noPercentage,
   vetoPercentage,
+  yesPercentage,
 }) => {
   const totalPercentage =
     yesPercentage + noPercentage + abstainPercentage + vetoPercentage;

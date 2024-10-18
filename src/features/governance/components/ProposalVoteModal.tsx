@@ -10,7 +10,7 @@ import CommonModal, {
   ModalDescription,
 } from "@/features/core/components/common-modal";
 
-import { VoteType } from "../lib/types";
+import type { VoteType } from "../lib/types";
 import { getReadableVoteType } from "../lib/utils";
 
 interface ProposalVoteModalProps {
@@ -21,8 +21,8 @@ interface ProposalVoteModalProps {
 }
 
 enum Step {
-  Review = "review",
   Completed = "completed",
+  Review = "review",
 }
 
 const ProposalVoteModal: React.FC<ProposalVoteModalProps> = ({
@@ -46,6 +46,7 @@ const ProposalVoteModal: React.FC<ProposalVoteModalProps> = ({
   // handle confirm
   const handleConfirm = async () => {
     setIsLoading(true);
+
     try {
       await onConfirm();
       setStep(Step.Completed);

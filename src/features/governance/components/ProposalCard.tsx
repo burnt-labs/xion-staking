@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Proposal } from "../lib/types";
+import type { Proposal } from "../lib/types";
 import {
   getProposalMessageType,
   getProposalMessageTypeName,
@@ -21,8 +21,8 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
         <ProposalStatusPill status={status} />
         <div className="text-2xl font-bold leading-7 text-white">
           <span
-            title={proposal.title}
             className="block overflow-hidden text-ellipsis whitespace-nowrap"
+            title={proposal.title}
           >
             {proposal.title.length > 21
               ? `${proposal.title.slice(0, 21)}...`
@@ -30,7 +30,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
           </span>
         </div>
       </div>
-      <div className="h-[1px] w-full bg-white/20"></div>
+      <div className="h-[1px] w-full bg-white/20" />
       <div className="flex flex-col gap-3">
         <div className="flex items-start justify-between">
           <div className="text-sm font-bold leading-none text-white">ID</div>

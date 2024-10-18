@@ -25,6 +25,7 @@ export const TooltipPopover: React.FC<TooltipPopoverProps> = ({
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };

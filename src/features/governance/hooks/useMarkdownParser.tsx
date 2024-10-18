@@ -1,17 +1,18 @@
 import Link from "next/link";
 
 function useMarkdownParser() {
-  return (text: string) => {
-    let isScam = false;
-    if (!text) return <pre></pre>;
+  return ({ text }: { text: string }) => {
+    if (!text) return <pre />;
+
     const result: (React.ReactNode | string)[] = [];
     const lines = text.split(/\\n|\n/);
+
     lines.forEach((line, i) => {
       if (line.startsWith("# ")) {
         result.push(
           <h1
-            key={i}
             className="font-['Akkurat LL'] mb-4 font-bold leading-none text-white"
+            key={i}
           >
             {line.replace("# ", "")}
           </h1>,
@@ -19,8 +20,8 @@ function useMarkdownParser() {
       } else if (line.startsWith("## ")) {
         result.push(
           <h2
-            key={i}
             className="font-['Akkurat LL'] mb-4 font-bold leading-none text-white"
+            key={i}
           >
             {line.replace("## ", "")}
           </h2>,
@@ -28,22 +29,26 @@ function useMarkdownParser() {
       } else if (line.startsWith("### ")) {
         result.push(
           <h3
-            key={i}
             className="font-['Akkurat LL'] mb-4 font-bold leading-none text-white"
+            key={i}
           >
             {line.replace("### ", "")}
           </h3>,
         );
       } else {
         const lineResult: (React.ReactNode | string)[] = [];
+
         const pattern =
           /\*\*(.*?)\*\*|`(.*?)`|(https?:\/\/[^\s]+)|\[(.*?)\]\((https?:\/\/[^\s]+)\)/g;
+
         const fixedLine = line.startsWith("- ") ? line.replace("- ", "") : line;
+
         let match = pattern.exec(fixedLine);
         let lastIndex = 0;
 
         while (match) {
           lineResult.push(fixedLine.slice(lastIndex, match.index));
+
           if (match[1]) {
             // bold text
             lineResult.push(
@@ -56,13 +61,12 @@ function useMarkdownParser() {
             );
           } else if (match[3]) {
             // plain URL
-
             lineResult.push(
               <Link
                 href={match[3]}
                 key={`${i}-${lineResult.length}`}
-                target="_blank"
                 rel="noopener noreferrer"
+                target="_blank"
               >
                 {match[3]}
               </Link>,
@@ -70,18 +74,20 @@ function useMarkdownParser() {
           } else if (match[4] && match[5]) {
             lineResult.push(
               <Link
-                href={match[3]}
+                href={match[5]}
                 key={`${i}-${lineResult.length}`}
-                target="_blank"
                 rel="noopener noreferrer"
+                target="_blank"
               >
-                {match[3]}
+                {match[4]}
               </Link>,
             );
           }
-          lastIndex = pattern.lastIndex;
+
+          ({ lastIndex } = pattern);
           match = pattern.exec(fixedLine);
         }
+
         lineResult.push(fixedLine.slice(lastIndex));
 
         if (line.startsWith("- ")) {

@@ -9,8 +9,8 @@ export function BreadCrumbNav({ proposalId }: BreadCrumbProps) {
     <div className="flex flex-row justify-between text-left">
       <div>
         <Link
-          href="/governance/"
           className="font-['Akkurat LL'] text-sm font-normal uppercase leading-tight text-white underline"
+          href="/governance/"
         >
           Governance
         </Link>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { NavItem } from "@/config";
+import type { NavItem } from "@/config";
 
 type NavLinkProps = NavItem & {
   className?: string;
@@ -9,10 +9,10 @@ type NavLinkProps = NavItem & {
 };
 
 const NavLink: React.FC<NavLinkProps> = ({
-  href,
-  label,
-  isRootLink,
   className = "",
+  href,
+  isRootLink,
+  label,
   onClick,
 }) => {
   const pathname = usePathname();

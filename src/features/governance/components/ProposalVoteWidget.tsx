@@ -5,33 +5,30 @@ import { VoteType } from "../lib/types";
 import ProposalVoteModal from "./ProposalVoteModal";
 
 const VotePopover: React.FC<{
-  onClose: () => void;
   onVote: (voteType: VoteType) => void;
-}> = ({ onVote }) => {
-  return (
-    <div className="absolute right-0 top-full mt-2 w-[148px] rounded-2xl bg-[#1a1a1a] shadow">
-      <div className="p-4">
-        <button
-          className="mb-4 w-full text-left text-sm font-bold leading-tight text-white"
-          onClick={() => onVote(VoteType.Abstain)}
-        >
-          Abstain
-        </button>
-        <div className="mb-4 h-[1px] w-full border-t border-white/20"></div>
-        <button
-          className="w-full text-left text-sm font-bold leading-tight text-white"
-          onClick={() => onVote(VoteType.NoWithVeto)}
-        >
-          No with Veto
-        </button>
-      </div>
+}> = ({ onVote }) => (
+  <div className="absolute right-0 top-full mt-2 w-[148px] rounded-2xl bg-[#1a1a1a] shadow">
+    <div className="p-4">
+      <button
+        className="mb-4 w-full text-left text-sm font-bold leading-tight text-white"
+        onClick={() => onVote(VoteType.Abstain)}
+      >
+        Abstain
+      </button>
+      <div className="mb-4 h-[1px] w-full border-t border-white/20" />
+      <button
+        className="w-full text-left text-sm font-bold leading-tight text-white"
+        onClick={() => onVote(VoteType.NoWithVeto)}
+      >
+        No with Veto
+      </button>
     </div>
-  );
-};
+  </div>
+);
 
 interface VoteWidgetProps {
   proposalId: string;
-  userVote: VoteType | undefined;
+  userVote: undefined | VoteType;
 }
 
 export const VoteWidget: React.FC<VoteWidgetProps> = ({
@@ -40,10 +37,10 @@ export const VoteWidget: React.FC<VoteWidgetProps> = ({
 }) => {
   const [showPopover, setShowPopover] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [selectedVote, setSelectedVote] = useState<VoteType | null>(null);
+  const [selectedVote, setSelectedVote] = useState<null | VoteType>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
-  const { submitVote, isVoting, voteError, client, address } =
-    useGovernanceTx();
+
+  const { address, client, submitVote } = useGovernanceTx();
 
   // listen for clicks outside the popover
   useEffect(() => {
@@ -57,6 +54,7 @@ export const VoteWidget: React.FC<VoteWidgetProps> = ({
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -73,19 +71,20 @@ export const VoteWidget: React.FC<VoteWidgetProps> = ({
   const handleConfirmVote = async () => {
     if (selectedVote && proposalId) {
       const voteOption = {
-        [VoteType.Yes]: 1,
         [VoteType.Abstain]: 2,
         [VoteType.No]: 3,
         [VoteType.NoWithVeto]: 4,
+        [VoteType.Yes]: 1,
       }[selectedVote];
 
       try {
         await submitVote({
-          proposalId,
-          option: voteOption,
           client: client!,
+          option: voteOption,
+          proposalId,
           voter: address!,
         });
+
         setShowModal(false);
       } catch (error) {
         console.error("Error submitting vote:", error);
@@ -117,17 +116,12 @@ export const VoteWidget: React.FC<VoteWidgetProps> = ({
             onClick={() => setShowPopover(!showPopover)}
           >
             <div className="flex flex-col items-center">
-              <div className="mb-2 h-1 w-1 rounded-full bg-[#6b6969]"></div>
-              <div className="mb-2 h-1 w-1 rounded-full bg-[#6b6969]"></div>
-              <div className="h-1 w-1 rounded-full bg-[#6b6969]"></div>
+              <div className="mb-2 h-1 w-1 rounded-full bg-[#6b6969]" />
+              <div className="mb-2 h-1 w-1 rounded-full bg-[#6b6969]" />
+              <div className="h-1 w-1 rounded-full bg-[#6b6969]" />
             </div>
           </button>
-          {showPopover && (
-            <VotePopover
-              onClose={() => setShowPopover(false)}
-              onVote={handleVote}
-            />
-          )}
+          {showPopover && <VotePopover onVote={handleVote} />}
         </div>
       </div>
       {selectedVote && (

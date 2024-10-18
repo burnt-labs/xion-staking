@@ -1,6 +1,7 @@
-import { Coin } from "@cosmjs/proto-signing";
+import type { Coin } from "@cosmjs/proto-signing";
 
-import { ProposalStatus, VoteType } from "./types";
+import type { ProposalStatus } from "./types";
+import { VoteType } from "./types";
 
 export const formatProposalDate = (
   dateString: string,
@@ -17,30 +18,28 @@ export const formatProposalDate = (
       return date.toISOString();
     case "custom":
     default:
-      return (
-        date
-          .toLocaleString("en-US", {
-            month: "2-digit",
-            day: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            timeZone: "UTC",
-            hour12: false,
-          })
-          .replace(",", "") + " UTC"
-      );
+      return `${date
+        .toLocaleString("en-US", {
+          day: "2-digit",
+          hour: "2-digit",
+          hour12: false,
+          minute: "2-digit",
+          month: "2-digit",
+          timeZone: "UTC",
+          year: "numeric",
+        })
+        .replace(",", "")} UTC`;
   }
 };
 
-export const getProposalStatus = (status: string): ProposalStatus => {
-  return status as ProposalStatus;
-};
+export const getProposalStatus = (status: string): ProposalStatus =>
+  status as ProposalStatus;
 
 export function getAmount(coin: Coin, denom: string): number {
   if (coin.denom === denom) {
     return parseFloat(coin.amount);
   }
+
   return 0;
 }
 
@@ -51,6 +50,7 @@ export function getProposalType(messageType: string): string {
     "/cosmos.params.v1beta1.ParameterChangeProposal": "Parameter Change",
     "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal": "Software Upgrade",
   };
+
   return types[messageType] || "Unknown";
 }
 
@@ -77,6 +77,7 @@ export function calculateRemainingDays(endTime: string): number {
   const end = new Date(endTime);
   const diffTime = end.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
   return Math.max(0, diffDays);
 }
 
@@ -87,5 +88,21 @@ export function calculateVotingProgress(endTime: string): number {
   const startTime = new Date(end.getTime() - totalDuration);
   const elapsedTime = now.getTime() - startTime.getTime();
   const progress = (elapsedTime / totalDuration) * 100;
+
   return Math.min(100, Math.max(0, progress));
 }
+
+export const getReadableVoteType = (voteType: VoteType): string => {
+  switch (voteType) {
+    case VoteType.Yes:
+      return "Yes";
+    case VoteType.No:
+      return "No";
+    case VoteType.NoWithVeto:
+      return "No with veto";
+    case VoteType.Abstain:
+      return "Abstain";
+    default:
+      return "Unknown";
+  }
+};

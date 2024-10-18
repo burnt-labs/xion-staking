@@ -1,4 +1,5 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios from "axios";
+import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import BigNumber from "bignumber.js";
 
 import { REST_URL } from "@/constants";
@@ -40,6 +41,7 @@ export async function fetchFromAPI<T>(
         ...config,
       },
     );
+
     return response.data;
   } catch (error) {
     console.error(`Failed to fetch from API: ${endpoint}`, error);

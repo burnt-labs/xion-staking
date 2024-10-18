@@ -1,4 +1,4 @@
-import {
+import type {
   GovDepositParamsResponse,
   GovProposalDepositsResponse,
   GovProposalsResponse,
@@ -11,41 +11,41 @@ import {
 } from "../lib/types";
 
 export const GOVERNANCE_ENDPOINTS = {
-  PROPOSALS: {
-    url: "/cosmos/gov/v1/proposals",
-    responseType: {} as GovProposalsResponse,
+  DEPOSIT_PARAMS: {
+    responseType: {} as GovDepositParamsResponse,
+    url: "/cosmos/gov/v1/params/deposit",
   },
   PROPOSAL: {
-    url: (id: string) => `/cosmos/gov/v1/proposals/${id}`,
     responseType: {} as { proposal: Proposal },
-  },
-  VOTING_PARAMS: {
-    url: "/cosmos/gov/v1/params/voting",
-    responseType: {} as GovVotingParamsResponse,
-  },
-  DEPOSIT_PARAMS: {
-    url: "/cosmos/gov/v1/params/deposit",
-    responseType: {} as GovDepositParamsResponse,
-  },
-  TALLY_PARAMS: {
-    url: "/cosmos/gov/v1/params/tallying",
-    responseType: {} as GovTallyParamsResponse,
+    url: (id: string) => `/cosmos/gov/v1/proposals/${id}`,
   },
   PROPOSAL_DEPOSITS: {
-    url: (id: string) => `/cosmos/gov/v1/proposals/${id}/deposits`,
     responseType: {} as GovProposalDepositsResponse,
+    url: (id: string) => `/cosmos/gov/v1/proposals/${id}/deposits`,
   },
-  TALLY: {
-    url: (proposalId: string) => `/cosmos/gov/v1/proposals/${proposalId}/tally`,
-    responseType: {} as GovTallyResponse,
-  },
-  VOTE: {
-    url: (proposalId: string, voterAddress: string) =>
-      `/cosmos/gov/v1/proposals/${proposalId}/votes/${voterAddress}`,
-    responseType: {} as GovVoteResponse,
+  PROPOSALS: {
+    responseType: {} as GovProposalsResponse,
+    url: "/cosmos/gov/v1/proposals",
   },
   STAKING_POOL: {
-    url: "/cosmos/staking/v1beta1/pool",
     responseType: {} as StakingPoolResponse,
+    url: "/cosmos/staking/v1beta1/pool",
+  },
+  TALLY: {
+    responseType: {} as GovTallyResponse,
+    url: (proposalId: string) => `/cosmos/gov/v1/proposals/${proposalId}/tally`,
+  },
+  TALLY_PARAMS: {
+    responseType: {} as GovTallyParamsResponse,
+    url: "/cosmos/gov/v1/params/tallying",
+  },
+  VOTE: {
+    responseType: {} as GovVoteResponse,
+    url: (proposalId: string, voterAddress: string) =>
+      `/cosmos/gov/v1/proposals/${proposalId}/votes/${voterAddress}`,
+  },
+  VOTING_PARAMS: {
+    responseType: {} as GovVotingParamsResponse,
+    url: "/cosmos/gov/v1/params/voting",
   },
 } as const;

@@ -36,11 +36,11 @@ export const IS_TESTNET = NETWORK_TYPE === "testnet";
 
 export interface NavItem {
   href: string;
-  label: string;
   isRootLink?: boolean;
+  label: string;
 }
 
 export const mainNavItems: NavItem[] = [
-  { href: "/staking", label: "Staking", isRootLink: true },
+  { href: "/staking", isRootLink: true, label: "Staking" },
   { href: "/governance", label: "Governance" },
 ];

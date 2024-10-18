@@ -1,6 +1,7 @@
 import React from "react";
 
-import { ProposalDetailsResult, ProposalStatus, VoteType } from "../lib/types";
+import type { ProposalDetailsResult } from "../lib/types";
+import { ProposalStatus, VoteType } from "../lib/types";
 import { formatProposalDate, getProposalStatus } from "../lib/utils";
 import { ProposalStatusPill } from "./ProposalStatusPill";
 import { ProposalTallyBar } from "./ProposalTallyBar";
@@ -13,12 +14,13 @@ interface ProposalOverviewProps {
 export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
   proposalDetails,
 }) => {
-  const { title, submittedDate, voteValue } = proposalDetails.info;
+  const { submittedDate, title, voteValue } = proposalDetails.info;
   const { progressData, proposal } = proposalDetails;
   const proposalId = proposal.id;
 
   const getVoteAmount = (type: VoteType): number => {
     const voteData = progressData.find((data) => data.type === type);
+
     return voteData ? Number(voteData.amount) : 0;
   };
 
@@ -29,6 +31,7 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
 
   const getVotePercentage = (type: VoteType): number => {
     const amount = getVoteAmount(type);
+
     return totalVotes > 0 ? (amount / totalVotes) * 100 : 0;
   };
 
@@ -55,10 +58,10 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
 
           <div className="mt-8">
             <ProposalTallyBar
-              yesPercentage={yesPercentage}
-              noPercentage={noPercentage}
               abstainPercentage={abstainPercentage}
+              noPercentage={noPercentage}
               vetoPercentage={noWithVetoPercentage}
+              yesPercentage={yesPercentage}
             />
           </div>
         </div>

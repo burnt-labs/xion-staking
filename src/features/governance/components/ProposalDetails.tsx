@@ -1,7 +1,7 @@
 import { Title } from "@/features/core/components/base";
 
 import useMarkdownParser from "../hooks/useMarkdownParser";
-import { ProposalDetailsResult } from "../lib/types";
+import type { ProposalDetailsResult } from "../lib/types";
 import { ProposalMessageDetails } from "./ProposalMessageDetails";
 
 interface ProposalDetailsProps {
@@ -10,9 +10,7 @@ interface ProposalDetailsProps {
 
 export function ProposalDetails({ proposalDetails }: ProposalDetailsProps) {
   const markdownParser = useMarkdownParser();
-  const content = markdownParser(proposalDetails.proposal.summary);
-
-  console.log({ proposalDetails });
+  const content = markdownParser({ text: proposalDetails.proposal.summary });
 
   return (
     <div>

@@ -7,7 +7,7 @@ import { getTxVerifier, handleTxError } from "@/features/staking/lib/core/tx";
 
 import { GOVERNANCE_ENDPOINTS } from "../config/api";
 import { GOVERNANCE_PAGE_LIMIT } from "../config/constants";
-import {
+import type {
   ExecuteVoteParams,
   GovDepositParamsResponse,
   GovProposalDepositsResponse,
@@ -16,15 +16,13 @@ import {
   GovTallyParamsResponse,
   GovTallyResponse,
   GovVoteResponse,
-  GovVotingParamsResponse,
   PaginationParams,
   Proposal,
-  ProposalStatus,
   ProposalTallyResult,
   StakingPool,
-  VoteType,
+  StakingPoolResponse,
 } from "../lib/types";
-import { StakingPoolResponse } from "../lib/types";
+import { ProposalStatus, VoteType } from "../lib/types";
 
 type SortOrder = "ASC" | "DESC";
 
@@ -42,7 +40,7 @@ export const fetchProposals = async ({
   status,
 }: FetchProposalsOptions = {}): Promise<Proposal[]> => {
   let allProposals: Proposal[] = [];
-  let nextKey: string | null = null;
+  let nextKey: null | string = null;
 
   do {
     const params: PaginationParams = {
@@ -60,6 +58,7 @@ export const fetchProposals = async ({
           params,
         },
       );
+
       allProposals = allProposals.concat(data.proposals);
       nextKey = data.pagination.next_key;
       paginationParams["pagination.key"] = nextKey || undefined;
@@ -73,6 +72,7 @@ export const fetchProposals = async ({
   allProposals.sort((a, b) => {
     const idA = parseInt(a.id);
     const idB = parseInt(b.id);
+
     return sortOrder === "ASC" ? idA - idB : idB - idA;
   });
 
@@ -83,126 +83,114 @@ export const fetchProposal = async (proposalId: string): Promise<Proposal> => {
   const response = await fetchFromAPI<{ proposal: Proposal }>(
     GOVERNANCE_ENDPOINTS.PROPOSAL.url(proposalId),
   );
+
   return response.proposal;
 };
 
-export const fetchVotingParams = async (): Promise<GovVotingParamsResponse> => {
-  return fetchFromAPI<GovVotingParamsResponse>(
-    GOVERNANCE_ENDPOINTS.VOTING_PARAMS.url,
+export const fetchDepositParams = async (): Promise<GovDepositParamsResponse> =>
+  fetchFromAPI<GovDepositParamsResponse>(
+    GOVERNANCE_ENDPOINTS.DEPOSIT_PARAMS.url,
   );
-};
 
-export const fetchDepositParams =
-  async (): Promise<GovDepositParamsResponse> => {
-    return fetchFromAPI<GovDepositParamsResponse>(
-      GOVERNANCE_ENDPOINTS.DEPOSIT_PARAMS.url,
-    );
-  };
-
-export const fetchTallyParams = async (): Promise<GovTallyParamsResponse> => {
-  return fetchFromAPI<GovTallyParamsResponse>(
-    GOVERNANCE_ENDPOINTS.TALLY_PARAMS.url,
-  );
-};
+export const fetchTallyParams = async (): Promise<GovTallyParamsResponse> =>
+  fetchFromAPI<GovTallyParamsResponse>(GOVERNANCE_ENDPOINTS.TALLY_PARAMS.url);
 
 export const fetchProposalDeposits = async (
   proposalId: string,
-): Promise<GovProposalDepositsResponse> => {
-  return fetchFromAPI<GovProposalDepositsResponse>(
+): Promise<GovProposalDepositsResponse> =>
+  fetchFromAPI<GovProposalDepositsResponse>(
     GOVERNANCE_ENDPOINTS.PROPOSAL_DEPOSITS.url(proposalId),
   );
-};
 
 export const fetchTally = async (
   proposalId: string,
-): Promise<GovTallyResponse> => {
-  return fetchFromAPI<GovTallyResponse>(
-    GOVERNANCE_ENDPOINTS.TALLY.url(proposalId),
-  );
-};
+): Promise<GovTallyResponse> =>
+  fetchFromAPI<GovTallyResponse>(GOVERNANCE_ENDPOINTS.TALLY.url(proposalId));
 
 export const fetchVote = async (
   proposalId: string,
   voterAddress: string,
-): Promise<GovVoteResponse> => {
-  return fetchFromAPI<GovVoteResponse>(
+): Promise<GovVoteResponse> =>
+  fetchFromAPI<GovVoteResponse>(
     GOVERNANCE_ENDPOINTS.VOTE.url(proposalId, voterAddress),
   );
-};
 
-export const fetchStakingPool = async (): Promise<StakingPoolResponse> => {
-  return fetchFromAPI<StakingPoolResponse>(
-    GOVERNANCE_ENDPOINTS.STAKING_POOL.url,
-  );
-};
+export const fetchStakingPool = async (): Promise<StakingPoolResponse> =>
+  fetchFromAPI<StakingPoolResponse>(GOVERNANCE_ENDPOINTS.STAKING_POOL.url);
 
 export const calcTallies = (
   tally: ProposalTallyResult,
   { quorum }: GovTallyParams,
   pool: StakingPool,
 ) => {
+  const tallies = {
+    [VoteType.Abstain]: tally.abstain_count,
+    [VoteType.No]: tally.no_count,
+    [VoteType.NoWithVeto]: tally.no_with_veto_count,
+    [VoteType.Yes]: tally.yes_count,
+  };
+
+  const total = {
+    staked: pool.bonded_tokens,
+    voted: Object.values(tallies)
+      .reduce((sum, value) => sum.plus(value), new BigNumber(0))
+      .toString(),
+  };
+
+  const ratio = new BigNumber(total.voted).div(total.staked).toNumber();
+
   const getTallyItem = (option: VoteType) => {
     const voted = tallies[option] || "0";
     const byVoted = new BigNumber(voted).div(total.voted).toNumber();
     const byStaked = new BigNumber(byVoted).times(ratio).toNumber();
 
-    return { option, voted, ratio: { byVoted, byStaked } };
+    return { option, ratio: { byStaked, byVoted }, voted };
   };
 
-  const tallies = {
-    [VoteType.Yes]: tally.yes_count,
-    [VoteType.No]: tally.no_count,
-    [VoteType.NoWithVeto]: tally.no_with_veto_count,
-    [VoteType.Abstain]: tally.abstain_count,
-  };
-
-  const total = {
-    voted: Object.values(tallies)
-      .reduce((sum, value) => sum.plus(value), new BigNumber(0))
-      .toString(),
-    staked: pool.bonded_tokens,
-  };
-
-  const ratio = new BigNumber(total.voted).div(total.staked).toNumber();
   const options = [
     VoteType.Yes,
     VoteType.No,
     VoteType.NoWithVeto,
     VoteType.Abstain,
   ];
+
   const list = options.map(getTallyItem);
 
   const quorumValue = new BigNumber(
     Buffer.from(quorum).toString("hex"),
     16,
   ).toNumber();
+
   const isBelowQuorum = new BigNumber(quorumValue).gt(ratio);
 
   const yesRatio = list[0].ratio.byVoted;
-  const noRatio = list.slice(2, 4).map(({ ratio }) => ratio.byVoted);
+
+  const noRatio = list
+    .slice(2, 4)
+    .map(({ ratio: voteRatio }) => voteRatio.byVoted);
 
   const isPassing =
     !isBelowQuorum && new BigNumber(noRatio[0]).plus(noRatio[1]).lte(yesRatio);
 
   return {
-    list,
-    total: { ...total, ratio },
-    tallies,
     isPassing,
+    list,
+    tallies,
+    total: { ...total, ratio },
   };
 };
 
 export const submitVote = async ({
-  proposalId,
-  voter,
-  option,
   client,
   memo = "",
+  option,
+  proposalId,
+  voter,
 }: ExecuteVoteParams) => {
   const msg = MsgVote.fromPartial({
+    option,
     proposalId: BigInt(proposalId),
     voter,
-    option,
   });
 
   const messageWrapper = {
