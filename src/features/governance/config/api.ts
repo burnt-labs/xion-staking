@@ -49,5 +49,3 @@ export const GOVERNANCE_ENDPOINTS = {
     responseType: {} as StakingPoolResponse,
   },
 } as const;
-
-export type GovernanceEndpoint = keyof typeof GOVERNANCE_ENDPOINTS;

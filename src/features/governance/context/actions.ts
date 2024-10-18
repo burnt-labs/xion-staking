@@ -26,7 +26,7 @@ import {
 } from "../lib/types";
 import { StakingPoolResponse } from "../lib/types";
 
-export type SortOrder = "ASC" | "DESC";
+type SortOrder = "ASC" | "DESC";
 
 export interface FetchProposalsOptions {
   paginationParams?: PaginationParams;

@@ -141,5 +141,3 @@ export const VoteWidget: React.FC<VoteWidgetProps> = ({
     </div>
   );
 };
-
-export default VoteWidget;

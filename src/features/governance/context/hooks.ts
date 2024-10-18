@@ -95,25 +95,10 @@ export const useProposal = (
 };
 
 /**
- * Fetches the voting parameters.
- * @returns The voting parameters.
- */
-export const useVotingParams = (): UseQueryResult<
-  GovVotingParamsResponse,
-  Error
-> => {
-  return useQuery<GovVotingParamsResponse, Error>({
-    queryKey: ["votingParams"],
-    queryFn: fetchVotingParams as () => Promise<GovVotingParamsResponse>,
-    ...RefetchOptions.INFINITY,
-  });
-};
-
-/**
  * Fetches the deposit parameters.
  * @returns The deposit parameters.
  */
-export const useDepositParams = (): UseQueryResult<
+const useDepositParams = (): UseQueryResult<
   GovDepositParamsResponse,
   Error
 > => {
@@ -128,10 +113,7 @@ export const useDepositParams = (): UseQueryResult<
  * Fetches the tally parameters.
  * @returns The tally parameters.
  */
-export const useTallyParams = (): UseQueryResult<
-  GovTallyParamsResponse,
-  Error
-> => {
+const useTallyParams = (): UseQueryResult<GovTallyParamsResponse, Error> => {
   return useQuery<GovTallyParamsResponse, Error>({
     queryKey: ["tallyParams"],
     queryFn: fetchTallyParams as () => Promise<GovTallyParamsResponse>,
@@ -144,7 +126,7 @@ export const useTallyParams = (): UseQueryResult<
  * @param proposalId - The id of the proposal.
  * @returns The proposal deposits.
  */
-export const useProposalDeposits = (
+const useProposalDeposits = (
   proposalId: string,
 ): UseQueryResult<GovProposalDepositsResponse, Error> => {
   return useQuery<GovProposalDepositsResponse, Error>({
@@ -160,7 +142,7 @@ export const useProposalDeposits = (
  * @param proposalId - The id of the proposal.
  * @returns The proposal tally.
  */
-export const useTally = (
+const useTally = (
   proposalId: string,
 ): UseQueryResult<GovTallyResponse, Error> => {
   return useQuery<GovTallyResponse, Error>({
@@ -176,7 +158,7 @@ export const useTally = (
  * @param voterAddress - The address of the voter.
  * @returns The proposal vote.
  */
-export const useVote = (
+const useVote = (
   proposalId: string,
   voterAddress: string,
 ): UseQueryResult<GovVoteResponse, Error> => {
@@ -203,10 +185,7 @@ export const useVote = (
  * Fetches the staking pool.
  * @returns The staking pool.
  */
-export const useStakingPool = (): UseQueryResult<
-  StakingPoolResponse,
-  Error
-> => {
+const useStakingPool = (): UseQueryResult<StakingPoolResponse, Error> => {
   return useQuery<StakingPoolResponse, Error>({
     queryKey: ["stakingPool"],
     queryFn: fetchStakingPool,

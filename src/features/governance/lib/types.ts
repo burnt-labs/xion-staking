@@ -3,12 +3,6 @@ import { Coin } from "@cosmjs/proto-signing";
 import { AbstraxionSigningClient } from "@/features/staking/lib/core/client";
 
 // Enums
-export enum OrderByOptions {
-  ORDER_BY_UNSPECIFIED = "ORDER_BY_UNSPECIFIED",
-  ORDER_BY_ASC = "ORDER_BY_ASC",
-  ORDER_BY_DESC = "ORDER_BY_DESC",
-}
-
 export enum ProposalStatus {
   PROPOSAL_STATUS_UNSPECIFIED = "PROPOSAL_STATUS_UNSPECIFIED",
   PROPOSAL_STATUS_DEPOSIT_PERIOD = "PROPOSAL_STATUS_DEPOSIT_PERIOD",
@@ -26,7 +20,7 @@ export enum VoteType {
 }
 
 // Pagination related interfaces
-export interface PaginationResponse {
+interface PaginationResponse {
   next_key: string;
   total: string;
 }
@@ -74,7 +68,7 @@ export interface ProposalTallyResult {
   no_with_veto_count: string;
 }
 
-export interface ProposalDeposit extends Coin {}
+interface ProposalDeposit extends Coin {}
 
 export interface Proposal {
   id: string;
@@ -94,7 +88,7 @@ export interface Proposal {
   failed_reason: string;
 }
 
-export interface ProposalTallyTotal {
+interface ProposalTallyTotal {
   ratio: number;
   voted: string;
   staked: string;
@@ -134,16 +128,16 @@ export interface GovTallyParams {
   veto_threshold: string;
 }
 
-export interface GovVotingParams {
+interface GovVotingParams {
   voting_period: string;
 }
 
-export interface GovDepositParams {
+interface GovDepositParams {
   min_deposit: Coin[];
   max_deposit_period: string;
 }
 
-export interface GovParams {
+interface GovParams {
   min_deposit: Coin[];
   max_deposit_period: string;
   voting_period: string;
@@ -162,7 +156,7 @@ export interface GovParams {
   min_deposit_ratio: string;
 }
 
-export interface GovParamsResponse {
+interface GovParamsResponse {
   voting_params: GovVotingParams | null;
   deposit_params: GovDepositParams | null;
   tally_params: GovTallyParams | null;
@@ -183,20 +177,20 @@ export interface GovProposalDepositsResponse {
 }
 
 // Deposit and Vote related interfaces
-export interface Deposit {
+interface Deposit {
   proposal_id: string;
   depositor: string;
   amount: Coin[];
 }
 
-export interface Vote {
+interface Vote {
   proposal_id: string;
   voter: string;
   options: VoteOption[];
   metadata: string;
 }
 
-export interface VoteOption {
+interface VoteOption {
   option: VoteType;
   weight: string;
 }
@@ -249,7 +243,7 @@ export const toStatusLabel: Record<ProposalStatus, string> = {
   [ProposalStatus.PROPOSAL_STATUS_FAILED]: "Failed",
 };
 
-export type ProposalMessageType = string;
+type ProposalMessageType = string;
 
 export function getProposalMessageType(
   proposal: Proposal,

@@ -2,9 +2,9 @@ import React from "react";
 
 import { ProposalDetailsResult, ProposalStatus, VoteType } from "../lib/types";
 import { formatProposalDate, getProposalStatus } from "../lib/utils";
-import ProposalStatusPill from "./ProposalStatusPill";
-import ProposalTallyBar from "./ProposalTallyBar";
-import VoteWidget from "./ProposalVoteWidget";
+import { ProposalStatusPill } from "./ProposalStatusPill";
+import { ProposalTallyBar } from "./ProposalTallyBar";
+import { VoteWidget } from "./ProposalVoteWidget";
 
 interface ProposalOverviewProps {
   proposalDetails: ProposalDetailsResult;
@@ -72,5 +72,3 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
     </div>
   );
 };
-
-export default ProposalOverview;

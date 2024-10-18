@@ -119,5 +119,3 @@ export const ProposalTallyBar: React.FC<ProposalTallyBarProps> = ({
     </div>
   );
 };
-
-export default ProposalTallyBar;

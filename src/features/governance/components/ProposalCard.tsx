@@ -6,7 +6,7 @@ import {
   getProposalMessageTypeName,
 } from "../lib/types";
 import { formatProposalDate, getProposalStatus } from "../lib/utils";
-import ProposalStatusPill from "./ProposalStatusPill";
+import { ProposalStatusPill } from "./ProposalStatusPill";
 
 interface ProposalCardProps {
   proposal: Proposal;
@@ -61,5 +61,3 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
     </div>
   );
 };
-
-export default ProposalCard;

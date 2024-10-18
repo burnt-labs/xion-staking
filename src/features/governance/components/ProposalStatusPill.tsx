@@ -29,5 +29,3 @@ export const ProposalStatusPill: React.FC<ProposalStatusPillProps> = ({
     </div>
   );
 };
-
-export default ProposalStatusPill;

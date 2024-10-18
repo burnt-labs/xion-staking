@@ -37,21 +37,6 @@ export const getProposalStatus = (status: string): ProposalStatus => {
   return status as ProposalStatus;
 };
 
-export const getReadableVoteType = (voteType: VoteType): string => {
-  switch (voteType) {
-    case VoteType.Yes:
-      return "Yes";
-    case VoteType.No:
-      return "No";
-    case VoteType.NoWithVeto:
-      return "No with veto";
-    case VoteType.Abstain:
-      return "Abstain";
-    default:
-      return "Unknown";
-  }
-};
-
 export function getAmount(coin: Coin, denom: string): number {
   if (coin.denom === denom) {
     return parseFloat(coin.amount);
@@ -75,26 +60,6 @@ export function readPercent(value: number): string {
 
 export function toInput(amount: number, decimals: number): number {
   return Number(amount.toFixed(decimals));
-}
-
-// Add this function to the existing utils.ts file
-export function getReadableProposalStatus(status: ProposalStatus): string {
-  switch (status) {
-    case ProposalStatus.PROPOSAL_STATUS_UNSPECIFIED:
-      return "Unspecified";
-    case ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD:
-      return "Deposit";
-    case ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD:
-      return "Voting";
-    case ProposalStatus.PROPOSAL_STATUS_PASSED:
-      return "Passed";
-    case ProposalStatus.PROPOSAL_STATUS_REJECTED:
-      return "Rejected";
-    case ProposalStatus.PROPOSAL_STATUS_FAILED:
-      return "Failed";
-    default:
-      return "Unknown";
-  }
 }
 
 export function calculateDepositPercent(
