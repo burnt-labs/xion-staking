@@ -218,6 +218,8 @@ const ValidatorsTable = () => {
     !staking.state.validators.unbonding ||
     !staking.state.validators.bonded;
 
+  console.log({staking});
+
   const validators =
     currentTab === "active" ? activeValidators : inactiveValidators;
 
