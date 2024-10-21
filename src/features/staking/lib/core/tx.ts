@@ -1,27 +1,20 @@
-import type {
-  Coin,
-  DeliverTxResponse,
-  MsgBeginRedelegateEncodeObject,
-  MsgDelegateEncodeObject,
-  MsgUndelegateEncodeObject,
-  MsgWithdrawDelegatorRewardEncodeObject,
-} from "@cosmjs/stargate";
+import type { Coin, DeliverTxResponse, MsgBeginRedelegateEncodeObject, MsgDelegateEncodeObject, MsgUndelegateEncodeObject, MsgWithdrawDelegatorRewardEncodeObject } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
-import {
-  MsgBeginRedelegate,
-  MsgCancelUnbondingDelegation,
-  MsgDelegate,
-  MsgUndelegate,
-} from "cosmjs-types/cosmos/staking/v1beta1/tx";
+import { MsgBeginRedelegate, MsgCancelUnbondingDelegation, MsgDelegate, MsgUndelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
+
+
 
 import { FAUCET_CONTRACT_ADDRESS } from "@/config";
 import { MIN_CLAIMABLE_XION } from "@/constants";
+
+
 
 import type { Unbonding } from "../../context/state";
 import { type AbstraxionSigningClient } from "./client";
 import { getUXionCoinFromXion, normaliseCoin } from "./coins";
 import { getCosmosFee } from "./fee";
+
 
 const getTxCoin = (coin: Coin) => ({
   amount: coin.amount,
@@ -194,6 +187,22 @@ export const claimRewards = async (
 
   return await client
     .signAndBroadcast(addresses.delegator, messageWrapper, fee)
+    .then(getTxVerifier("withdraw_rewards"))
+    .catch(handleTxError);
+};
+
+export const claimRewardsBatch = async (
+  rewardClaimMessages: MsgWithdrawDelegatorRewardEncodeObject[],
+  client: NonNullable<AbstraxionSigningClient>,
+  delegatorAddress: string,
+) => {
+  const fee = await getCosmosFee({
+    address: delegatorAddress,
+    msgs: rewardClaimMessages,
+  });
+
+  return await client
+    .signAndBroadcast(delegatorAddress, rewardClaimMessages, fee)
     .then(getTxVerifier("withdraw_rewards"))
     .catch(handleTxError);
 };

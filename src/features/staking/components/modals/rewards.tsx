@@ -1,4 +1,6 @@
+import type { MsgWithdrawDelegatorRewardEncodeObject } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
+import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import { memo, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -12,7 +14,7 @@ import { fetchUserDataAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
 import { normaliseCoin } from "../../lib/core/coins";
-import { claimRewards } from "../../lib/core/tx";
+import { claimRewardsBatch } from "../../lib/core/tx";
 
 type Step = "completed" | "loading";
 
@@ -33,23 +35,56 @@ const claimRewardsLoop = async (
 
   const delegatorAddress = stakingRef.account.bech32Address;
 
-  delegations
-    .reduce(async (promise, delegation) => {
-      await promise;
+  // Collect the rewards claims in an array of messages
+  const rewardClaimMessages = delegations.reduce((messages, delegation) => {
+    const normalised = normaliseCoin(delegation.rewards);
 
-      const normalised = normaliseCoin(delegation.rewards);
+    if (new BigNumber(normalised.amount).lt(MIN_CLAIMABLE_XION)) {
+      return messages;
+    }
 
-      if (new BigNumber(normalised.amount).lt(MIN_CLAIMABLE_XION)) {
-        return;
-      }
+    const addresses = {
+      delegator: delegatorAddress,
+      validator: delegation.validatorAddress,
+    };
 
-      const addresses = {
-        delegator: delegatorAddress,
-        validator: delegation.validatorAddress,
-      };
+    const msg = MsgWithdrawDelegatorReward.fromPartial({
+      delegatorAddress: addresses.delegator,
+      validatorAddress: addresses.validator,
+    });
 
-      await claimRewards(addresses, client);
-    }, Promise.resolve())
+    messages.push({
+      typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+      value: msg,
+    } satisfies MsgWithdrawDelegatorRewardEncodeObject);
+
+    return messages;
+  }, [] as MsgWithdrawDelegatorRewardEncodeObject[]);
+
+  if (rewardClaimMessages.length === 0) {
+    toast("No claimable rewards found.", { type: "info" });
+
+    return;
+  }
+
+  // delegations
+  //   .reduce(async (promise, delegation) => {
+  //     await promise;
+
+  //     const normalised = normaliseCoin(delegation.rewards);
+
+  //     if (new BigNumber(normalised.amount).lt(MIN_CLAIMABLE_XION)) {
+  //       return;
+  //     }
+
+  //     const addresses = {
+  //       delegator: delegatorAddress,
+  //       validator: delegation.validatorAddress,
+  //     };
+
+  //     await claimRewards(addresses, client);
+  //   }, Promise.resolve())
+  claimRewardsBatch(rewardClaimMessages, client, delegatorAddress)
     .then(() => fetchUserDataAction(delegatorAddress, staking))
     .then(() => {
       setStep("completed");
