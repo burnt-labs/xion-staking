@@ -12,6 +12,7 @@ with Node.js v20. Once you have it installed, you can run:
 npm install
 
 npm run dev
+
 ```
 
 It integrates the `@burnt-labs/abstraxion` library from
