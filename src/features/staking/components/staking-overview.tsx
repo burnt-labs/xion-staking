@@ -140,7 +140,7 @@ const StakingOverview = () => {
       <div className={columnStyle}>
         <Heading8>Available For Delegation (XION)</Heading8>
         <Heading2 title={formatCoin(availableDelegation)}>
-          {formatToSmallDisplay(new BigNumber(availableDelegation.amount))}
+          {formatCoin(availableDelegation, undefined, true)}
         </Heading2>
         <BodyMedium>{formatXionToUSD(availableDelegation)}</BodyMedium>
       </div>
