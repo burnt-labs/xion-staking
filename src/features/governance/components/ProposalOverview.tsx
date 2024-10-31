@@ -11,6 +11,36 @@ interface ProposalOverviewProps {
   proposalDetails: ProposalDetailsResult;
 }
 
+const VoteEmptyState = () => (
+  <div className="flex h-[184px] w-[303px] flex-col gap-6">
+    <div className="font-['Akkurat LL'] text-sm font-bold leading-none text-white">
+      Voting Period Ended
+    </div>
+
+    <div className="h-16 w-full rounded-lg border border-[#bdbdbd]  hover:cursor-not-allowed">
+      <div className="font-['Akkurat LL'] flex h-full items-center justify-center text-sm font-normal uppercase leading-tight text-[#bdbdbd]">
+        Yes
+      </div>
+    </div>
+
+    <div className="flex gap-4">
+      <div className="h-16 w-[222px] rounded-lg border border-[#bdbdbd]  hover:cursor-not-allowed">
+        <div className="font-['Akkurat LL'] flex h-full items-center justify-center text-sm font-normal uppercase leading-tight text-[#bdbdbd]">
+          No
+        </div>
+      </div>
+
+      <div className="flex h-16 w-16 items-center justify-center rounded-lg border border-[#bdbdbd]  hover:cursor-not-allowed">
+        <div className="flex flex-col gap-2">
+          <div className="h-1 w-1 rounded-full bg-[#bdbdbd]" />
+          <div className="h-1 w-1 rounded-full bg-[#bdbdbd]" />
+          <div className="h-1 w-1 rounded-full bg-[#bdbdbd]" />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
   proposalDetails,
 }) => {
@@ -67,8 +97,10 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
         </div>
 
         <div className="mt-8 flex w-full flex-col justify-end lg:mt-0 lg:w-[303px] lg:flex-shrink-0">
-          {status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD && (
+          {status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD ? (
             <VoteWidget proposalId={proposalId} userVote={voteValue} />
+          ) : (
+            <VoteEmptyState />
           )}
         </div>
       </div>

@@ -126,17 +126,14 @@ const VotingPeriodBar = ({
   percentage: number;
 }) => (
   <div className="flex flex-col space-y-2">
-    <div className="text-center text-xs text-[#666666]">
-      <span>{percentage.toFixed(0)}%</span>
+    <div className="text-xs text-[#666666]">
+      End on {formatProposalDate(endDate, "utc")}
     </div>
     <div className="relative h-4 w-full border border-white/20">
       <div
         className="absolute h-full bg-white"
         style={{ width: `${percentage}%` }}
       />
-    </div>
-    <div className="text-xs text-[#666666]">
-      End on {formatProposalDate(endDate, "utc")}
     </div>
   </div>
 );
