@@ -21,4 +21,3 @@ The main part of the business logic that queries and interacts with XION
 is in:
 
 - [./src/features/staking/lib](./src/features/staking/lib)
-
