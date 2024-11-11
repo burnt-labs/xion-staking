@@ -1,6 +1,6 @@
 import type { Coin } from "@cosmjs/proto-signing";
 
-import type { ProposalStatus } from "./types";
+import type { ProposalDetailsResult, ProposalStatus } from "./types";
 import { VoteType } from "./types";
 
 export const formatProposalDate = (
@@ -105,4 +105,48 @@ export const getReadableVoteType = (voteType: VoteType): string => {
     default:
       return "Unknown";
   }
+};
+
+export const extractProposalDetails = (
+  proposalDetails: ProposalDetailsResult,
+) => {
+  const { submittedDate, title, voteValue } = proposalDetails.info;
+  const { progressData, proposal } = proposalDetails;
+  const proposalId = proposal.id;
+
+  const getVoteAmount = (type: VoteType): number => {
+    const voteData = progressData.find((data) => data.type === type);
+
+    return voteData ? Number(voteData.amount) : 0;
+  };
+
+  const totalVotes = progressData.reduce(
+    (sum, data) => (data.type !== "quorum" ? sum + Number(data.amount) : sum),
+    0,
+  );
+
+  const getVotePercentage = (type: VoteType): number => {
+    const amount = getVoteAmount(type);
+
+    return totalVotes > 0 ? (amount / totalVotes) * 100 : 0;
+  };
+
+  const yesPercentage = getVotePercentage(VoteType.Yes);
+  const noPercentage = getVotePercentage(VoteType.No);
+  const abstainPercentage = getVotePercentage(VoteType.Abstain);
+  const noWithVetoPercentage = getVotePercentage(VoteType.NoWithVeto);
+
+  const status = getProposalStatus(proposalDetails.info.status);
+
+  return {
+    abstainPercentage,
+    noPercentage,
+    noWithVetoPercentage,
+    proposalId,
+    status,
+    submittedDate,
+    title,
+    voteValue,
+    yesPercentage,
+  };
 };

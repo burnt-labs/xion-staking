@@ -5,9 +5,11 @@ import { useSearchParams } from "next/navigation";
 import { LoadingBanner, Title } from "@/features/core/components/base";
 
 import { useProposal, useProposalDetails } from "../context/hooks";
+import { extractProposalDetails } from "../lib/utils";
 import { BreadCrumbNav } from "./BreadCrumbNav";
 import { ProposalDetails } from "./ProposalDetails";
 import { ProposalOverview } from "./ProposalOverview";
+import { ProposalTallyWidget } from "./ProposalTallyWidget";
 import { ProposalTallyingStatus } from "./ProposalTallyingStatus";
 
 export default function ProposalPage() {
@@ -41,14 +43,46 @@ export default function ProposalPage() {
     );
   }
 
+  if (!proposalDetails) {
+    return <LoadingBanner />;
+  }
+
+  const {
+    abstainPercentage,
+    noPercentage,
+    noWithVetoPercentage,
+    status,
+    submittedDate,
+    title,
+    voteValue,
+    yesPercentage,
+  } = extractProposalDetails(proposalDetails);
+
   return (
     <div className="page-container flex flex-col gap-6 px-[12px] pb-[24px] pt-[40px] md:px-[24px]">
       <BreadCrumbNav proposalId={proposalId} />
       {proposalDetails && (
         <>
-          <ProposalOverview proposalDetails={proposalDetails} />
+          <ProposalOverview
+            abstainPercentage={abstainPercentage}
+            noPercentage={noPercentage}
+            noWithVetoPercentage={noWithVetoPercentage}
+            proposalId={proposalId}
+            status={status}
+            submittedDate={submittedDate}
+            title={title}
+            voteValue={voteValue}
+            yesPercentage={yesPercentage}
+          />
           <ProposalTallyingStatus proposalDetails={proposalDetails} />
-          <ProposalDetails proposalDetails={proposalDetails} />
+          <div className="flex flex-col gap-6 md:flex-row">
+            <div className="flex-1">
+              <ProposalDetails proposalDetails={proposalDetails} />
+            </div>
+            <div className="w-full md:w-[350px] md:min-w-[350px]">
+              <ProposalTallyWidget proposalDetails={proposalDetails} />
+            </div>
+          </div>
         </>
       )}
     </div>
