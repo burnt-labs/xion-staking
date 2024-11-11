@@ -256,3 +256,18 @@ export function getProposalMessageTypeName(
 ): string {
   return messageType.split(".").pop() || "";
 }
+
+export function getVoteTypeColorClass(type: VoteType): string {
+  switch (type) {
+    case VoteType.Yes:
+      return "text-green-500";
+    case VoteType.No:
+      return "text-red-500";
+    case VoteType.NoWithVeto:
+      return "text-gray-500";
+    case VoteType.Abstain:
+      return "text-gray-500";
+    default:
+      return "text-white";
+  }
+}

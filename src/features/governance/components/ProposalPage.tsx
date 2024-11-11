@@ -80,7 +80,12 @@ export default function ProposalPage() {
               <ProposalDetails proposalDetails={proposalDetails} />
             </div>
             <div className="w-full md:w-[350px] md:min-w-[350px]">
-              <ProposalTallyWidget proposalDetails={proposalDetails} />
+              <ProposalTallyWidget
+                abstainPercentage={abstainPercentage}
+                noPercentage={noPercentage}
+                noWithVetoPercentage={noWithVetoPercentage}
+                yesPercentage={yesPercentage}
+              />
             </div>
           </div>
         </>
