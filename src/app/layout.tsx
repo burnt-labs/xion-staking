@@ -8,7 +8,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { FAUCET_CONTRACT_ADDRESS } from "@/config";
+import { TREASURY_CONTRACT_ADDRESS } from "@/config";
 import { REST_URL, RPC_URL } from "@/constants";
 import BaseWrapper from "@/features/core/components/base-wrapper";
 import { CoreProvider } from "@/features/core/context/provider";
@@ -17,10 +17,9 @@ import { StakingProvider } from "@/features/staking/context/provider";
 import "./globals.css";
 
 const abstraxionConfig = {
-  contracts: [FAUCET_CONTRACT_ADDRESS],
   restUrl: REST_URL,
   rpcUrl: RPC_URL,
-  stake: true,
+  treasury: TREASURY_CONTRACT_ADDRESS,
 };
 
 const queryClient = new QueryClient({
