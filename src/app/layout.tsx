@@ -18,7 +18,6 @@ import "./globals.css";
 
 const abstraxionConfig = {
   contracts: [FAUCET_CONTRACT_ADDRESS],
-  governance: true,
   restUrl: REST_URL,
   rpcUrl: RPC_URL,
   stake: true,
