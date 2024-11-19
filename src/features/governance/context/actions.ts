@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 
-import { TREASURY_CONTRACT_ADDRESS } from "@/config";
 import { fetchFromAPI } from "@/features/core/utils";
 import { getCosmosFee } from "@/features/staking/lib/core/fee";
 import { getTxVerifier, handleTxError } from "@/features/staking/lib/core/tx";

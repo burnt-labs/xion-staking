@@ -34,16 +34,6 @@ const NETWORK_TYPE = getEnvStringOrThrow(
 
 export const IS_TESTNET = NETWORK_TYPE === "testnet";
 
-// The contract address(es) for the treasury
-const TREASURY_CONTRACT_ADDRESSES = {
-  mainnet: "",
-  testnet: "xion1n3xjmtcatvvdr25n9khx4qf30fd66hvgmtx43dtv0adfwk9w8w5q40c909",
-};
-
-export const TREASURY_CONTRACT_ADDRESS = IS_TESTNET
-  ? TREASURY_CONTRACT_ADDRESSES.testnet
-  : TREASURY_CONTRACT_ADDRESSES.mainnet;
-
 export interface NavItem {
   href: string;
   isRootLink?: boolean;
