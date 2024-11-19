@@ -200,7 +200,7 @@ export const submitVote = async ({
   };
 
   const fee = await getCosmosFee({
-    address: TREASURY_CONTRACT_ADDRESS,
+    address: voter,
     memo,
     msgs: [messageWrapper],
   });
