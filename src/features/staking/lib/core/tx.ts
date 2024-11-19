@@ -161,7 +161,7 @@ export const redelegate = async ({
   };
 
   const fee = await getCosmosFee({
-    address: addresses.delegator,
+    address: delegatorAddress,
     memo,
     msgs: [messageWrapper],
   });
