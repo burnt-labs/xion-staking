@@ -15,7 +15,7 @@ import {
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
-import { FAUCET_CONTRACT_ADDRESS, TREASURY_CONTRACT_ADDRESS } from "@/config";
+import { FAUCET_CONTRACT_ADDRESS } from "@/config";
 import { MIN_CLAIMABLE_XION } from "@/constants";
 
 import type { Unbonding } from "../../context/state";
@@ -87,7 +87,7 @@ export const stakeAmount = async (
   };
 
   const fee = await getCosmosFee({
-    address: TREASURY_CONTRACT_ADDRESS,
+    address: addresses.delegator,
     memo,
     msgs: [messageWrapper],
   });
@@ -118,7 +118,7 @@ export const unstakeAmount = async (
   };
 
   const fee = await getCosmosFee({
-    address: TREASURY_CONTRACT_ADDRESS,
+    address: addresses.delegator,
     memo,
     msgs: [messageWrapper],
   });
@@ -161,7 +161,7 @@ export const redelegate = async ({
   };
 
   const fee = await getCosmosFee({
-    address: TREASURY_CONTRACT_ADDRESS,
+    address: addresses.delegator,
     memo,
     msgs: [messageWrapper],
   });
@@ -189,7 +189,7 @@ export const claimRewards = async (
   ];
 
   const fee = await getCosmosFee({
-    address: TREASURY_CONTRACT_ADDRESS,
+    address: addresses.delegator,
     msgs: messageWrapper,
   });
 
@@ -234,7 +234,7 @@ export const cancelUnbonding = async (
   ];
 
   const fee = await getCosmosFee({
-    address: TREASURY_CONTRACT_ADDRESS,
+    address: addresses.delegator,
     msgs: messageWrapper,
   });
 
