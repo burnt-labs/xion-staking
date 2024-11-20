@@ -12,11 +12,21 @@ export enum ProposalStatus {
   PROPOSAL_STATUS_VOTING_PERIOD = "PROPOSAL_STATUS_VOTING_PERIOD",
 }
 
+// Values returned from the Vote Tally API
 export enum VoteType {
   Abstain = "abstain",
   No = "no",
   NoWithVeto = "no_with_veto",
   Yes = "yes",
+}
+
+// Values returned from the user Vote API
+export enum VoteOptionType {
+  VOTE_OPTION_ABSTAIN = "VOTE_OPTION_ABSTAIN",
+  VOTE_OPTION_NO = "VOTE_OPTION_NO",
+  VOTE_OPTION_NO_WITH_VETO = "VOTE_OPTION_NO_WITH_VETO",
+  VOTE_OPTION_UNSPECIFIED = "VOTE_OPTION_UNSPECIFIED",
+  VOTE_OPTION_YES = "VOTE_OPTION_YES",
 }
 
 // Pagination related interfaces
@@ -101,7 +111,7 @@ export interface ProposalDetailsResult {
     status: ProposalStatus;
     submittedDate: string;
     title: string;
-    voteValue?: VoteType;
+    voteValue?: VoteOptionType;
   };
   labelOverride?: string;
   progressData: Array<{
@@ -191,7 +201,7 @@ interface Vote {
 }
 
 interface VoteOption {
-  option: VoteType;
+  option: VoteOptionType;
   weight: string;
 }
 
@@ -271,3 +281,18 @@ export function getVoteTypeColorClass(type: VoteType): string {
       return "text-white";
   }
 }
+
+export const getReadableVoteOption = (vote: VoteOptionType): string => {
+  switch (vote) {
+    case VoteOptionType.VOTE_OPTION_YES:
+      return "Yes";
+    case VoteOptionType.VOTE_OPTION_NO:
+      return "No";
+    case VoteOptionType.VOTE_OPTION_NO_WITH_VETO:
+      return "No with Veto";
+    case VoteOptionType.VOTE_OPTION_ABSTAIN:
+      return "Abstain";
+    default:
+      return "Unknown";
+  }
+};

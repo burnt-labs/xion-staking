@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { VoteType } from "../lib/types";
+import type { VoteOptionType } from "../lib/types";
 import { ProposalStatus } from "../lib/types";
 import { formatProposalDate } from "../lib/utils";
 import { ProposalStatusPill } from "./ProposalStatusPill";
@@ -15,7 +15,7 @@ interface ProposalOverviewProps {
   status: ProposalStatus;
   submittedDate: string;
   title: string;
-  voteValue: undefined | VoteType;
+  voteValue: undefined | VoteOptionType;
   yesPercentage: number;
 }
 
