@@ -172,33 +172,32 @@ export const redelegate = async ({
     .catch(handleTxError);
 };
 
-// Deprecated
-// export const claimRewards = async (
-//   addresses: StakeAddresses,
-//   client: NonNullable<AbstraxionSigningClient>,
-// ) => {
-//   const msg = MsgWithdrawDelegatorReward.fromPartial({
-//     delegatorAddress: addresses.delegator,
-//     validatorAddress: addresses.validator,
-//   });
+export const claimRewards = async (
+  addresses: StakeAddresses,
+  client: NonNullable<AbstraxionSigningClient>,
+) => {
+  const msg = MsgWithdrawDelegatorReward.fromPartial({
+    delegatorAddress: addresses.delegator,
+    validatorAddress: addresses.validator,
+  });
 
-//   const messageWrapper = [
-//     {
-//       typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-//       value: msg,
-//     } satisfies MsgWithdrawDelegatorRewardEncodeObject,
-//   ];
+  const messageWrapper = [
+    {
+      typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+      value: msg,
+    } satisfies MsgWithdrawDelegatorRewardEncodeObject,
+  ];
 
-//   const fee = await getCosmosFee({
-//     address: addresses.delegator,
-//     msgs: messageWrapper,
-//   });
+  const fee = await getCosmosFee({
+    address: addresses.delegator,
+    msgs: messageWrapper,
+  });
 
-//   return await client
-//     .signAndBroadcast(addresses.delegator, messageWrapper, fee)
-//     .then(getTxVerifier("withdraw_rewards"))
-//     .catch(handleTxError);
-// };
+  return await client
+    .signAndBroadcast(addresses.delegator, messageWrapper, fee)
+    .then(getTxVerifier("withdraw_rewards"))
+    .catch(handleTxError);
+};
 
 export const getCanClaimRewards = (rewards?: Coin) => {
   if (!rewards) {

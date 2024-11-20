@@ -12,7 +12,7 @@ import { fetchUserDataAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
 import { normaliseCoin } from "../../lib/core/coins";
-import { batchClaimRewards } from "../../lib/core/tx";
+import { batchClaimRewards, claimRewards } from "../../lib/core/tx";
 
 type Step = "completed" | "loading";
 
@@ -27,39 +27,48 @@ const claimRewardsLoop = async (
 
   if (modal?.type !== "rewards") return;
 
-  const { delegations } = modal?.content || {};
-
-  if (!client || !delegations?.length) return;
+  if (!client) return;
 
   const delegatorAddress = stakingRef.account.bech32Address;
 
   try {
-    const claimableValidators = delegations
-      .filter((delegation) => {
-        const normalised = normaliseCoin(delegation.rewards);
+    // Handle single claim case
+    if ("validatorAddress" in modal.content) {
+      await claimRewards(
+        {
+          delegator: delegatorAddress,
+          validator: modal.content.validatorAddress,
+        },
+        client,
+      );
+    }
+    // Handle batch claim case
+    else if ("delegations" in modal.content) {
+      const claimableValidators = modal.content.delegations
+        .filter((delegation) => {
+          const normalised = normaliseCoin(delegation.rewards);
 
-        return new BigNumber(normalised.amount).gte(MIN_CLAIMABLE_XION);
-      })
-      .map((delegation) => delegation.validatorAddress);
+          return new BigNumber(normalised.amount).gte(MIN_CLAIMABLE_XION);
+        })
+        .map((delegation) => delegation.validatorAddress);
 
-    if (claimableValidators.length === 0) return;
+      if (claimableValidators.length === 0) return;
 
-    await batchClaimRewards(
-      {
-        delegator: delegatorAddress,
-        validators: claimableValidators,
-      },
-      client,
-    );
+      await batchClaimRewards(
+        {
+          delegator: delegatorAddress,
+          validators: claimableValidators,
+        },
+        client,
+      );
+    }
 
     await fetchUserDataAction(delegatorAddress, staking);
     setStep("completed");
   } catch (error) {
     toast(
       "There was an unexpected error claiming your rewards. Please try again later.",
-      {
-        type: "error",
-      },
+      { type: "error" },
     );
   }
 };
