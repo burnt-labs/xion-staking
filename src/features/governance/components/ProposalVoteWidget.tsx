@@ -88,10 +88,9 @@ export const VoteWidget: React.FC<VoteWidgetProps> = ({
           proposalId,
           voter: address!,
         });
-
-        setShowModal(false);
       } catch (error) {
         console.error("Error submitting vote:", error);
+        throw error;
       }
     }
   };

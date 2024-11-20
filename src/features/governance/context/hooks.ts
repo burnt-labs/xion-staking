@@ -284,12 +284,15 @@ export const useGovernanceTx = () => {
   const address = account?.bech32Address;
 
   const voteMutation = useMutation({
-    mutationFn: (params: ExecuteVoteParams) =>
-      submitVote({
+    mutationFn: async (params: ExecuteVoteParams) => {
+      const result = await submitVote({
         ...params,
         client: client!,
         voter: address!,
-      }),
+      });
+
+      return result;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["vote"] });
       queryClient.invalidateQueries({ queryKey: ["tally"] });
@@ -302,7 +305,7 @@ export const useGovernanceTx = () => {
     client: isConnected ? client : undefined,
     isConnected,
     isVoting: voteMutation.isLoading,
-    submitVote: voteMutation.mutate,
+    submitVote: voteMutation.mutateAsync,
     voteError: voteMutation.error,
   };
 };

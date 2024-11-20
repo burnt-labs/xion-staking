@@ -99,7 +99,7 @@ export const getReadableVoteType = (voteType: VoteType): string => {
     case VoteType.No:
       return "No";
     case VoteType.NoWithVeto:
-      return "No with veto";
+      return "No With Veto";
     case VoteType.Abstain:
       return "Abstain";
     default:
