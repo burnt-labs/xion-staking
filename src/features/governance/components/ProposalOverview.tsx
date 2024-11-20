@@ -1,3 +1,4 @@
+import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
 import React from "react";
 
 import type { VoteOptionType } from "../lib/types";
@@ -19,10 +20,14 @@ interface ProposalOverviewProps {
   yesPercentage: number;
 }
 
-const VoteEmptyState = () => (
+interface VoteEmptyStateProps {
+  reason: "not_connected" | "voting_ended";
+}
+
+const VoteEmptyState: React.FC<VoteEmptyStateProps> = ({ reason }) => (
   <div className="flex h-[184px] w-[303px] flex-col gap-6">
     <div className="font-['Akkurat LL'] text-sm font-bold leading-none text-white">
-      Voting Period Ended
+      {reason === "not_connected" ? "Log In to Vote" : "Voting Period Ended"}
     </div>
 
     <div className="h-16 w-full rounded-lg border border-[#bdbdbd]  hover:cursor-not-allowed">
@@ -59,37 +64,44 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
   title,
   voteValue,
   yesPercentage,
-}) => (
-  <div className="rounded-lg bg-white/10 p-6 text-white shadow-lg">
-    <div className="flex flex-col lg:flex-row lg:justify-between lg:space-x-6">
-      <div className="flex-grow">
-        <div className="mb-4">
-          <ProposalStatusPill status={status} />
-          <h2 className="font-['Akkurat LL'] mb-[7px] mt-2 text-[32px] font-bold leading-9 text-white">
-            {title}
-          </h2>
-          <p className="font-['Akkurat LL'] text-sm font-normal leading-tight text-white opacity-40">
-            Proposed {formatProposalDate(submittedDate)}
-          </p>
+}) => {
+  const { isConnected } = useAbstraxionAccount();
+
+  return (
+    <div className="rounded-lg bg-white/10 p-6 text-white shadow-lg">
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:space-x-6">
+        <div className="flex-grow">
+          <div className="mb-4">
+            <ProposalStatusPill status={status} />
+            <h2 className="font-['Akkurat LL'] mb-[7px] mt-2 text-[32px] font-bold leading-9 text-white">
+              {title}
+            </h2>
+            <p className="font-['Akkurat LL'] text-sm font-normal leading-tight text-white opacity-40">
+              Proposed {formatProposalDate(submittedDate)}
+            </p>
+          </div>
+
+          <div className="mt-8">
+            <ProposalTallyBar
+              abstainPercentage={abstainPercentage}
+              noPercentage={noPercentage}
+              vetoPercentage={noWithVetoPercentage}
+              yesPercentage={yesPercentage}
+            />
+          </div>
         </div>
 
-        <div className="mt-8">
-          <ProposalTallyBar
-            abstainPercentage={abstainPercentage}
-            noPercentage={noPercentage}
-            vetoPercentage={noWithVetoPercentage}
-            yesPercentage={yesPercentage}
-          />
+        <div className="mt-8 flex w-full flex-col justify-end lg:mt-0 lg:w-[303px] lg:flex-shrink-0">
+          {status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD &&
+          isConnected ? (
+            <VoteWidget proposalId={proposalId} userVote={voteValue} />
+          ) : (
+            <VoteEmptyState
+              reason={!isConnected ? "not_connected" : "voting_ended"}
+            />
+          )}
         </div>
-      </div>
-
-      <div className="mt-8 flex w-full flex-col justify-end lg:mt-0 lg:w-[303px] lg:flex-shrink-0">
-        {status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD ? (
-          <VoteWidget proposalId={proposalId} userVote={voteValue} />
-        ) : (
-          <VoteEmptyState />
-        )}
       </div>
     </div>
-  </div>
-);
+  );
+};
