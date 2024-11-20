@@ -206,6 +206,6 @@ export const submitVote = async ({
 
   return await client
     .signAndBroadcast(voter, [messageWrapper], fee, memo)
-    .then(getTxVerifier("vote"))
+    .then(getTxVerifier("proposal_vote"))
     .catch(handleTxError);
 };

@@ -89,8 +89,6 @@ export const VoteWidget: React.FC<VoteWidgetProps> = ({
           voter: address!,
         });
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
         setShowModal(false);
       } catch (error) {
         console.error("Error submitting vote:", error);
