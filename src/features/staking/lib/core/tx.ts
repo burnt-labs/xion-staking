@@ -172,32 +172,33 @@ export const redelegate = async ({
     .catch(handleTxError);
 };
 
-export const claimRewards = async (
-  addresses: StakeAddresses,
-  client: NonNullable<AbstraxionSigningClient>,
-) => {
-  const msg = MsgWithdrawDelegatorReward.fromPartial({
-    delegatorAddress: addresses.delegator,
-    validatorAddress: addresses.validator,
-  });
+// Deprecated
+// export const claimRewards = async (
+//   addresses: StakeAddresses,
+//   client: NonNullable<AbstraxionSigningClient>,
+// ) => {
+//   const msg = MsgWithdrawDelegatorReward.fromPartial({
+//     delegatorAddress: addresses.delegator,
+//     validatorAddress: addresses.validator,
+//   });
 
-  const messageWrapper = [
-    {
-      typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-      value: msg,
-    } satisfies MsgWithdrawDelegatorRewardEncodeObject,
-  ];
+//   const messageWrapper = [
+//     {
+//       typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+//       value: msg,
+//     } satisfies MsgWithdrawDelegatorRewardEncodeObject,
+//   ];
 
-  const fee = await getCosmosFee({
-    address: addresses.delegator,
-    msgs: messageWrapper,
-  });
+//   const fee = await getCosmosFee({
+//     address: addresses.delegator,
+//     msgs: messageWrapper,
+//   });
 
-  return await client
-    .signAndBroadcast(addresses.delegator, messageWrapper, fee)
-    .then(getTxVerifier("withdraw_rewards"))
-    .catch(handleTxError);
-};
+//   return await client
+//     .signAndBroadcast(addresses.delegator, messageWrapper, fee)
+//     .then(getTxVerifier("withdraw_rewards"))
+//     .catch(handleTxError);
+// };
 
 export const getCanClaimRewards = (rewards?: Coin) => {
   if (!rewards) {
@@ -309,5 +310,38 @@ export const faucetFunds = async (
 
   return await client
     .execute(address, FAUCET_CONTRACT_ADDRESS, msg, "auto")
+    .catch(handleTxError);
+};
+
+type BatchClaimAddresses = {
+  delegator: string;
+  validators: string[];
+};
+
+export const batchClaimRewards = async (
+  addresses: BatchClaimAddresses,
+  client: NonNullable<AbstraxionSigningClient>,
+) => {
+  if (!addresses.validators.length) return;
+
+  const messages = addresses.validators.map(
+    (validatorAddress) =>
+      ({
+        typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+        value: MsgWithdrawDelegatorReward.fromPartial({
+          delegatorAddress: addresses.delegator,
+          validatorAddress,
+        }),
+      }) satisfies MsgWithdrawDelegatorRewardEncodeObject,
+  );
+
+  const fee = await getCosmosFee({
+    address: addresses.delegator,
+    msgs: messages,
+  });
+
+  return await client
+    .signAndBroadcast(addresses.delegator, messages, fee)
+    .then(getTxVerifier("withdraw_rewards"))
     .catch(handleTxError);
 };

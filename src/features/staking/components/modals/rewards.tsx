@@ -12,7 +12,7 @@ import { fetchUserDataAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
 import { normaliseCoin } from "../../lib/core/coins";
-import { claimRewards } from "../../lib/core/tx";
+import { batchClaimRewards } from "../../lib/core/tx";
 
 type Step = "completed" | "loading";
 
@@ -33,35 +33,35 @@ const claimRewardsLoop = async (
 
   const delegatorAddress = stakingRef.account.bech32Address;
 
-  delegations
-    .reduce(async (promise, delegation) => {
-      await promise;
+  try {
+    const claimableValidators = delegations
+      .filter((delegation) => {
+        const normalised = normaliseCoin(delegation.rewards);
 
-      const normalised = normaliseCoin(delegation.rewards);
+        return new BigNumber(normalised.amount).gte(MIN_CLAIMABLE_XION);
+      })
+      .map((delegation) => delegation.validatorAddress);
 
-      if (new BigNumber(normalised.amount).lt(MIN_CLAIMABLE_XION)) {
-        return;
-      }
+    if (claimableValidators.length === 0) return;
 
-      const addresses = {
+    await batchClaimRewards(
+      {
         delegator: delegatorAddress,
-        validator: delegation.validatorAddress,
-      };
+        validators: claimableValidators,
+      },
+      client,
+    );
 
-      await claimRewards(addresses, client);
-    }, Promise.resolve())
-    .then(() => fetchUserDataAction(delegatorAddress, staking))
-    .then(() => {
-      setStep("completed");
-    })
-    .catch(() => {
-      toast(
-        "There was an unexpected error claiming your rewards. Please try again later.",
-        {
-          type: "error",
-        },
-      );
-    });
+    await fetchUserDataAction(delegatorAddress, staking);
+    setStep("completed");
+  } catch (error) {
+    toast(
+      "There was an unexpected error claiming your rewards. Please try again later.",
+      {
+        type: "error",
+      },
+    );
+  }
 };
 
 const RewardsModal = () => {
