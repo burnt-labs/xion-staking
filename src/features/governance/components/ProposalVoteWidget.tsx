@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { useGovernanceTx } from "../context/hooks";
-import { VoteType } from "../lib/types";
+import {
+  type VoteOptionType,
+  VoteType,
+  getReadableVoteOption,
+} from "../lib/types";
 import ProposalVoteModal from "./ProposalVoteModal";
 
 const VotePopover: React.FC<{
@@ -28,7 +32,7 @@ const VotePopover: React.FC<{
 
 interface VoteWidgetProps {
   proposalId: string;
-  userVote: undefined | VoteType;
+  userVote: undefined | VoteOptionType;
 }
 
 export const VoteWidget: React.FC<VoteWidgetProps> = ({
@@ -84,10 +88,9 @@ export const VoteWidget: React.FC<VoteWidgetProps> = ({
           proposalId,
           voter: address!,
         });
-
-        setShowModal(false);
       } catch (error) {
         console.error("Error submitting vote:", error);
+        throw error;
       }
     }
   };
@@ -95,7 +98,7 @@ export const VoteWidget: React.FC<VoteWidgetProps> = ({
   return (
     <div className="w-full">
       <p className="font-['Akkurat LL'] mb-4 text-sm font-bold leading-none text-white">
-        {userVote ? `You voted {voteValue}` : `Vote for`}
+        {userVote ? `You Voted ${getReadableVoteOption(userVote)}` : `Vote For`}
       </p>
       <button
         className="font-['Akkurat LL'] mb-4 h-16 w-full rounded-lg border border-[#03c600] bg-[#03c600]/5 text-sm font-normal uppercase leading-tight text-[#03c600]"

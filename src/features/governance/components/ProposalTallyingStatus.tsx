@@ -14,8 +14,8 @@ const QuorumBar = ({
   percentage,
   quorum,
 }: {
-  percentage: number;
-  quorum: number;
+  percentage: number; // percent achieved
+  quorum: number; // percent required
 }) => (
   <div className="flex flex-col space-y-2">
     {/* top line */}
@@ -40,7 +40,7 @@ const QuorumBar = ({
           className="absolute h-full bg-[#434040]"
           style={{
             left: `${percentage}%`,
-            width: `${Math.min(quorum - percentage, 100 - percentage)}%`,
+            width: `${percentage}%`,
           }}
         />
       )}
@@ -183,7 +183,7 @@ export const ProposalTallyingStatus = ({
       <div className="w-full max-w-[1119px] rounded-lg bg-white/10 p-4 text-white shadow-lg">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <TallyCard
-            infoTooltip={`Minimum participation required for the proposal to be valid. Quorum %: ${quorumPercentage.toFixed(2)}%`}
+            infoTooltip={`Minimum participation required for the proposal to be valid.\nQuorum Required: ${quorum * 100}%\nQuorum Achieved: ${quorumPercentage.toFixed(2)}%`}
             isPositive={quorumReached}
             title="Quorum"
             value={quorumValue}

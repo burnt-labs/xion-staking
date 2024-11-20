@@ -42,7 +42,7 @@ export const TooltipPopover: React.FC<TooltipPopoverProps> = ({
       {showTooltip && (
         <div className="absolute bottom-full left-0 mb-2 w-[200px] rounded-2xl bg-[#1a1a1a] shadow">
           <div className="p-4">
-            <p className="text-sm text-white">{content}</p>
+            <p className="whitespace-pre-line text-sm text-white">{content}</p>
           </div>
         </div>
       )}
