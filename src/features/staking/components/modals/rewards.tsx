@@ -84,6 +84,13 @@ const RewardsModal = () => {
   const isOpen = modal?.type === "rewards";
 
   useEffect(() => {
+    if (!isOpen) {
+      setStep(initialStep);
+      requested.current = false;
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     if (isOpen) {
       if (requested.current) return;
 
