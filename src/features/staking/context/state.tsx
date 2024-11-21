@@ -61,6 +61,10 @@ type ModalContent =
       content: { validator: Validator };
       type: "undelegate";
     }
+  | {
+      content: { validatorAddress: string };
+      type: "rewards";
+    }
   | null;
 
 export type ValidatorStatus = "bonded" | "unbonded" | "unbonding";

@@ -113,7 +113,7 @@ const StakingOverview = () => {
                 );
               }}
             >
-              Claim
+              Claim All Rewards
             </ButtonPill>
           )}
         </div>

@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 
 import { fetchFromAPI } from "@/features/core/utils";
-import { getCosmosFee } from "@/features/staking/lib/core/fee";
 import { getTxVerifier, handleTxError } from "@/features/staking/lib/core/tx";
 
 import { GOVERNANCE_ENDPOINTS } from "../config/api";
@@ -198,14 +197,8 @@ export const submitVote = async ({
     value: msg,
   };
 
-  const fee = await getCosmosFee({
-    address: voter,
-    memo,
-    msgs: [messageWrapper],
-  });
-
   return await client
-    .signAndBroadcast(voter, [messageWrapper], fee, memo)
+    .signAndBroadcast(voter, [messageWrapper], "auto", memo)
     .then(getTxVerifier("proposal_vote"))
     .catch(handleTxError);
 };

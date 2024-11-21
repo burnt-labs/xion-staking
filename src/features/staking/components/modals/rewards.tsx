@@ -12,7 +12,7 @@ import { fetchUserDataAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
 import { normaliseCoin } from "../../lib/core/coins";
-import { claimRewards } from "../../lib/core/tx";
+import { batchClaimRewards, claimRewards } from "../../lib/core/tx";
 
 type Step = "completed" | "loading";
 
@@ -27,41 +27,50 @@ const claimRewardsLoop = async (
 
   if (modal?.type !== "rewards") return;
 
-  const { delegations } = modal?.content || {};
-
-  if (!client || !delegations?.length) return;
+  if (!client) return;
 
   const delegatorAddress = stakingRef.account.bech32Address;
 
-  delegations
-    .reduce(async (promise, delegation) => {
-      await promise;
-
-      const normalised = normaliseCoin(delegation.rewards);
-
-      if (new BigNumber(normalised.amount).lt(MIN_CLAIMABLE_XION)) {
-        return;
-      }
-
-      const addresses = {
-        delegator: delegatorAddress,
-        validator: delegation.validatorAddress,
-      };
-
-      await claimRewards(addresses, client);
-    }, Promise.resolve())
-    .then(() => fetchUserDataAction(delegatorAddress, staking))
-    .then(() => {
-      setStep("completed");
-    })
-    .catch(() => {
-      toast(
-        "There was an unexpected error claiming your rewards. Please try again later.",
+  try {
+    // Handle single claim case
+    if ("validatorAddress" in modal.content) {
+      await claimRewards(
         {
-          type: "error",
+          delegator: delegatorAddress,
+          validator: modal.content.validatorAddress,
         },
+        client,
       );
-    });
+    }
+    // Handle batch claim case
+    else if ("delegations" in modal.content) {
+      const claimableValidators = modal.content.delegations
+        .filter((delegation) => {
+          const normalised = normaliseCoin(delegation.rewards);
+
+          return new BigNumber(normalised.amount).gte(MIN_CLAIMABLE_XION);
+        })
+        .map((delegation) => delegation.validatorAddress);
+
+      if (claimableValidators.length === 0) return;
+
+      await batchClaimRewards(
+        {
+          delegator: delegatorAddress,
+          validators: claimableValidators,
+        },
+        client,
+      );
+    }
+
+    await fetchUserDataAction(delegatorAddress, staking);
+    setStep("completed");
+  } catch (error) {
+    toast(
+      "There was an unexpected error claiming your rewards. Please try again later.",
+      { type: "error" },
+    );
+  }
 };
 
 const RewardsModal = () => {
@@ -73,6 +82,13 @@ const RewardsModal = () => {
   const { modal } = staking.state;
 
   const isOpen = modal?.type === "rewards";
+
+  useEffect(() => {
+    if (!isOpen) {
+      setStep(initialStep);
+      requested.current = false;
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {

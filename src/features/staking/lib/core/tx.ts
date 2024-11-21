@@ -21,7 +21,6 @@ import { MIN_CLAIMABLE_XION } from "@/constants";
 import type { Unbonding } from "../../context/state";
 import { type AbstraxionSigningClient } from "./client";
 import { getUXionCoinFromXion, normaliseCoin } from "./coins";
-import { getCosmosFee } from "./fee";
 
 const getTxCoin = (coin: Coin) => ({
   amount: coin.amount,
@@ -86,14 +85,8 @@ export const stakeAmount = async (
     value: msg,
   };
 
-  const fee = await getCosmosFee({
-    address: addresses.delegator,
-    memo,
-    msgs: [messageWrapper],
-  });
-
   return await client
-    .signAndBroadcast(addresses.delegator, [messageWrapper], fee, memo)
+    .signAndBroadcast(addresses.delegator, [messageWrapper], "auto", memo)
     .then(getTxVerifier("delegate"))
     .catch(handleTxError);
 };
@@ -117,14 +110,8 @@ export const unstakeAmount = async (
     value: msg,
   };
 
-  const fee = await getCosmosFee({
-    address: addresses.delegator,
-    memo,
-    msgs: [messageWrapper],
-  });
-
   return await client
-    .signAndBroadcast(addresses.delegator, [messageWrapper], fee, memo)
+    .signAndBroadcast(addresses.delegator, [messageWrapper], "auto", memo)
     .then(getTxVerifier("unbond"))
     .catch(handleTxError);
 };
@@ -160,14 +147,8 @@ export const redelegate = async ({
     value: msg,
   };
 
-  const fee = await getCosmosFee({
-    address: delegatorAddress,
-    memo,
-    msgs: [messageWrapper],
-  });
-
   return await client
-    .signAndBroadcast(delegatorAddress, [messageWrapper], fee, memo)
+    .signAndBroadcast(delegatorAddress, [messageWrapper], "auto", memo)
     .then(getTxVerifier("redelegate"))
     .catch(handleTxError);
 };
@@ -188,13 +169,8 @@ export const claimRewards = async (
     } satisfies MsgWithdrawDelegatorRewardEncodeObject,
   ];
 
-  const fee = await getCosmosFee({
-    address: addresses.delegator,
-    msgs: messageWrapper,
-  });
-
   return await client
-    .signAndBroadcast(addresses.delegator, messageWrapper, fee)
+    .signAndBroadcast(addresses.delegator, messageWrapper, "auto")
     .then(getTxVerifier("withdraw_rewards"))
     .catch(handleTxError);
 };
@@ -233,13 +209,8 @@ export const cancelUnbonding = async (
     },
   ];
 
-  const fee = await getCosmosFee({
-    address: addresses.delegator,
-    msgs: messageWrapper,
-  });
-
   return await abstraxionClient
-    .signAndBroadcast(addresses.delegator, messageWrapper, fee, "")
+    .signAndBroadcast(addresses.delegator, messageWrapper, "auto", "")
     .then(getTxVerifier("cancel_unbonding_delegation"))
     .catch(handleTxError);
 };
@@ -309,5 +280,33 @@ export const faucetFunds = async (
 
   return await client
     .execute(address, FAUCET_CONTRACT_ADDRESS, msg, "auto")
+    .catch(handleTxError);
+};
+
+type BatchClaimAddresses = {
+  delegator: string;
+  validators: string[];
+};
+
+export const batchClaimRewards = async (
+  addresses: BatchClaimAddresses,
+  client: NonNullable<AbstraxionSigningClient>,
+) => {
+  if (!addresses.validators.length) return;
+
+  const messages = addresses.validators.map(
+    (validatorAddress) =>
+      ({
+        typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+        value: MsgWithdrawDelegatorReward.fromPartial({
+          delegatorAddress: addresses.delegator,
+          validatorAddress,
+        }),
+      }) satisfies MsgWithdrawDelegatorRewardEncodeObject,
+  );
+
+  return await client
+    .signAndBroadcast(addresses.delegator, messages, "auto")
+    .then(getTxVerifier("withdraw_rewards"))
     .catch(handleTxError);
 };
