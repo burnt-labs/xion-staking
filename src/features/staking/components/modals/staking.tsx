@@ -3,7 +3,6 @@ import type { FormEventHandler } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import { XION_TO_USD } from "@/constants";
 import {
   Button,
   FormError,
@@ -16,6 +15,7 @@ import {
 import CommonModal, {
   ModalDescription,
 } from "@/features/core/components/common-modal";
+import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
 
 import { stakeValidatorAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
@@ -23,11 +23,7 @@ import { setModalOpened } from "../../context/reducer";
 import { getTokensAvailableBG } from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
 import type { StakeAddresses } from "../../lib/core/tx";
-import {
-  formatCoin,
-  formatToSmallDisplay,
-  formatXionToUSD,
-} from "../../lib/formatters";
+import { formatCoin, formatXionToUSD } from "../../lib/formatters";
 
 type Step = "completed" | "input" | "review";
 
@@ -38,6 +34,11 @@ const StakingModal = () => {
   const { client } = stakingRef;
   const [step, setStep] = useState<Step>(initialStep);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { getBalanceByDenom } = useAccountBalance();
+
+  const xionBalance = getBalanceByDenom("uxion");
+  const xionPrice = xionBalance?.price;
 
   const [amountXION, setAmount] = useState("");
   const [memo, setMemo] = useState("");
@@ -71,7 +72,7 @@ const StakingModal = () => {
   const amountUSD = (() => {
     if (amountXIONParsed.isNaN()) return "";
 
-    return amountXIONParsed.times(XION_TO_USD);
+    return amountXIONParsed.times(xionPrice || 0).toFixed(2);
   })();
 
   const hasErrors = Object.values(formError).some((v) => !!v);
@@ -94,9 +95,7 @@ const StakingModal = () => {
               <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
                 <Heading8>Staked Amount (XION)</Heading8>
                 <Heading2>{amountXIONParsed.toString()}</Heading2>
-                {amountUSD && (
-                  <Heading8>${formatToSmallDisplay(amountUSD)}</Heading8>
-                )}
+                {amountUSD && <Heading8>${amountUSD}</Heading8>}
               </div>
               {!!memo && (
                 <div className="mb-[32px] text-center italic">
@@ -231,16 +230,14 @@ const StakingModal = () => {
                         {formatCoin(availableTokensCoin, undefined, true)}
                       </Heading2>
                       <Heading8>
-                        {formatXionToUSD(availableTokensCoin)}
+                        {formatXionToUSD(availableTokensCoin, xionPrice || 0)}
                       </Heading8>
                     </div>
                   );
                 })()}
               <div className="mt-[40px] flex w-full flex-row justify-between">
                 <div>Amount</div>
-                {!!amountUSD && (
-                  <Heading8>= ${formatToSmallDisplay(amountUSD)}</Heading8>
-                )}
+                {!!amountUSD && <Heading8>= ${amountUSD}</Heading8>}
               </div>
               <form onSubmit={onSubmit}>
                 <div className="mt-[8px]">

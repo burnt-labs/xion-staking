@@ -16,6 +16,7 @@ import {
   LoadingBanner,
   NavLink,
 } from "@/features/core/components/base";
+import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
 
 import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
@@ -42,6 +43,11 @@ export default function ValidatorPage() {
   const searchParams = useSearchParams();
   const address = searchParams.get("address");
   const stakingRef = useStaking();
+
+  const { getBalanceByDenom } = useAccountBalance();
+
+  const xionBalance = getBalanceByDenom("uxion");
+  const xionPrice = xionBalance?.price;
 
   const [validatorDetails, setValidatorDetails] = useState<Awaited<
     ReturnType<typeof getValidatorDetailsAction>
@@ -164,7 +170,7 @@ export default function ValidatorPage() {
                 </Heading2>
               </div>
               <BodyMedium>
-                {formatXionToUSD(getXionCoin(totalStakeBN))}
+                {formatXionToUSD(getXionCoin(totalStakeBN), xionPrice || 0)}
               </BodyMedium>
               <div className="absolute bottom-0 right-[20px] top-0">
                 <DivisorVertical />
@@ -210,7 +216,7 @@ export default function ValidatorPage() {
                 </Heading2>
               </div>
               <BodyMedium>
-                {formatXionToUSD(myDelegationToValidator)}
+                {formatXionToUSD(myDelegationToValidator, xionPrice || 0)}
               </BodyMedium>
             </div>
           </div>

@@ -1,5 +1,3 @@
-import type { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
-
 /* eslint-disable */
 
 // types to match https://github.com/cosmos/chain-registry/blob/master/assetlist.schema.json
@@ -154,10 +152,6 @@ export interface AssetList {
   $schema?: string;
   chain_name: string;
   assets: Asset[];
-}
-
-export interface AccountBalance {
-  balances: Coin[];
 }
 
 export interface FormattedAssetAmount {

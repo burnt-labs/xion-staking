@@ -58,3 +58,11 @@ export const ASSET_ENDPOINT = IS_TESTNET
 
 export const COINGECKO_API_URL =
   "https://api.coingecko.com/api/v3/simple/price";
+
+export const REST_API_URL = IS_TESTNET
+  ? "https://api.xion-testnet-1.burnt.com"
+  : "https://api.xion-mainnet-1.burnt.com";
+
+export const REST_ENDPOINTS = {
+  balances: "/cosmos/bank/v1beta1/balances",
+} as const;

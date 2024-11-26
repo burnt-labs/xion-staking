@@ -11,6 +11,7 @@ import {
   Heading8,
   HeroText,
 } from "@/features/core/components/base";
+import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
@@ -46,6 +47,11 @@ const Divisor = () => (
 const StakingOverview = () => {
   const { isConnected } = useAbstraxionAccount();
   const { staking } = useStaking();
+  const { getBalanceByDenom } = useAccountBalance();
+
+  const xionBalance = getBalanceByDenom("uxion");
+  const xionPrice = xionBalance?.price;
+
   const [, setShowAbstraxion] = useModal();
 
   if (!isConnected) {
@@ -117,7 +123,7 @@ const StakingOverview = () => {
             </ButtonPill>
           )}
         </div>
-        <BodyMedium>{formatXionToUSD(totalRewards)}</BodyMedium>
+        <BodyMedium>{formatXionToUSD(totalRewards, xionPrice || 0)}</BodyMedium>
         <Divisor />
       </div>
       <div className={columnStyle}>
@@ -134,7 +140,9 @@ const StakingOverview = () => {
             2,
           )}
         </Heading2>
-        <BodyMedium>{formatXionToUSD(totalDelegation)}</BodyMedium>
+        <BodyMedium>
+          {formatXionToUSD(totalDelegation, xionPrice || 0)}
+        </BodyMedium>
         <Divisor />
       </div>
       <div className={columnStyle}>
@@ -142,7 +150,9 @@ const StakingOverview = () => {
         <Heading2 title={formatCoin(availableDelegation)}>
           {formatCoin(availableDelegation, undefined, true)}
         </Heading2>
-        <BodyMedium>{formatXionToUSD(availableDelegation)}</BodyMedium>
+        <BodyMedium>
+          {formatXionToUSD(availableDelegation, xionPrice || 0)}
+        </BodyMedium>
       </div>
     </div>
   );

@@ -8,8 +8,6 @@ const TESTNET_REST_URL = "https://testnet-api.xion-api.com:443";
 export const RPC_URL = IS_TESTNET ? TESTNET_RPC_URL : MAINNET_RPC_URL;
 export const REST_URL = IS_TESTNET ? TESTNET_REST_URL : MAINNET_REST_URL;
 
-export const XION_TO_USD = 10;
-
 // // Even if this can be retrieved from the params, hardcode it to avoid an
 // // extra request. It can be retrieved with this:
 // const params = await queryClient.staking.params();

@@ -34,7 +34,7 @@ const fetchAssetList = async (): Promise<AssetList> => {
  * Hook to fetch the asset list from the chain registry
  * @returns The asset list and query info
  */
-export const useAssetListQuery = () =>
+const useAssetListQuery = () =>
   useQuery({
     queryFn: fetchAssetList,
     queryKey: ["assetList"],
@@ -90,7 +90,7 @@ const fetchPrices = async (
  * @param assets - Array of assets to fetch prices for
  * @returns Object with asset base denoms as keys and PriceData as values, along with query info
  */
-export const usePrices = (assets: Asset[]) =>
+const usePrices = (assets: Asset[]) =>
   useQuery({
     queryFn: () => fetchPrices(assets),
     queryKey: ["prices", assets.map((a) => a.coingecko_id).filter(Boolean)],
