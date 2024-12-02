@@ -6,7 +6,7 @@ import type { FormEventHandler } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import { UNBONDING_DAYS, XION_TO_USD } from "@/constants";
+import { UNBONDING_DAYS } from "@/constants";
 import {
   Button,
   FormError,
@@ -20,6 +20,7 @@ import CommonModal, {
   ModalDescription,
 } from "@/features/core/components/common-modal";
 import { ValidatorLogo } from "@/features/core/components/table";
+import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
 import { chevron } from "@/features/core/lib/icons";
 import AddressShort from "@/features/staking/components/address-short";
 import { useValidatorLogo } from "@/features/staking/hooks";
@@ -100,6 +101,11 @@ const RedelegateModal = () => {
   const [step, setStep] = useState<Step>(initialStep);
   const [isLoading, setIsLoading] = useState(false);
 
+  const { getBalanceByDenom } = useAccountBalance();
+
+  const xionBalance = getBalanceByDenom("uxion");
+  const xionPrice = xionBalance?.price;
+
   const [formError, setFormError] = useState<
     Record<string, string | undefined>
   >({ amount: undefined, memo: undefined });
@@ -150,7 +156,7 @@ const RedelegateModal = () => {
   const amountUSD = (() => {
     if (amountXIONParsed.isNaN()) return "";
 
-    return amountXIONParsed.times(XION_TO_USD);
+    return amountXIONParsed.times(xionPrice || 0).toFixed(2);
   })();
 
   const delegatedTokens = getTotalDelegation(
@@ -202,7 +208,10 @@ const RedelegateModal = () => {
                 <Heading8>Redelegation Amount (XION)</Heading8>
                 <Heading2>{formatToSmallDisplay(amountXIONParsed)}</Heading2>
                 <Heading8>
-                  {formatXionToUSD(getXionCoin(amountXIONParsed))}
+                  {formatXionToUSD(
+                    getXionCoin(amountXIONParsed),
+                    xionPrice || 0,
+                  )}
                 </Heading8>
               </div>
               {!!memo && (
@@ -333,9 +342,7 @@ const RedelegateModal = () => {
               </Select>
               <div className="mt-[40px] flex w-full flex-row justify-between">
                 <div>Amount</div>
-                {!!amountUSD && (
-                  <Heading8>=${formatToSmallDisplay(amountUSD)}</Heading8>
-                )}
+                {!!amountUSD && <Heading8>=${amountUSD}</Heading8>}
               </div>
               <form onSubmit={onSubmit}>
                 <div className="mt-[8px]">

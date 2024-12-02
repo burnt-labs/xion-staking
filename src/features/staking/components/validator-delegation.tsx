@@ -15,6 +15,7 @@ import {
   HeroText,
   Title,
 } from "@/features/core/components/base";
+import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
 
 import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
@@ -49,6 +50,11 @@ export default function ValidatorDelegation() {
   const searchParams = useSearchParams();
   const address = searchParams.get("address");
   const stakingRef = useStaking();
+  const { getBalanceByDenom } = useAccountBalance();
+
+  const xionBalance = getBalanceByDenom("uxion");
+  const xionPrice = xionBalance?.price;
+
   const [, setShowAbstraxion] = useModal();
   const [isShowingDetails, setIsShowingDetails] = useState(true);
 
@@ -132,7 +138,9 @@ export default function ValidatorDelegation() {
                 </ButtonPill>
               )}
             </div>
-            <BodyMedium>{formatXionToUSD(totalRewards)}</BodyMedium>
+            <BodyMedium>
+              {formatXionToUSD(totalRewards, xionPrice || 0)}
+            </BodyMedium>
           </div>
         </div>
         <Divisor />
@@ -146,7 +154,9 @@ export default function ValidatorDelegation() {
             </Heading2>
           )}
         </div>
-        <BodyMedium>{formatXionToUSD(userTotalDelegation)}</BodyMedium>
+        <BodyMedium>
+          {formatXionToUSD(userTotalDelegation, xionPrice || 0)}
+        </BodyMedium>
         <Divisor />
       </div>
       <div className="flex flex-row gap-[16px]">
@@ -161,7 +171,7 @@ export default function ValidatorDelegation() {
           </div>
           <BodyMedium>
             {availableToStakeBN
-              ? formatXionToUSD(getXionCoin(availableToStakeBN))
+              ? formatXionToUSD(getXionCoin(availableToStakeBN), xionPrice || 0)
               : "-"}
           </BodyMedium>
           <Divisor />
@@ -204,7 +214,9 @@ export default function ValidatorDelegation() {
             </div>
           </div>
           <BodyMedium>
-            {userTotalUnbondings ? formatXionToUSD(userTotalUnbondings) : "-"}
+            {userTotalUnbondings
+              ? formatXionToUSD(userTotalUnbondings, xionPrice || 0)
+              : "-"}
           </BodyMedium>
         </div>
       </div>

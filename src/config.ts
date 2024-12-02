@@ -44,3 +44,25 @@ export const mainNavItems: NavItem[] = [
   { href: "/staking", isRootLink: true, label: "Staking" },
   { href: "/governance", label: "Governance" },
 ];
+
+const ASSET_ENDPOINTS = {
+  mainnet:
+    "https://raw.githubusercontent.com/burnt-labs/burnt-networks/main/mainnet/xion-mainnet-1/chain-registry/assetlist.json",
+  testnet:
+    "https://raw.githubusercontent.com/burnt-labs/burnt-networks/main/testnets/xion-testnet-1/chain-registry/assetlist.json",
+} as const;
+
+export const ASSET_ENDPOINT = IS_TESTNET
+  ? ASSET_ENDPOINTS.testnet
+  : ASSET_ENDPOINTS.mainnet;
+
+export const COINGECKO_API_URL =
+  "https://api.coingecko.com/api/v3/simple/price";
+
+export const REST_API_URL = IS_TESTNET
+  ? "https://api.xion-testnet-1.burnt.com"
+  : "https://api.xion-mainnet-1.burnt.com";
+
+export const REST_ENDPOINTS = {
+  balances: "/cosmos/bank/v1beta1/balances",
+} as const;

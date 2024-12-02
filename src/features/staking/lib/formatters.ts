@@ -1,11 +1,7 @@
 import type { Coin } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 
-import {
-  MIN_DISPLAYED_XION,
-  MIN_DISPLAYED_XION_DECIMALS,
-  XION_TO_USD,
-} from "@/constants";
+import { MIN_DISPLAYED_XION, MIN_DISPLAYED_XION_DECIMALS } from "@/constants";
 
 import { getEmptyXionCoin, normaliseCoin } from "./core/coins";
 
@@ -73,10 +69,14 @@ export const formatCommission = (commissionRate: string, decimals: number) => {
   return `${(comission * 100).toFixed(decimals)}%`;
 };
 
-export const formatXionToUSD = (coin: Coin | null, compact?: boolean) => {
+export const formatXionToUSD = (
+  coin: Coin | null,
+  xionPrice: number,
+  compact?: boolean,
+) => {
   const normalised = normaliseCoin(coin || getEmptyXionCoin());
   const value = coin ? new BigNumber(normalised.amount) : new BigNumber(0);
-  const usd = value.times(XION_TO_USD);
+  const usd = value.times(xionPrice);
 
   if (usd.eq(0)) {
     return "$0";
