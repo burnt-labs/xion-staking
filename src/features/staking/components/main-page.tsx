@@ -2,7 +2,6 @@
 
 import { memo, useState } from "react";
 
-import { IS_TESTNET } from "@/config";
 import { Title } from "@/features/core/components/base";
 
 import { useStaking } from "../context/hooks";
@@ -10,7 +9,6 @@ import DelegationDetails, {
   DetailsTrigger,
   getCanShowDetails,
 } from "./delegation-details";
-import Faucet from "./faucet";
 import StakingModals from "./staking-modals";
 import StakingOverview from "./staking-overview";
 import ValidatorsTable from "./validators-table";
@@ -36,7 +34,6 @@ function StakingPage() {
             />
           )}
         </div>
-        {IS_TESTNET && <Faucet />}
         <StakingOverview />
         {isShowingDetails && canShowDetail && <DelegationDetails />}
         <ValidatorsTable />

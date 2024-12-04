@@ -15,7 +15,6 @@ import {
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
-import { FAUCET_CONTRACT_ADDRESS } from "@/config";
 import { MIN_CLAIMABLE_XION } from "@/constants";
 
 import type { Unbonding } from "../../context/state";
@@ -212,74 +211,6 @@ export const cancelUnbonding = async (
   return await abstraxionClient
     .signAndBroadcast(addresses.delegator, messageWrapper, "auto", "")
     .then(getTxVerifier("cancel_unbonding_delegation"))
-    .catch(handleTxError);
-};
-
-export interface AddressLastFaucetStatus {
-  canFaucet: boolean;
-
-  denom: string;
-  lastFaucetTimestamp: number;
-  maxBalance: number;
-  nextFaucetTimestamp: number;
-}
-
-interface GetAccountLastClaimTimestampResponse {
-  amount_to_faucet: number;
-  cooldown_period: number;
-  denom: string;
-  timestamp: string;
-}
-
-export const getAddressLastFaucetTimestamp = async (
-  address: string,
-  client: NonNullable<AbstraxionSigningClient>,
-): Promise<AddressLastFaucetStatus> => {
-  const msg = {
-    get_address_last_faucet_timestamp: {
-      address,
-    },
-  };
-
-  return await client
-    .queryContractSmart(FAUCET_CONTRACT_ADDRESS, msg)
-    .then((res: GetAccountLastClaimTimestampResponse) => {
-      // Get the current timestamp in seconds
-      const currentTimestampInSeconds = Math.floor(Date.now() / 1000);
-      const timestamp = parseInt(res.timestamp);
-
-      // If the timestamp is 0, the user has never claimed.
-      if (timestamp === 0) {
-        return {
-          canFaucet: true,
-          denom: res.denom,
-          lastFaucetTimestamp: 0,
-          maxBalance: res.amount_to_faucet,
-          nextFaucetTimestamp: currentTimestampInSeconds,
-        };
-      }
-
-      return {
-        canFaucet: timestamp + res.cooldown_period < currentTimestampInSeconds,
-        denom: res.denom,
-        lastFaucetTimestamp: timestamp,
-        maxBalance: res.amount_to_faucet,
-        nextFaucetTimestamp: timestamp + res.cooldown_period,
-      };
-    })
-    .catch(handleTxError);
-};
-
-export const faucetFunds = async (
-  address: string,
-  client: NonNullable<AbstraxionSigningClient>,
-) => {
-  const msg = {
-    faucet: {},
-  };
-
-  return await client
-    .execute(address, FAUCET_CONTRACT_ADDRESS, msg, "auto")
     .catch(handleTxError);
 };
 
