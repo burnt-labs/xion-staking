@@ -169,7 +169,7 @@ export const claimRewards = async (
   ];
 
   return await client
-    .signAndBroadcast(addresses.delegator, messageWrapper, "auto")
+    .signAndBroadcast(addresses.delegator, messageWrapper, 2.3)
     .then(getTxVerifier("withdraw_rewards"))
     .catch(handleTxError);
 };
@@ -237,7 +237,7 @@ export const batchClaimRewards = async (
   );
 
   return await client
-    .signAndBroadcast(addresses.delegator, messages, "auto")
+    .signAndBroadcast(addresses.delegator, messages, 2.5)
     .then(getTxVerifier("withdraw_rewards"))
     .catch(handleTxError);
 };
