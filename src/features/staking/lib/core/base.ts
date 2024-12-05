@@ -125,5 +125,5 @@ export const getInflation = async () => {
 
   const params = await queryClient.mint.params().catch(() => null);
 
-  return params?.inflationMax || 0.2;
+  return params?.inflationMax || 0.42;
 };
