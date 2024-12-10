@@ -3,6 +3,7 @@ import type { Coin } from "@cosmjs/stargate";
 import {
   getBalance,
   getDelegations,
+  getDistributionParams,
   getInflation,
   getPool,
   getRedelegation,
@@ -19,6 +20,7 @@ import {
   addDelegations,
   addRedelegations,
   addUnbondings,
+  setCommunityTax,
   setExtraValidators,
   setInflation,
   setIsInfoLoading,
@@ -40,12 +42,14 @@ export const fetchStakingDataAction = async (staking: StakingContextType) => {
       validatorsUnbonding,
       inflation,
       pool,
+      communityTax,
     ] = await Promise.all([
       getValidatorsList("BOND_STATUS_BONDED"),
       getValidatorsList("BOND_STATUS_UNBONDED"),
       getValidatorsList("BOND_STATUS_UNBONDING"),
       getInflation(),
       getPool(),
+      getDistributionParams(),
     ]);
 
     (
@@ -70,6 +74,7 @@ export const fetchStakingDataAction = async (staking: StakingContextType) => {
 
     staking.dispatch(setPool(pool));
     staking.dispatch(setInflation(inflation.toString()));
+    staking.dispatch(setCommunityTax(communityTax.toString()));
 
     staking.dispatch(setIsInfoLoading(false));
   } catch (error) {

@@ -27,6 +27,10 @@ export type StakingAction =
       type: "LOGOUT";
     }
   | {
+      content: StakingState["communityTax"];
+      type: "SET_COMMUNITY_TAX";
+    }
+  | {
       content: StakingState["extraValidators"];
       type: "SET_EXTRA_VALIDATORS";
     }
@@ -132,6 +136,13 @@ export const setModalOpened = (
 ): StakingAction => ({
   content,
   type: "SET_MODAL",
+});
+
+export const setCommunityTax = (
+  content: Content<"SET_COMMUNITY_TAX">,
+): StakingAction => ({
+  content,
+  type: "SET_COMMUNITY_TAX",
 });
 
 export const setInflation = (
@@ -356,6 +367,13 @@ export const reducer = (
       return {
         ...state,
         inflation: action.content,
+      };
+    }
+
+    case "SET_COMMUNITY_TAX": {
+      return {
+        ...state,
+        communityTax: action.content,
       };
     }
 

@@ -64,4 +64,6 @@ export const REST_API_URL = IS_TESTNET
 
 export const REST_ENDPOINTS = {
   balances: "/cosmos/bank/v1beta1/balances",
+  distributionParams: "/cosmos/distribution/v1beta1/params",
+  inflation: "/xion/mint/v1/inflation",
 } as const;
