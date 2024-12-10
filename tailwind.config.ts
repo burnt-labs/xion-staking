@@ -39,6 +39,11 @@ const config: Config = {
           DEFAULT: "#FFFFFF",
         },
       },
+      keyframes: {
+        shimmer: {
+          '100%': { transform: 'translateX(100%)' }
+        }
+      }
     },
   },
 };

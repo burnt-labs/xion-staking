@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import { memo } from "react";
 
 import { BASE_PATH } from "@/config";
+import { SkeletonWrapper } from "@/features/core/components/SkeletonWrapper";
 import {
   BodyMedium,
   Button,
@@ -12,6 +13,7 @@ import {
   HeroText,
 } from "@/features/core/components/base";
 import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
+import { isLoadingValue } from "@/features/core/utils";
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
@@ -103,9 +105,18 @@ const StakingOverview = () => {
       <div className={columnStyle}>
         <Heading8>Claimable Rewards (XION)</Heading8>
         <div className="flex flex-row flex-wrap items-center gap-4">
-          <Heading2 title={[totalRewards.amount, "XION"].join(" ")}>
-            {formatToSmallDisplay(new BigNumber(totalRewards.amount), 0.001, 3)}
-          </Heading2>
+          <SkeletonWrapper
+            isLoading={isLoadingValue(totalRewards)}
+            width="120px"
+          >
+            <Heading2 title={[totalRewards.amount, "XION"].join(" ")}>
+              {formatToSmallDisplay(
+                new BigNumber(totalRewards.amount),
+                0.001,
+                3,
+              )}
+            </Heading2>
+          </SkeletonWrapper>
           {getCanClaimAnyRewards(staking.state) && (
             <ButtonPill
               onClick={() => {
@@ -128,18 +139,25 @@ const StakingOverview = () => {
       </div>
       <div className={columnStyle}>
         <Heading8>APR</Heading8>
-        <Heading2>{formatAPR(apr)}</Heading2>
+        <SkeletonWrapper isLoading={!apr} width="80px">
+          <Heading2>{formatAPR(apr)}</Heading2>
+        </SkeletonWrapper>
         <Divisor />
       </div>
       <div className={columnStyle}>
         <Heading8>Delegated Amount (XION)</Heading8>
-        <Heading2 title={formatCoin(totalDelegation)}>
-          {formatToSmallDisplay(
-            new BigNumber(totalDelegation.amount),
-            undefined,
-            2,
-          )}
-        </Heading2>
+        <SkeletonWrapper
+          isLoading={isLoadingValue(totalDelegation)}
+          width="120px"
+        >
+          <Heading2 title={formatCoin(totalDelegation)}>
+            {formatToSmallDisplay(
+              new BigNumber(totalDelegation.amount),
+              undefined,
+              2,
+            )}
+          </Heading2>
+        </SkeletonWrapper>
         <BodyMedium>
           {formatXionToUSD(totalDelegation, xionPrice || 0)}
         </BodyMedium>
@@ -147,9 +165,14 @@ const StakingOverview = () => {
       </div>
       <div className={columnStyle}>
         <Heading8>Available For Delegation (XION)</Heading8>
-        <Heading2 title={formatCoin(availableDelegation)}>
-          {formatCoin(availableDelegation, undefined, true)}
-        </Heading2>
+        <SkeletonWrapper
+          isLoading={isLoadingValue(availableDelegation)}
+          width="120px"
+        >
+          <Heading2 title={formatCoin(availableDelegation)}>
+            {formatCoin(availableDelegation, undefined, true)}
+          </Heading2>
+        </SkeletonWrapper>
         <BodyMedium>
           {formatXionToUSD(availableDelegation, xionPrice || 0)}
         </BodyMedium>

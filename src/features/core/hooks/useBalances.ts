@@ -16,7 +16,7 @@ const fetchBalances = async (address: string): Promise<Coin[]> => {
 
     return response.data.balances;
   } catch (error) {
-    console.error("Error fetching asset list:", error);
+    console.error("Error fetching bank balances:", error);
     throw error;
   }
 };
@@ -28,6 +28,7 @@ const fetchBalances = async (address: string): Promise<Coin[]> => {
  */
 export const useBalances = (address: string) =>
   useQuery({
+    enabled: Boolean(address), // Only run the query when address exists
     queryFn: () => fetchBalances(address),
     queryKey: ["balances", address],
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
