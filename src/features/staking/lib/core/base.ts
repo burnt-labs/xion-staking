@@ -150,13 +150,3 @@ export const getDistributionParams = async () => {
     return 0.02;
   }
 };
-
-export const getAPR = async (inflation: null | string) => {
-  if (!inflation) return null;
-
-  const communityTax = await getDistributionParams();
-  const inflationBN = new BigNumber(inflation);
-
-  // APR = inflation * (1 - community_tax)
-  return inflationBN.times(new BigNumber(1).minus(communityTax));
-};
