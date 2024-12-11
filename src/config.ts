@@ -64,4 +64,11 @@ export const REST_API_URL = IS_TESTNET
 
 export const REST_ENDPOINTS = {
   balances: "/cosmos/bank/v1beta1/balances",
+  simulate: "/cosmos/tx/v1beta1/simulate",
+} as const;
+
+export const GAS_CONFIG = {
+  defaultMultiplier: 2.3,
+  defaultStakeEstimate: 200000,
+  price: "0.001",
 } as const;

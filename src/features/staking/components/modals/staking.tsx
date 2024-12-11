@@ -22,6 +22,7 @@ import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
 import { getTokensAvailableBG } from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
+import { estimateGas } from "../../lib/core/gas";
 import type { StakeAddresses } from "../../lib/core/tx";
 import { formatCoin, formatXionToUSD } from "../../lib/formatters";
 
@@ -50,6 +51,7 @@ const StakingModal = () => {
   const { account, staking } = stakingRef;
   const { modal } = staking.state;
   const isOpen = modal?.type === "delegate";
+  const validator = isOpen ? modal?.content?.validator : undefined;
 
   useEffect(
     () => () => {
@@ -62,8 +64,6 @@ const StakingModal = () => {
   );
 
   if (!isOpen) return null;
-
-  const { validator } = modal?.content;
 
   if (!validator) return null;
 
@@ -78,6 +78,71 @@ const StakingModal = () => {
   const hasErrors = Object.values(formError).some((v) => !!v);
 
   const availableTokens = getTokensAvailableBG(staking.state);
+
+  const validateAmount = async () => {
+    if (!availableTokens) {
+      setFormError({
+        ...formError,
+        amount: "No tokens available",
+      });
+
+      return true;
+    }
+
+    if (
+      !amountXIONParsed ||
+      amountXIONParsed.isNaN() ||
+      amountXIONParsed.lte(0)
+    ) {
+      setFormError({
+        ...formError,
+        amount: "Invalid amount",
+      });
+
+      return true;
+    }
+
+    try {
+      const gasEstimate = await estimateGas({
+        amount: getXionCoin(amountXIONParsed),
+        delegator: account.bech32Address,
+        messageType: "delegate",
+        validator: validator.operatorAddress,
+      });
+
+      const totalRequired = amountXIONParsed.plus(gasEstimate);
+
+      if (totalRequired.gt(availableTokens)) {
+        setFormError({
+          ...formError,
+          amount: `Amount too high. Need ~${gasEstimate.toString()} XION for fees`,
+        });
+
+        return true;
+      }
+    } catch (error) {
+      setFormError({
+        ...formError,
+        amount: "Failed to estimate transaction fees",
+      });
+
+      return true;
+    }
+
+    return false;
+  };
+
+  const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    e?.preventDefault();
+
+    if (!client) return;
+
+    const hasValidationError = await validateAmount();
+
+    if (!hasValidationError) {
+      setStep("review");
+    }
+  };
 
   return (
     <CommonModal
@@ -183,33 +248,6 @@ const StakingModal = () => {
               </>
             );
           }
-
-          const validateAmount = () => {
-            if (
-              !amountUSD ||
-              !availableTokens ||
-              amountXIONParsed.isNaN() ||
-              amountXIONParsed.gt(availableTokens)
-            ) {
-              setFormError({
-                ...formError,
-                amount: "Invalid amount",
-              });
-
-              return true;
-            }
-          };
-
-          const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-            e?.stopPropagation();
-            e?.preventDefault();
-
-            if (validateAmount()) return;
-
-            if (!client || hasErrors || amountXIONParsed.lt(0)) return;
-
-            setStep("review");
-          };
 
           return (
             <>

@@ -28,8 +28,12 @@ import { useValidatorLogo } from "@/features/staking/hooks";
 import { redelegateAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
-import { getTotalDelegation } from "../../context/selectors";
+import {
+  getTokensAvailableBG,
+  getTotalDelegation,
+} from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
+import { estimateGas } from "../../lib/core/gas";
 import {
   formatCoin,
   formatToSmallDisplay,
@@ -164,10 +168,11 @@ const RedelegateModal = () => {
     validator.operatorAddress,
   );
 
-  const validateAmount = () => {
+  const validateAmount = async () => {
     if (
-      !amountUSD ||
       !delegatedTokens ||
+      !amountXIONParsed ||
+      amountXIONParsed.isNaN() ||
       amountXIONParsed.lte(0) ||
       amountXIONParsed.gt(new BigNumber(delegatedTokens.amount))
     ) {
@@ -178,17 +183,60 @@ const RedelegateModal = () => {
 
       return true;
     }
+
+    if (!dstValidator) {
+      setFormError({
+        ...formError,
+        amount: "Please select a destination validator",
+      });
+
+      return true;
+    }
+
+    try {
+      const gasEstimate = await estimateGas({
+        amount: getXionCoin(amountXIONParsed),
+        delegator: account.bech32Address,
+        messageType: "redelegate",
+        redelegateParams: {
+          validatorDst: dstValidator.operatorAddress,
+          validatorSrc: validator.operatorAddress,
+        },
+        validator: validator.operatorAddress,
+      });
+
+      const availableTokens = getTokensAvailableBG(staking.state);
+
+      if (!availableTokens || gasEstimate.gt(availableTokens)) {
+        setFormError({
+          ...formError,
+          amount: `Insufficient funds for fees. Need ~${gasEstimate.toString()} XION`,
+        });
+
+        return true;
+      }
+    } catch (error) {
+      setFormError({
+        ...formError,
+        amount: "Failed to estimate transaction fees",
+      });
+
+      return true;
+    }
+
+    return false;
   };
 
-  const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-    e?.stopPropagation();
+  const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e?.preventDefault();
 
-    if (validateAmount()) return;
+    if (!client) return;
 
-    if (!client || !amountXIONParsed.gt(0)) return;
+    const hasValidationError = await validateAmount();
 
-    setStep("review");
+    if (!hasValidationError) {
+      setStep("review");
+    }
   };
 
   return (
@@ -258,7 +306,7 @@ const RedelegateModal = () => {
                   </div>
                   <ModalDescription>
                     You are about to redelegate your token from{" "}
-                    {validator.description.moniker} to
+                    {validator.description.moniker} to{" "}
                     {dstValidator?.description.moniker}. Remember, you will not
                     able to redelegate these token within {UNBONDING_DAYS} days.
                   </ModalDescription>
@@ -322,6 +370,10 @@ const RedelegateModal = () => {
                 onChange={(_, validatorAddress) => {
                   if (!!validatorAddress) {
                     setDstValidator(validatorsPerAddress[validatorAddress]);
+
+                    if (formError.amount) {
+                      setFormError({ ...formError, amount: undefined });
+                    }
                   }
                 }}
                 renderValue={(option: null | SelectOption<string>) =>
