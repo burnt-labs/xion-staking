@@ -6,6 +6,8 @@ import type {
   Validator,
 } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 
+import { REST_API_URL, REST_ENDPOINTS } from "@/config";
+
 import { getStakingQueryClient, getStargateClient } from "./client";
 import { normaliseCoin } from "./coins";
 
@@ -121,9 +123,30 @@ export const getRewards = async (address: string, validatorAddress: string) => {
 };
 
 export const getInflation = async () => {
-  const queryClient = await getStakingQueryClient();
+  try {
+    const response = await fetch(`${REST_API_URL}${REST_ENDPOINTS.inflation}`);
+    const data = await response.json();
 
-  const params = await queryClient.mint.params().catch(() => null);
+    return Number(data.inflation);
+  } catch (error) {
+    console.error("Failed to fetch inflation:", error);
 
-  return params?.inflationMax || 0.42;
+    return 0.42;
+  }
+};
+
+export const getDistributionParams = async () => {
+  try {
+    const response = await fetch(
+      `${REST_API_URL}${REST_ENDPOINTS.distributionParams}`,
+    );
+
+    const data = await response.json();
+
+    return Number(data.params.community_tax);
+  } catch (error) {
+    console.error("Failed to fetch distribution params:", error);
+
+    return 0.02;
+  }
 };

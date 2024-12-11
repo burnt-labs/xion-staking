@@ -71,4 +71,6 @@ export const GAS_CONFIG = {
   defaultMultiplier: 2.3,
   defaultStakeEstimate: 200000,
   price: "0.001",
+  distributionParams: "/cosmos/distribution/v1beta1/params",
+  inflation: "/xion/mint/v1/inflation",
 } as const;

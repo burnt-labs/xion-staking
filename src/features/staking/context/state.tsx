@@ -70,6 +70,7 @@ type ModalContent =
 export type ValidatorStatus = "bonded" | "unbonded" | "unbonding";
 
 export type StakingState = {
+  communityTax: null | string;
   delegations: Paginated<Delegation>;
   extraValidators: Record<string, undefined | Validator>;
   inflation: null | string;
@@ -89,6 +90,7 @@ export type StakingContextType = {
 };
 
 export const defaultState: StakingState = {
+  communityTax: null,
   delegations: null,
   extraValidators: {},
   inflation: null,
