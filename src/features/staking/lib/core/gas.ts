@@ -25,49 +25,56 @@ type GasEstimationParams = BaseGasEstimationParams & {
   redelegateParams?: Omit<RedelegateGasParams, keyof BaseGasEstimationParams>;
 };
 
-function getMessageBody(params: GasEstimationParams) {
+function getMessageBody(params: GasEstimationParams): SimulateRequestMessage {
   const baseAmount = {
     amount: params.amount,
     delegator_address: params.delegator,
   };
 
-  switch (params.messageType) {
-    case "delegate":
-      return {
-        "@type": "/cosmos.staking.v1beta1.MsgDelegate",
-        ...baseAmount,
-        "validator_address": params.validator,
-      };
+  const message = (() => {
+    switch (params.messageType) {
+      case "delegate":
+        return {
+          "@type": "/cosmos.staking.v1beta1.MsgDelegate",
+          ...baseAmount,
+          "validator_address": params.validator,
+        };
 
-    case "redelegate":
-      if (!params.redelegateParams) {
-        throw new Error("Redelegate params required for redelegate message");
-      }
+      case "redelegate":
+        if (!params.redelegateParams) {
+          throw new Error("Redelegate params required for redelegate message");
+        }
 
-      return {
-        "@type": "/cosmos.staking.v1beta1.MsgBeginRedelegate",
-        ...baseAmount,
-        "validator_dst_address": params.redelegateParams.validatorDst,
-        "validator_src_address": params.redelegateParams.validatorSrc,
-      };
+        return {
+          "@type": "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+          ...baseAmount,
+          "validator_dst_address": params.redelegateParams.validatorDst,
+          "validator_src_address": params.redelegateParams.validatorSrc,
+        };
 
-    case "undelegate":
-      return {
-        "@type": "/cosmos.staking.v1beta1.MsgUndelegate",
-        ...baseAmount,
-        "validator_address": params.validator,
-      };
+      case "undelegate":
+        return {
+          "@type": "/cosmos.staking.v1beta1.MsgUndelegate",
+          ...baseAmount,
+          "validator_address": params.validator,
+        };
 
-    case "claim_rewards":
-      return {
-        "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-        "delegator_address": params.delegator,
-        "validator_address": params.validator,
-      };
+      case "claim_rewards":
+        return {
+          "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+          "delegator_address": params.delegator,
+          "validator_address": params.validator,
+        };
 
-    default:
-      throw new Error(`Unsupported message type: ${params.messageType}`);
-  }
+      default:
+        throw new Error(`Unsupported message type: ${params.messageType}`);
+    }
+  })();
+
+  return {
+    type_url: message["@type"],
+    value: Buffer.from(JSON.stringify(message)).toString("base64"),
+  };
 }
 
 function estimateGasStatic(): BigNumber {
@@ -79,12 +86,77 @@ function estimateGasStatic(): BigNumber {
     .dividedBy(1e6);
 }
 
+interface SimulateRequestMessage {
+  type_url: string;
+  value: string;
+}
+
+interface SimulateRequest {
+  tx: {
+    auth_info?: {
+      fee?: {
+        amount?: Array<{
+          amount: string;
+          denom: string;
+        }>;
+        gas_limit?: string;
+        granter?: string;
+        payer?: string;
+      };
+      signer_infos?: Array<{
+        mode_info?: {
+          multi?: {
+            bitarray?: {
+              elems: string;
+              extra_bits_stored: number;
+            };
+            mode_infos?: string[];
+          };
+          single?: {
+            mode: string;
+          };
+        };
+        public_key?: {
+          type_url: string;
+          value: string;
+        };
+        sequence?: string;
+      }>;
+      tip?: {
+        amount?: Array<{
+          amount: string;
+          denom: string;
+        }>;
+        tipper?: string;
+      };
+    };
+    body: {
+      extension_options?: Array<{
+        type_url: string;
+        value: string;
+      }>;
+      memo?: string;
+      messages: SimulateRequestMessage[];
+      non_critical_extension_options?: Array<{
+        type_url: string;
+        value: string;
+      }>;
+      timeout_height?: string;
+    };
+    signatures?: string[];
+  };
+  tx_bytes?: string;
+}
+
 async function estimateGasViaRest(
   params: GasEstimationParams,
 ): Promise<BigNumber> {
-  const body = {
-    gas_adjustment: GAS_CONFIG.defaultMultiplier.toString(),
-    messages: [getMessageBody(params)],
+  const body: SimulateRequest = {
+    tx: {
+      body: {
+        messages: [getMessageBody(params)],
+      },
+    },
   };
 
   try {
