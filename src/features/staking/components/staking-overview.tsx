@@ -13,7 +13,6 @@ import {
   HeroText,
 } from "@/features/core/components/base";
 import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
-import { isLoadingValue } from "@/features/core/utils";
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
@@ -49,7 +48,10 @@ const Divisor = () => (
 const StakingOverview = () => {
   const { isConnected } = useAbstraxionAccount();
   const { staking } = useStaking();
-  const { getBalanceByDenom } = useAccountBalance();
+  const { assetList, getBalanceByDenom } = useAccountBalance();
+
+  const isBalanceLoading = !assetList;
+  const { isLoading: isStakingLoading } = useStaking();
 
   const xionBalance = getBalanceByDenom("uxion");
   const xionPrice = xionBalance?.price;
@@ -105,10 +107,7 @@ const StakingOverview = () => {
       <div className={columnStyle}>
         <Heading8>Claimable Rewards (XION)</Heading8>
         <div className="flex flex-row flex-wrap items-center gap-4">
-          <SkeletonWrapper
-            isLoading={isLoadingValue(totalRewards)}
-            width="120px"
-          >
+          <SkeletonWrapper isLoading={isStakingLoading} width="120px">
             <Heading2 title={[totalRewards.amount, "XION"].join(" ")}>
               {formatToSmallDisplay(
                 new BigNumber(totalRewards.amount),
@@ -139,17 +138,14 @@ const StakingOverview = () => {
       </div>
       <div className={columnStyle}>
         <Heading8>APR</Heading8>
-        <SkeletonWrapper isLoading={!apr} width="80px">
+        <SkeletonWrapper isLoading={isStakingLoading} width="80px">
           <Heading2>{formatAPR(apr)}</Heading2>
         </SkeletonWrapper>
         <Divisor />
       </div>
       <div className={columnStyle}>
         <Heading8>Delegated Amount (XION)</Heading8>
-        <SkeletonWrapper
-          isLoading={isLoadingValue(totalDelegation)}
-          width="120px"
-        >
+        <SkeletonWrapper isLoading={isStakingLoading} width="120px">
           <Heading2 title={formatCoin(totalDelegation)}>
             {formatToSmallDisplay(
               new BigNumber(totalDelegation.amount),
@@ -166,7 +162,7 @@ const StakingOverview = () => {
       <div className={columnStyle}>
         <Heading8>Available For Delegation (XION)</Heading8>
         <SkeletonWrapper
-          isLoading={isLoadingValue(availableDelegation)}
+          isLoading={isBalanceLoading || isStakingLoading}
           width="120px"
         >
           <Heading2 title={formatCoin(availableDelegation)}>

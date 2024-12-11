@@ -1,4 +1,3 @@
-import { type Coin } from "@cosmjs/stargate";
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import BigNumber from "bignumber.js";
@@ -49,13 +48,3 @@ export async function fetchFromAPI<T>(
     throw error;
   }
 }
-
-export const isLoadingValue = (value: unknown): boolean => {
-  if (value === null || value === undefined) return true;
-
-  if (typeof value === "object" && "amount" in (value as Coin)) {
-    return (value as Coin).amount === "0";
-  }
-
-  return false;
-};
