@@ -1,10 +1,9 @@
-import { GasPrice, calculateFee } from "@cosmjs/stargate";
 import type { Coin } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 
 import { GAS_CONFIG, REST_API_URL, REST_ENDPOINTS } from "@/config";
 
-export type StakingMessageType =
+type StakingMessageType =
   | "claim_rewards"
   | "delegate"
   | "redelegate"
@@ -21,7 +20,7 @@ interface RedelegateGasParams extends BaseGasEstimationParams {
   validatorSrc: string;
 }
 
-export type GasEstimationParams = BaseGasEstimationParams & {
+type GasEstimationParams = BaseGasEstimationParams & {
   messageType: StakingMessageType;
   redelegateParams?: Omit<RedelegateGasParams, keyof BaseGasEstimationParams>;
 };
@@ -124,16 +123,4 @@ export async function estimateGas(
 
     return estimateGasStatic();
   }
-}
-
-export function calculateTxFee(gasEstimate: number): {
-  amount: readonly Coin[];
-  gas: string;
-} {
-  const gasPrice = GasPrice.fromString(`${GAS_CONFIG.price}uxion`);
-
-  return calculateFee(
-    Math.round(gasEstimate * GAS_CONFIG.defaultMultiplier),
-    gasPrice,
-  );
 }
