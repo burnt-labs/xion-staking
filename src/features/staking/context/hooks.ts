@@ -2,7 +2,7 @@ import {
   useAbstraxionAccount,
   useAbstraxionSigningClient,
 } from "@burnt-labs/abstraxion";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import { fetchStakingDataAction, fetchUserDataAction } from "./actions";
 import { logout } from "./reducer";
@@ -15,21 +15,35 @@ export const useStaking = () => {
   const stakingRef = useRef<StakingContextType>({} as StakingContextType);
   const staking = useContext(StakingContext);
 
-  // It is important to not override the `current` object reference so it
-  // doesn't trigger more hooks than it should if it is added as a hook
-  // dependency
+  const [isLoading, setIsLoading] = useState(true);
+
   stakingRef.current.state = staking.state;
   stakingRef.current.dispatch = staking.dispatch;
 
   const { data: account, isConnected } = useAbstraxionAccount();
-
   const address = account?.bech32Address;
+
+  useEffect(() => {
+    if (!isConnected) {
+      setIsLoading(false);
+
+      return;
+    }
+
+    const hasRequiredData =
+      staking.state.validators.bonded &&
+      staking.state.delegations &&
+      staking.state.tokens;
+
+    setIsLoading(!hasRequiredData);
+  }, [isConnected, staking.state]);
 
   return {
     account,
     address,
     client: isConnected ? cachedClient : undefined,
     isConnected,
+    isLoading,
     staking: stakingRef.current,
   };
 };
