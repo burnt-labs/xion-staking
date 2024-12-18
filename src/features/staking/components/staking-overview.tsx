@@ -173,7 +173,7 @@ const StakingOverview = () => {
         <BodyMedium>
           {formatXionToUSD(availableDelegation, xionPrice || 0)}
         </BodyMedium>
-        <NavLink href="https://xion.network" isExternal>
+        <NavLink href="https://xion.burnt.com/get-xion" isExternal>
           Get XION
         </NavLink>
       </div>
