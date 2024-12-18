@@ -11,6 +11,7 @@ import {
   Heading2,
   Heading8,
   HeroText,
+  NavLink,
 } from "@/features/core/components/base";
 import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
 
@@ -172,6 +173,9 @@ const StakingOverview = () => {
         <BodyMedium>
           {formatXionToUSD(availableDelegation, xionPrice || 0)}
         </BodyMedium>
+        <NavLink href="https://xion.burnt.com/get-xion" isExternal>
+          Get XION
+        </NavLink>
       </div>
     </div>
   );
