@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 import { useCore } from "../context/hooks";
 import { setPopupOpenId } from "../context/reducer";
-import { clipboard, loader, loader2, search } from "../lib/icons";
+import { clipboard, external, loader, loader2, search } from "../lib/icons";
 
 type TypographyProps = PropsWithChildren & {
   className?: string;
@@ -92,14 +92,25 @@ export const BodyMedium = ({
 type NavLinkProps = {
   children: React.ReactNode;
   href: string;
+  isExternal?: boolean;
 };
 
-export const NavLink = ({ children, href }: NavLinkProps) => (
+export const NavLink = ({ children, href, isExternal }: NavLinkProps) => (
   <Link
     className="text-left font-normal leading-[24px] underline underline-offset-[2px]"
     href={href}
+    rel={isExternal ? "noopener noreferrer" : undefined}
+    target={isExternal ? "_blank" : undefined}
   >
-    {children}
+    <span className="flex items-center gap-1">
+      {children}
+      {isExternal && (
+        <span
+          className="inline-block"
+          dangerouslySetInnerHTML={{ __html: external }}
+        />
+      )}
+    </span>
   </Link>
 );
 
