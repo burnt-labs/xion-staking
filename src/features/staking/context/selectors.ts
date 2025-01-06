@@ -118,5 +118,7 @@ export const getAllValidators = (
 
 export const getAPR = (state: StakingState) =>
   state.inflation && state.communityTax
-    ? new BigNumber(state.inflation).minus(state.communityTax)
+    ? new BigNumber(state.inflation).times(
+        new BigNumber(1).minus(new BigNumber(state.communityTax)),
+      )
     : null;
