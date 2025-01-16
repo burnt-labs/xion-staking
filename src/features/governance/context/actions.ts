@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
-import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
+import { MsgSubmitProposal, MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
+import { StoreCodeProposal } from "cosmjs-types/cosmwasm/wasm/v1/proposal";
 
 import { fetchFromAPI } from "@/features/core/utils";
 import { getTxVerifier, handleTxError } from "@/features/staking/lib/core/tx";
@@ -20,6 +21,7 @@ import type {
   ProposalTallyResult,
   StakingPool,
   StakingPoolResponse,
+  SubmitProposalParams,
 } from "../lib/types";
 import { ProposalStatus, VoteType } from "../lib/types";
 
@@ -200,5 +202,48 @@ export const submitVote = async ({
   return await client
     .signAndBroadcast(voter, [messageWrapper], 2.5, memo)
     .then(getTxVerifier("proposal_vote"))
+    .catch(handleTxError);
+};
+
+export const submitStoreCodeProposal = async ({
+  client,
+  memo = "",
+  proposer,
+  values,
+}: SubmitProposalParams) => {
+  const storeCodeProposal = StoreCodeProposal.fromPartial({
+    description: values.description,
+    instantiatePermission: values.instantiatePermission,
+    runAs: proposer,
+    title: values.title,
+    wasmByteCode: values.wasmByteCode,
+  });
+
+  console.log("test message", {
+    content: {
+      typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
+      value: StoreCodeProposal.encode(storeCodeProposal).finish(),
+    },
+    initialDeposit: values.initialDeposit ? [values.initialDeposit] : [],
+    proposer,
+  });
+
+  const msg = MsgSubmitProposal.fromPartial({
+    content: {
+      typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
+      value: StoreCodeProposal.encode(storeCodeProposal).finish(),
+    },
+    initialDeposit: values.initialDeposit ? [values.initialDeposit] : [],
+    proposer,
+  });
+
+  const messageWrapper = {
+    typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+    value: msg,
+  };
+
+  return await client
+    .signAndBroadcast(proposer, [messageWrapper], 2.5, memo)
+    .then(getTxVerifier("submit_proposal"))
     .catch(handleTxError);
 };

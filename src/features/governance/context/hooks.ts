@@ -15,6 +15,7 @@ import type {
   GovVoteResponse,
   Proposal,
   ProposalDetailsResult,
+  ProposalFormValues,
   StakingPoolResponse,
   VoteType,
 } from "../lib/types";
@@ -37,6 +38,7 @@ import {
   fetchTally,
   fetchTallyParams,
   fetchVote,
+  submitStoreCodeProposal,
   submitVote,
 } from "./actions";
 import type { FetchProposalsOptions } from "./actions";
@@ -86,7 +88,7 @@ export const useProposal = (proposalId: string) =>
  * Fetches the deposit parameters.
  * @returns The deposit parameters.
  */
-const useDepositParams = () =>
+export const useDepositParams = () =>
   useQuery<GovDepositParamsResponse, Error>({
     queryFn: fetchDepositParams as () => Promise<GovDepositParamsResponse>,
     queryKey: ["depositParams"],
@@ -307,5 +309,39 @@ export const useGovernanceTx = () => {
     isVoting: voteMutation.isLoading,
     submitVote: voteMutation.mutateAsync,
     voteError: voteMutation.error,
+  };
+};
+
+/**
+ * Hook for submitting a proposal.
+ * @returns The proposal submission state.
+ * For now, we're only submitting store code proposals. We will extend it to text, parameter change, and community pool spend proposals as they're added.
+ */
+export const useSubmitProposal = () => {
+  const { client } = useAbstraxionSigningClient();
+  const { data: account } = useAbstraxionAccount();
+  const queryClient = useQueryClient();
+
+  const submitProposalMutation = useMutation({
+    mutationFn: async (values: ProposalFormValues) => {
+      if (!client || !account?.bech32Address) {
+        throw new Error("Wallet not connected");
+      }
+
+      return await submitStoreCodeProposal({
+        client,
+        proposer: account.bech32Address,
+        values,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["proposals"] });
+    },
+  });
+
+  return {
+    error: submitProposalMutation.error,
+    isSubmitting: submitProposalMutation.isLoading,
+    submitProposal: submitProposalMutation.mutateAsync,
   };
 };
