@@ -319,7 +319,6 @@ export interface StoreCodeProposalValues extends BaseProposalValues {
   wasmByteCode: Uint8Array;
 }
 
-// Add new type for clarity
 export interface AccessConfig {
   address?: string;
   permission: "Everybody" | "Nobody" | "OnlyAddress";
