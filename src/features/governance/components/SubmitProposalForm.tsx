@@ -8,8 +8,10 @@ import { formatCoin } from "@/features/staking/lib/formatters";
 
 import { useDepositParams, useSubmitProposal } from "../context/hooks";
 import type { StoreCodeProposalValues } from "../lib/types";
+import { ProposalType } from "../lib/types";
 import { FileUpload } from "./forms/FileUpload";
 import { FormInput } from "./forms/FormInput";
+import { FormSelect } from "./forms/FormSelect";
 import { FormTextArea } from "./forms/FormTextArea";
 import { ProposalModal } from "./modals/ProposalModal";
 
@@ -24,15 +26,30 @@ interface FormValues extends Omit<StoreCodeProposalValues, "wasmByteCode"> {
   wasmByteCode: File;
 }
 
+const PERMISSION_OPTIONS = [
+  { label: "Everybody", value: "Everybody" },
+  { label: "Nobody", value: "Nobody" },
+  { label: "Only Address", value: "OnlyAddress" },
+];
+
 export const SubmitProposalForm = () => {
   const [step, setStep] = useState<Step>(Step.Form);
   const [error, setError] = useState<null | string>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<FormValues | null>(null);
 
+  const [selectedPermission, setSelectedPermission] =
+    useState<string>("Everybody");
+
   const { data: depositParams } = useDepositParams();
   const { getBalanceByDenom } = useAccountBalance();
   const balance = getBalanceByDenom("uxion");
+
+  const {
+    error: submitError,
+    isSubmitting,
+    submitProposal,
+  } = useSubmitProposal();
 
   const {
     formState: { errors },
@@ -41,15 +58,11 @@ export const SubmitProposalForm = () => {
     setValue,
     unregister,
   } = useForm<FormValues>({
-    defaultValues: {},
+    defaultValues: {
+      type: ProposalType.STORE_CODE,
+    },
     mode: "onSubmit",
   });
-
-  const {
-    error: submitError,
-    isSubmitting,
-    submitProposal,
-  } = useSubmitProposal();
 
   useEffect(() => {
     if (depositParams?.params?.min_deposit?.[0] && balance?.decimals) {
@@ -88,6 +101,15 @@ export const SubmitProposalForm = () => {
       },
     });
   }, [register, uploadedFile]);
+
+  const handlePermissionChange = (value: string) => {
+    setSelectedPermission(value);
+
+    setValue(
+      "instantiatePermission.permission",
+      value as "Everybody" | "Nobody" | "OnlyAddress",
+    );
+  };
 
   const handleFormSubmit = async (data: FormValues) => {
     try {
@@ -179,6 +201,31 @@ export const SubmitProposalForm = () => {
           unregister={unregister}
           uploadedFile={uploadedFile}
         />
+
+        <div className="flex w-full flex-col">
+          <div className="font-['Akkurat LL'] text-2xl font-bold leading-7 text-white">
+            Contract Permissions
+          </div>
+        </div>
+
+        <FormSelect
+          id="instantiatePermission.permission"
+          label="Instantiate Permission"
+          onChange={handlePermissionChange}
+          options={PERMISSION_OPTIONS}
+          register={register}
+          value={selectedPermission}
+        />
+
+        {selectedPermission === "OnlyAddress" && (
+          <FormInput
+            error={errors.instantiatePermission?.address?.message}
+            id="instantiatePermission.address"
+            label="Authorized Address"
+            register={register}
+            required={selectedPermission === "OnlyAddress"}
+          />
+        )}
 
         <div className="flex w-full flex-col">
           <div className="font-['Akkurat LL'] text-2xl font-bold leading-7 text-white">

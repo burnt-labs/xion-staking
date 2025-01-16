@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { MsgSubmitProposal, MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
-import { StoreCodeProposal } from "cosmjs-types/cosmwasm/wasm/v1/proposal";
+import { MsgStoreCode } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 
 import { fetchFromAPI } from "@/features/core/utils";
 import { getTxVerifier, handleTxError } from "@/features/staking/lib/core/tx";
@@ -211,20 +211,26 @@ export const submitStoreCodeProposal = async ({
   proposer,
   values,
 }: SubmitProposalParams) => {
-  const wasmBytesBase64 = Buffer.from(values.wasmByteCode).toString("base64");
-
-  const storeCodeProposal = StoreCodeProposal.fromPartial({
-    description: values.description,
-    instantiatePermission: values.instantiatePermission,
-    runAs: proposer,
-    title: values.title,
-    wasmByteCode: new Uint8Array(Buffer.from(wasmBytesBase64, "base64")),
+  const storeCodeMsg = MsgStoreCode.fromPartial({
+    instantiatePermission: values.instantiatePermission
+      ? {
+          address: values.instantiatePermission.address,
+          permission:
+            values.instantiatePermission.permission === "Everybody"
+              ? 1
+              : values.instantiatePermission.permission === "Nobody"
+                ? 2
+                : 3,
+        }
+      : undefined,
+    sender: proposer,
+    wasmByteCode: values.wasmByteCode,
   });
 
   const msg = MsgSubmitProposal.fromPartial({
     content: {
-      typeUrl: "/cosmwasm.wasm.v1.StoreCodeProposal",
-      value: StoreCodeProposal.encode(storeCodeProposal).finish(),
+      typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
+      value: MsgStoreCode.encode(storeCodeMsg).finish(),
     },
     initialDeposit: values.initialDeposit ? [values.initialDeposit] : [],
     proposer,

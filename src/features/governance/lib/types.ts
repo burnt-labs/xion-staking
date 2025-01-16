@@ -313,10 +313,16 @@ interface BaseProposalValues {
 export interface StoreCodeProposalValues extends BaseProposalValues {
   instantiatePermission?: {
     address: string;
-    permission: number;
+    permission: "Everybody" | "Nobody" | "OnlyAddress";
   };
   type: ProposalType.STORE_CODE;
   wasmByteCode: Uint8Array;
+}
+
+// Add new type for clarity
+export interface AccessConfig {
+  address?: string;
+  permission: "Everybody" | "Nobody" | "OnlyAddress";
 }
 
 export type ProposalFormValues = StoreCodeProposalValues; // union with other types as they're added
