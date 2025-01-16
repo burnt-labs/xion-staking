@@ -15,7 +15,7 @@ export const FormTextArea = ({
   register,
   required = false,
 }: FormTextAreaProps) => (
-  <div className="flex w-[944px] flex-col">
+  <div className="flex w-full flex-col">
     <label
       className="font-['Akkurat LL'] text-xs font-bold uppercase leading-[14px] tracking-wide text-[#949494]"
       htmlFor={id}

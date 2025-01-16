@@ -4,6 +4,7 @@ interface FormInputProps {
   error?: string;
   id: string;
   label: string;
+  readOnly?: boolean;
   register: UseFormRegister<any>;
   required?: boolean;
   type?: "number" | "text";
@@ -13,11 +14,12 @@ export const FormInput = ({
   error,
   id,
   label,
+  readOnly = false,
   register,
   required = false,
   type = "text",
 }: FormInputProps) => (
-  <div className="flex w-[464px] flex-col">
+  <div className="flex w-full flex-col">
     <label
       className="font-['Akkurat LL'] text-xs font-normal leading-tight text-[#949494]"
       htmlFor={id}
@@ -28,6 +30,7 @@ export const FormInput = ({
       <input
         className="font-['Akkurat LL'] mt-2 w-full bg-transparent text-sm font-normal leading-tight text-[#f2f2f2]"
         id={id}
+        readOnly={readOnly}
         type={type}
         {...register(id, {
           required: required ? `${label} is required` : false,

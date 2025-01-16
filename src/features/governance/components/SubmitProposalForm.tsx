@@ -149,7 +149,7 @@ export const SubmitProposalForm = () => {
   };
 
   return (
-    <>
+    <div className="w-full">
       <form
         className="flex flex-col space-y-4"
         onSubmit={handleSubmit(handleFormSubmit)}
@@ -180,10 +180,26 @@ export const SubmitProposalForm = () => {
           uploadedFile={uploadedFile}
         />
 
+        <div className="flex w-full flex-col">
+          <div className="font-['Akkurat LL'] text-2xl font-bold leading-7 text-white">
+            Deposit
+          </div>
+          <div className="font-['Akkurat LL'] text-base font-normal leading-normal text-[#6b6969]">
+            For the proposal to pass to the voting stage, it must have{" "}
+            {new BigNumber(
+              depositParams?.params?.min_deposit?.[0]?.amount || "0",
+            )
+              .dividedBy(new BigNumber(10).pow(balance?.decimals || 6))
+              .toString()}{" "}
+            XION deposited.
+          </div>
+        </div>
+
         <FormInput
           error={errors.initialDeposit?.amount?.message}
           id="initialDeposit.amount"
           label="Initial Deposit"
+          readOnly
           register={register}
           required
           type="number"
@@ -205,6 +221,6 @@ export const SubmitProposalForm = () => {
         }
         title={formData?.title}
       />
-    </>
+    </div>
   );
 };

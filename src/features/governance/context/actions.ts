@@ -211,12 +211,14 @@ export const submitStoreCodeProposal = async ({
   proposer,
   values,
 }: SubmitProposalParams) => {
+  const wasmBytesBase64 = Buffer.from(values.wasmByteCode).toString("base64");
+
   const storeCodeProposal = StoreCodeProposal.fromPartial({
     description: values.description,
     instantiatePermission: values.instantiatePermission,
     runAs: proposer,
     title: values.title,
-    wasmByteCode: values.wasmByteCode,
+    wasmByteCode: new Uint8Array(Buffer.from(wasmBytesBase64, "base64")),
   });
 
   const msg = MsgSubmitProposal.fromPartial({
