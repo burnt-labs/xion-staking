@@ -2,21 +2,16 @@ import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import {
-  Button,
-  Heading2,
-  Heading8,
-  HeroText,
-} from "@/features/core/components/base";
-import CommonModal, {
-  ModalDescription,
-} from "@/features/core/components/common-modal";
+import { Button } from "@/features/core/components/base";
 import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
-import { loader2 } from "@/features/core/lib/icons";
 import { formatCoin } from "@/features/staking/lib/formatters";
 
 import { useDepositParams, useSubmitProposal } from "../context/hooks";
 import type { StoreCodeProposalValues } from "../lib/types";
+import { FileUpload } from "./forms/FileUpload";
+import { FormInput } from "./forms/FormInput";
+import { FormTextArea } from "./forms/FormTextArea";
+import { ProposalModal } from "./modals/ProposalModal";
 
 enum Step {
   Completed = "completed",
@@ -25,13 +20,15 @@ enum Step {
   Submitting = "submitting",
 }
 
+interface FormValues extends Omit<StoreCodeProposalValues, "wasmByteCode"> {
+  wasmByteCode: File;
+}
+
 export const SubmitProposalForm = () => {
   const [step, setStep] = useState<Step>(Step.Form);
   const [error, setError] = useState<null | string>(null);
-
-  const [formData, setFormData] = useState<null | StoreCodeProposalValues>(
-    null,
-  );
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [formData, setFormData] = useState<FormValues | null>(null);
 
   const { data: depositParams } = useDepositParams();
   const { getBalanceByDenom } = useAccountBalance();
@@ -42,7 +39,11 @@ export const SubmitProposalForm = () => {
     handleSubmit,
     register,
     setValue,
-  } = useForm<StoreCodeProposalValues>();
+    unregister,
+  } = useForm<FormValues>({
+    defaultValues: {},
+    mode: "onSubmit",
+  });
 
   const {
     error: submitError,
@@ -51,10 +52,19 @@ export const SubmitProposalForm = () => {
   } = useSubmitProposal();
 
   useEffect(() => {
-    if (depositParams?.params?.min_deposit?.[0]) {
-      setValue("initialDeposit", depositParams.params.min_deposit[0]);
+    if (depositParams?.params?.min_deposit?.[0] && balance?.decimals) {
+      const demicroAmount = new BigNumber(
+        depositParams.params.min_deposit[0].amount,
+      )
+        .dividedBy(new BigNumber(10).pow(balance.decimals))
+        .toString();
+
+      setValue("initialDeposit", {
+        ...depositParams.params.min_deposit[0],
+        amount: demicroAmount,
+      });
     }
-  }, [depositParams, setValue]);
+  }, [depositParams, setValue, balance?.decimals]);
 
   useEffect(() => {
     if (submitError) {
@@ -66,10 +76,30 @@ export const SubmitProposalForm = () => {
     }
   }, [submitError]);
 
-  const handleFormSubmit = async (data: StoreCodeProposalValues) => {
+  useEffect(() => {
+    register("wasmByteCode", {
+      required: "Please upload a WASM binary file",
+      validate: () => {
+        if (!uploadedFile) {
+          return "Please upload a WASM binary file";
+        }
+
+        return true;
+      },
+    });
+  }, [register, uploadedFile]);
+
+  const handleFormSubmit = async (data: FormValues) => {
     try {
-      const requiredAmount = new BigNumber(data.initialDeposit?.amount || "0");
-      const availableBalance = new BigNumber(balance?.baseAmount || "0");
+      if (!balance?.decimals)
+        throw new Error("Unable to determine token decimals");
+
+      const microAmount = new BigNumber(data.initialDeposit?.amount || "0")
+        .multipliedBy(new BigNumber(10).pow(balance.decimals))
+        .toString();
+
+      const requiredAmount = new BigNumber(microAmount);
+      const availableBalance = new BigNumber(balance.baseAmount || "0");
       const estimatedGas = new BigNumber("500000");
 
       if (availableBalance.isLessThan(requiredAmount.plus(estimatedGas))) {
@@ -97,30 +127,15 @@ export const SubmitProposalForm = () => {
     setError(null);
 
     try {
-      const reader = new FileReader();
-      const file = (formData.wasmByteCode as unknown as FileList).item(0);
+      const arrayBuffer = await formData.wasmByteCode.arrayBuffer();
+      const wasmByteCode = new Uint8Array(arrayBuffer);
 
-      if (!file) {
-        throw new Error("No file selected");
-      }
+      await submitProposal({
+        ...formData,
+        wasmByteCode,
+      });
 
-      reader.onload = async (e) => {
-        try {
-          const wasmByteCode = new Uint8Array(e.target?.result as ArrayBuffer);
-
-          await submitProposal({
-            ...formData,
-            wasmByteCode,
-          });
-
-          setStep(Step.Completed);
-        } catch (err) {
-          setError(err instanceof Error ? err.message : String(err));
-          setStep(Step.Review);
-        }
-      };
-
-      reader.readAsArrayBuffer(file);
+      setStep(Step.Completed);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setStep(Step.Review);
@@ -133,183 +148,63 @@ export const SubmitProposalForm = () => {
     setFormData(null);
   };
 
-  const renderModal = () => {
-    switch (step) {
-      case Step.Review:
-        return (
-          <CommonModal isOpen onRequestClose={() => setStep(Step.Form)}>
-            <div className="min-w-[90vw] md:min-w-[390px]">
-              <div className="text-center">
-                <div className="mb-[35px] text-center uppercase">
-                  <HeroText>REVIEW PROPOSAL</HeroText>
-                </div>
-                <ModalDescription>
-                  Please review your proposal details before submitting.
-                </ModalDescription>
-                {error && (
-                  <div className="mt-4 text-sm text-danger">{error}</div>
-                )}
-              </div>
-              <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
-                <Heading8>Title</Heading8>
-                <Heading2>{formData?.title}</Heading2>
-                <Heading8>Description</Heading8>
-                <p className="text-center">{formData?.description}</p>
-              </div>
-              <Button onClick={handleConfirm}>CONFIRM</Button>
-            </div>
-          </CommonModal>
-        );
-
-      case Step.Submitting:
-        return (
-          <CommonModal isOpen onRequestClose={() => {}}>
-            <div className="min-w-[90vw] md:min-w-[390px]">
-              <div className="text-center">
-                <div className="mb-[35px] text-center uppercase">
-                  <HeroText>SUBMITTING</HeroText>
-                </div>
-                <ModalDescription>
-                  Please wait while your proposal is being submitted...
-                </ModalDescription>
-              </div>
-              <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center">
-                <div className="mb-[32px] flex w-[80px] items-center justify-center">
-                  <span
-                    className="animate-spin"
-                    dangerouslySetInnerHTML={{ __html: loader2 }}
-                  />
-                </div>
-              </div>
-            </div>
-          </CommonModal>
-        );
-
-      case Step.Completed:
-        return (
-          <CommonModal isOpen onRequestClose={handleClose}>
-            <div className="min-w-[90vw] md:min-w-[390px]">
-              <div className="text-center">
-                <div className="mb-[35px] text-center uppercase">
-                  <HeroText>SUCCESS!</HeroText>
-                </div>
-                <ModalDescription>
-                  Your proposal has been successfully submitted.
-                </ModalDescription>
-              </div>
-              <div className="mb-[32px] mt-[32px]">
-                <Button onClick={handleClose}>CLOSE</Button>
-              </div>
-            </div>
-          </CommonModal>
-        );
-
-      default:
-        return null;
-    }
-  };
-
   return (
     <>
-      <form className="space-y-4" onSubmit={handleSubmit(handleFormSubmit)}>
-        <div>
-          <input
-            {...register("title", { required: "Title is required" })}
-            placeholder="Title"
-          />
-          {errors.title && (
-            <p className="text-sm text-red-500">{errors.title.message}</p>
-          )}
-        </div>
+      <form
+        className="flex flex-col space-y-4"
+        onSubmit={handleSubmit(handleFormSubmit)}
+      >
+        <FormInput
+          error={errors.title?.message}
+          id="title"
+          label="Title"
+          register={register}
+          required
+        />
 
-        <div>
-          <textarea
-            {...register("description", {
-              required: "Description is required",
-            })}
-            placeholder="Description"
-          />
-          {errors.description && (
-            <p className="text-sm text-red-500">{errors.description.message}</p>
-          )}
-        </div>
+        <FormTextArea
+          error={errors.description?.message}
+          id="description"
+          label="Contract Description and intended uses"
+          register={register}
+          required
+        />
 
-        <div>
-          <input
-            type="file"
-            {...register("wasmByteCode", { required: "WASM file is required" })}
-            accept=".wasm"
-          />
-          {errors.wasmByteCode && (
-            <p className="text-sm text-red-500">
-              {errors.wasmByteCode.message}
-            </p>
-          )}
-        </div>
+        <FileUpload
+          error={errors.wasmByteCode?.message}
+          id="wasmByteCode"
+          label="Deployment Information"
+          setUploadedFile={setUploadedFile}
+          setValue={setValue}
+          unregister={unregister}
+          uploadedFile={uploadedFile}
+        />
 
-        <div>
-          <div className="flex items-center justify-between">
-            <label className="text-sm text-gray-600" htmlFor="initialDeposit">
-              Initial Deposit
-            </label>
-            {depositParams?.params?.min_deposit && (
-              <span className="text-sm text-gray-500">
-                Required: {formatCoin(depositParams.params.min_deposit[0])}
-              </span>
-            )}
-          </div>
-          <input
-            type="number"
-            {...register("initialDeposit.amount", {
-              required: "Initial deposit is required",
-              validate: {
-                minDeposit: (value) => {
-                  if (!depositParams?.params?.min_deposit?.[0]) return true;
+        <FormInput
+          error={errors.initialDeposit?.amount?.message}
+          id="initialDeposit.amount"
+          label="Initial Deposit"
+          register={register}
+          required
+          type="number"
+        />
 
-                  const minDeposit = new BigNumber(
-                    depositParams.params.min_deposit[0].amount,
-                  );
-
-                  return (
-                    new BigNumber(value).gte(minDeposit) ||
-                    `Minimum deposit is ${formatCoin(depositParams.params.min_deposit[0])}`
-                  );
-                },
-                sufficientBalance: (value) => {
-                  if (!balance) return true;
-
-                  const requiredAmount = new BigNumber(value);
-                  const availableBalance = new BigNumber(balance.baseAmount);
-                  const estimatedGas = new BigNumber("500000");
-
-                  return (
-                    availableBalance.gte(requiredAmount.plus(estimatedGas)) ||
-                    "Insufficient balance for deposit and gas fees"
-                  );
-                },
-              },
-            })}
-            disabled
-            placeholder="Initial Deposit Amount"
-          />
-          {errors.initialDeposit?.amount && (
-            <p className="text-sm text-red-500">
-              {errors.initialDeposit.amount.message}
-            </p>
-          )}
-          {error && <p className="text-sm text-red-500">{error}</p>}
-        </div>
-
-        <button
-          className="bg-primary hover:bg-primary-dark w-full rounded px-4 py-2 text-white disabled:opacity-50"
-          disabled={isSubmitting}
-          type="submit"
-        >
+        <Button className="mt-4 w-full" disabled={isSubmitting} type="submit">
           Submit Proposal
-        </button>
+        </Button>
       </form>
 
-      {renderModal()}
+      <ProposalModal
+        description={formData?.description}
+        error={error}
+        isOpen={step !== Step.Form}
+        onClose={handleClose}
+        onConfirm={handleConfirm}
+        step={
+          step.toLowerCase() as "completed" | "form" | "review" | "submitting"
+        }
+        title={formData?.title}
+      />
     </>
   );
 };

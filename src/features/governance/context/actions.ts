@@ -219,18 +219,9 @@ export const submitStoreCodeProposal = async ({
     wasmByteCode: values.wasmByteCode,
   });
 
-  console.log("test message", {
-    content: {
-      typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
-      value: StoreCodeProposal.encode(storeCodeProposal).finish(),
-    },
-    initialDeposit: values.initialDeposit ? [values.initialDeposit] : [],
-    proposer,
-  });
-
   const msg = MsgSubmitProposal.fromPartial({
     content: {
-      typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
+      typeUrl: "/cosmwasm.wasm.v1.StoreCodeProposal",
       value: StoreCodeProposal.encode(storeCodeProposal).finish(),
     },
     initialDeposit: values.initialDeposit ? [values.initialDeposit] : [],
