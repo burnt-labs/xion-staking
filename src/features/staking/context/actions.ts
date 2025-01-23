@@ -12,7 +12,7 @@ import {
   getValidatorDetails,
   getValidatorsList,
 } from "../lib/core/base";
-import type { AbstraxionSigningClient } from "../lib/core/client";
+import type { SigningClient } from "../lib/core/client";
 import { sumAllCoins } from "../lib/core/coins";
 import type { RedelegateParams, StakeAddresses } from "../lib/core/tx";
 import { redelegate, stakeAmount, unstakeAmount } from "../lib/core/tx";
@@ -209,7 +209,7 @@ export const stakeValidatorAction = async (
   addresses: StakeAddresses,
   amount: Coin,
   memo: string,
-  client: AbstraxionSigningClient,
+  client: SigningClient,
   staking: StakingContextType,
 ) => {
   await stakeAmount(addresses, client, amount, memo);
@@ -223,7 +223,7 @@ export const unstakeValidatorAction = async (
   addresses: StakeAddresses,
   amount: Coin,
   memo: string,
-  client: AbstraxionSigningClient,
+  client: SigningClient,
   staking: StakingContextType,
 ) => {
   await unstakeAmount(addresses, client, amount, memo);

@@ -74,3 +74,9 @@ export const GAS_CONFIG = {
   defaultStakeEstimate: 200000,
   price: "0.001",
 } as const;
+
+// Whether the app is in pro mode (uses Graz instead of Abstraxion)
+export const IS_PRO_MODE = getEnvBooleanOrThrow(
+  "NEXT_PUBLIC_IS_PRO_MODE",
+  process.env.NEXT_PUBLIC_IS_PRO_MODE,
+);

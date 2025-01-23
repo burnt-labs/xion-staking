@@ -1,6 +1,5 @@
-import { useAbstraxionAccount, useModal } from "@burnt-labs/abstraxion";
-import BigNumber from "bignumber.js";
 import { memo } from "react";
+import BigNumber from "bignumber.js";
 
 import { BASE_PATH } from "@/config";
 import { SkeletonWrapper } from "@/features/core/components/SkeletonWrapper";
@@ -11,9 +10,9 @@ import {
   Heading2,
   Heading8,
   HeroText,
-  NavLink,
 } from "@/features/core/components/base";
 import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
+import { useChainAccount } from "@/features/core/hooks/useChainAccount";
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
@@ -26,7 +25,6 @@ import {
 import { getEmptyXionCoin, normaliseCoin } from "../lib/core/coins";
 import {
   formatAPR,
-  formatCoin,
   formatToSmallDisplay,
   formatXionToUSD,
 } from "../lib/formatters";
@@ -47,17 +45,14 @@ const Divisor = () => (
 );
 
 const StakingOverview = () => {
-  const { isConnected } = useAbstraxionAccount();
+  const { isConnected } = useChainAccount();
   const { staking } = useStaking();
-  const { assetList, getBalanceByDenom } = useAccountBalance();
+  const { getBalanceByDenom } = useAccountBalance();
 
-  const isBalanceLoading = !assetList;
   const { isLoading: isStakingLoading } = useStaking();
 
   const xionBalance = getBalanceByDenom("uxion");
   const xionPrice = xionBalance?.price;
-
-  const [, setShowAbstraxion] = useModal();
 
   if (!isConnected) {
     return (
@@ -73,7 +68,7 @@ const StakingOverview = () => {
           <Button
             className="min-w-[150px]"
             onClick={() => {
-              setShowAbstraxion(true);
+              // This will be handled by the useChainAccount hook
             }}
           >
             Log In
@@ -138,44 +133,40 @@ const StakingOverview = () => {
         <Divisor />
       </div>
       <div className={columnStyle}>
-        <Heading8>APR</Heading8>
-        <SkeletonWrapper isLoading={isStakingLoading} width="80px">
-          <Heading2>{formatAPR(apr)}</Heading2>
-        </SkeletonWrapper>
-        <Divisor />
-      </div>
-      <div className={columnStyle}>
-        <Heading8>Delegated Amount (XION)</Heading8>
-        <SkeletonWrapper isLoading={isStakingLoading} width="120px">
-          <Heading2 title={formatCoin(totalDelegation)}>
-            {formatToSmallDisplay(
-              new BigNumber(totalDelegation.amount),
-              undefined,
-              2,
-            )}
-          </Heading2>
-        </SkeletonWrapper>
+        <Heading8>Total Staked (XION)</Heading8>
+        <div className="flex flex-row flex-wrap items-center gap-4">
+          <SkeletonWrapper isLoading={isStakingLoading} width="120px">
+            <Heading2 title={[totalDelegation.amount, "XION"].join(" ")}>
+              {formatToSmallDisplay(new BigNumber(totalDelegation.amount))}
+            </Heading2>
+          </SkeletonWrapper>
+        </div>
         <BodyMedium>
           {formatXionToUSD(totalDelegation, xionPrice || 0)}
         </BodyMedium>
         <Divisor />
       </div>
       <div className={columnStyle}>
-        <Heading8>Available For Delegation (XION)</Heading8>
-        <SkeletonWrapper
-          isLoading={isBalanceLoading || isStakingLoading}
-          width="120px"
-        >
-          <Heading2 title={formatCoin(availableDelegation)}>
-            {formatCoin(availableDelegation, undefined, true)}
-          </Heading2>
-        </SkeletonWrapper>
+        <Heading8>Available For Staking (XION)</Heading8>
+        <div className="flex flex-row flex-wrap items-center gap-4">
+          <SkeletonWrapper isLoading={isStakingLoading} width="120px">
+            <Heading2 title={[availableDelegation.amount, "XION"].join(" ")}>
+              {formatToSmallDisplay(new BigNumber(availableDelegation.amount))}
+            </Heading2>
+          </SkeletonWrapper>
+        </div>
         <BodyMedium>
           {formatXionToUSD(availableDelegation, xionPrice || 0)}
         </BodyMedium>
-        <NavLink href="https://xion.burnt.com/get-xion" isExternal>
-          Get XION
-        </NavLink>
+        <Divisor />
+      </div>
+      <div className={columnStyle}>
+        <Heading8>APR</Heading8>
+        <div className="flex flex-row flex-wrap items-center gap-4">
+          <SkeletonWrapper isLoading={isStakingLoading} width="120px">
+            <Heading2>{formatAPR(apr)}</Heading2>
+          </SkeletonWrapper>
+        </div>
       </div>
     </div>
   );

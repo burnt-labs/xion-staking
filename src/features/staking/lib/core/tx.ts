@@ -18,7 +18,7 @@ import {
 import { MIN_CLAIMABLE_XION } from "@/constants";
 
 import type { Unbonding } from "../../context/state";
-import { type AbstraxionSigningClient } from "./client";
+import { type SigningClient } from "./client";
 import { getUXionCoinFromXion, normaliseCoin } from "./coins";
 
 const getTxCoin = (coin: Coin) => ({
@@ -51,7 +51,7 @@ export const getTxVerifier =
     }
 
     return result;
-  };
+};
 
 export const handleTxError = (err: unknown) => {
   // eslint-disable-next-line no-console
@@ -67,7 +67,7 @@ export type StakeAddresses = {
 
 export const stakeAmount = async (
   addresses: StakeAddresses,
-  client: NonNullable<AbstraxionSigningClient>,
+  client: SigningClient,
   initialAmount: Coin,
   memo: string,
 ) => {
@@ -92,7 +92,7 @@ export const stakeAmount = async (
 
 export const unstakeAmount = async (
   addresses: StakeAddresses,
-  client: NonNullable<AbstraxionSigningClient>,
+  client: SigningClient,
   initialAmount: Coin,
   memo: string,
 ) => {
@@ -117,7 +117,7 @@ export const unstakeAmount = async (
 
 export type RedelegateParams = {
   amount: Coin;
-  client: NonNullable<AbstraxionSigningClient>;
+  client: SigningClient;
   delegatorAddress: string;
   memo: string;
   validatorDstAddress: string;
@@ -154,7 +154,7 @@ export const redelegate = async ({
 
 export const claimRewards = async (
   addresses: StakeAddresses,
-  client: NonNullable<AbstraxionSigningClient>,
+  client: SigningClient,
 ) => {
   const msg = MsgWithdrawDelegatorReward.fromPartial({
     delegatorAddress: addresses.delegator,
@@ -172,6 +172,7 @@ export const claimRewards = async (
     .signAndBroadcast(addresses.delegator, messageWrapper, 2.3)
     .then(getTxVerifier("withdraw_rewards"))
     .catch(handleTxError);
+
 };
 
 export const getCanClaimRewards = (rewards?: Coin) => {
@@ -187,12 +188,14 @@ export const getCanClaimRewards = (rewards?: Coin) => {
 export const cancelUnbonding = async (
   addresses: StakeAddresses,
   unbonding: Unbonding,
-  abstraxionClient: NonNullable<AbstraxionSigningClient>,
+  client: SigningClient,
 ) => {
-  abstraxionClient.registry.register(
-    MsgCancelUnbondingDelegation.typeUrl,
-    MsgCancelUnbondingDelegation,
-  );
+  if ('registry' in client) {
+    client.registry.register(
+      MsgCancelUnbondingDelegation.typeUrl,
+      MsgCancelUnbondingDelegation,
+    );
+  }
 
   const msg = MsgCancelUnbondingDelegation.fromPartial({
     amount: unbonding.balance,
@@ -208,20 +211,20 @@ export const cancelUnbonding = async (
     },
   ];
 
-  return await abstraxionClient
+  return await client
     .signAndBroadcast(addresses.delegator, messageWrapper, "auto", "")
     .then(getTxVerifier("cancel_unbonding_delegation"))
     .catch(handleTxError);
 };
 
-type BatchClaimAddresses = {
+export type BatchClaimAddresses = {
   delegator: string;
   validators: string[];
 };
 
 export const batchClaimRewards = async (
   addresses: BatchClaimAddresses,
-  client: NonNullable<AbstraxionSigningClient>,
+  client: SigningClient,
 ) => {
   if (!addresses.validators.length) return;
 

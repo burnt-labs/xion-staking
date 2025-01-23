@@ -1,15 +1,9 @@
-import {
-  useAbstraxionAccount,
-  useAbstraxionSigningClient,
-} from "@burnt-labs/abstraxion";
 import { useContext, useEffect, useRef, useState } from "react";
-
-import { fetchStakingDataAction, fetchUserDataAction } from "./actions";
-import { logout } from "./reducer";
 import { StakingContext } from "./state";
 import type { StakingContextType } from "./state";
-
-let cachedClient: ReturnType<typeof useAbstraxionSigningClient>["client"];
+import { fetchStakingDataAction, fetchUserDataAction } from "./actions";
+import { logout } from "./reducer";
+import { useChainAccount } from "@/features/core/hooks/useChainAccount";
 
 export const useStaking = () => {
   const stakingRef = useRef<StakingContextType>({} as StakingContextType);
@@ -20,8 +14,7 @@ export const useStaking = () => {
   stakingRef.current.state = staking.state;
   stakingRef.current.dispatch = staking.dispatch;
 
-  const { data: account, isConnected } = useAbstraxionAccount();
-  const address = account?.bech32Address;
+  const { account, address, client, isConnected } = useChainAccount();
 
   useEffect(() => {
     if (!isConnected) {
@@ -41,7 +34,7 @@ export const useStaking = () => {
   return {
     account,
     address,
-    client: isConnected ? cachedClient : undefined,
+    client,
     isConnected,
     isLoading,
     staking: stakingRef.current,
@@ -49,11 +42,7 @@ export const useStaking = () => {
 };
 
 export const useStakingSync = () => {
-  const { client } = useAbstraxionSigningClient();
-
   const { address, isConnected, staking } = useStaking();
-
-  cachedClient = isConnected ? client : undefined;
 
   useEffect(() => {
     fetchStakingDataAction(staking);

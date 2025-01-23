@@ -1,4 +1,5 @@
 import type { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
+import type { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import type {
   DistributionExtension,
   IbcExtension,
@@ -17,9 +18,9 @@ import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 
 import { RPC_URL } from "@/constants";
 
-export type AbstraxionSigningClient = NonNullable<
+export type SigningClient = NonNullable<
   ReturnType<typeof useAbstraxionSigningClient>["client"]
->;
+> | SigningCosmWasmClient;
 
 let stakingQueryClientPromise:
   | Promise<

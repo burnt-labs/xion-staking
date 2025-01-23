@@ -3,7 +3,7 @@
 import { Abstraxion, useModal } from "@burnt-labs/abstraxion";
 import Link from "next/link";
 
-import { BASE_PATH, IS_TESTNET, mainNavItems } from "@/config";
+import { BASE_PATH, IS_PRO_MODE, IS_TESTNET, mainNavItems } from "@/config";
 
 import NavAccount from "./nav-account";
 import NavLink from "./nav-link";
@@ -48,11 +48,13 @@ export default function RootLayout({
         </div>
       </nav>
       {children}
-      <Abstraxion
-        onClose={() => {
-          setShowAbstraxion(false);
-        }}
-      />
+      {!IS_PRO_MODE && (
+        <Abstraxion
+          onClose={() => {
+            setShowAbstraxion(false);
+          }}
+        />
+      )}
     </main>
   );
 }

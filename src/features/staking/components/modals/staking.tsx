@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import type { FormEventHandler } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -102,6 +101,15 @@ const StakingModal = () => {
       return true;
     }
 
+    if (!account) {
+      setFormError({
+        ...formError,
+        amount: "Please connect your wallet",
+      });
+
+      return true;
+    }
+
     try {
       const gasEstimate = await estimateGas({
         amount: getXionCoin(amountXIONParsed),
@@ -132,15 +140,50 @@ const StakingModal = () => {
     return false;
   };
 
-  const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e?.preventDefault();
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    if (!client) return;
+    if (!account || !client) {
+      return;
+    }
 
     const hasValidationError = await validateAmount();
 
-    if (!hasValidationError) {
-      setStep("review");
+    if (hasValidationError) {
+      return;
+    }
+
+    setStep("review");
+  };
+
+  const onConfirm = async () => {
+    if (!account || !client) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const addresses: StakeAddresses = {
+        delegator: account.bech32Address,
+        validator: validator.operatorAddress,
+      };
+
+      await stakeValidatorAction(
+        addresses,
+        getXionCoin(amountXIONParsed),
+        memo,
+        client,
+        staking,
+      );
+
+      setStep("completed");
+    } catch (error) {
+      toast("Staking error", {
+        type: "error",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -211,37 +254,7 @@ const StakingModal = () => {
                 {getStakingSummary()}
                 <Button
                   isLoading={isLoading}
-                  onClick={() => {
-                    if (!client) return;
-
-                    setIsLoading(true);
-
-                    const addresses: StakeAddresses = {
-                      delegator: account.bech32Address,
-                      validator: validator.operatorAddress,
-                    };
-
-                    stakeValidatorAction(
-                      addresses,
-                      getXionCoin(amountXIONParsed),
-                      memo,
-                      client,
-                      staking,
-                    )
-                      .then((fetchDataFn) => {
-                        setStep("completed");
-
-                        return fetchDataFn();
-                      })
-                      .catch(() => {
-                        toast("Staking error", {
-                          type: "error",
-                        });
-                      })
-                      .finally(() => {
-                        setIsLoading(false);
-                      });
-                  }}
+                  onClick={onConfirm}
                 >
                   CONFIRM
                 </Button>
