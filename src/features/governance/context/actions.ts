@@ -1,12 +1,16 @@
 import BigNumber from "bignumber.js";
-import { MsgSubmitProposal, MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
+import { MsgSubmitProposal } from "cosmjs-types/cosmos/gov/v1/tx";
+import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 import { MsgStoreCode } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 
 import { fetchFromAPI } from "@/features/core/utils";
 import { getTxVerifier, handleTxError } from "@/features/staking/lib/core/tx";
 
 import { GOVERNANCE_ENDPOINTS } from "../config/api";
-import { GOVERNANCE_PAGE_LIMIT } from "../config/constants";
+import {
+  GOVERNANCE_MODULE_ADDRESS,
+  GOVERNANCE_PAGE_LIMIT,
+} from "../config/constants";
 import type {
   ExecuteVoteParams,
   GovDepositParamsResponse,
@@ -212,32 +216,26 @@ export const submitStoreCodeProposal = async ({
   values,
 }: SubmitProposalParams) => {
   const storeCodeMsg = MsgStoreCode.fromPartial({
-    instantiatePermission: values.instantiatePermission
-      ? {
-          address: values.instantiatePermission.address,
-          permission:
-            values.instantiatePermission.permission === "Everybody"
-              ? 1
-              : values.instantiatePermission.permission === "Nobody"
-                ? 2
-                : 3,
-        }
-      : undefined,
-    sender: proposer,
+    sender: GOVERNANCE_MODULE_ADDRESS,
     wasmByteCode: values.wasmByteCode,
   });
 
   const msg = MsgSubmitProposal.fromPartial({
-    content: {
-      typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
-      value: MsgStoreCode.encode(storeCodeMsg).finish(),
-    },
     initialDeposit: values.initialDeposit ? [values.initialDeposit] : [],
+    messages: [
+      {
+        typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
+        value: MsgStoreCode.encode(storeCodeMsg).finish(),
+      },
+    ],
+    metadata: "",
     proposer,
+    summary: values.description,
+    title: values.title,
   });
 
   const messageWrapper = {
-    typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+    typeUrl: "/cosmos.gov.v1.MsgSubmitProposal",
     value: msg,
   };
 

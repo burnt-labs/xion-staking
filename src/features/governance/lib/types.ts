@@ -1,4 +1,5 @@
 import type { Coin } from "@cosmjs/proto-signing";
+import { type AccessConfig } from "cosmjs-types/cosmwasm/wasm/v1/types";
 
 import type { AbstraxionSigningClient } from "@/features/staking/lib/core/client";
 
@@ -311,17 +312,9 @@ interface BaseProposalValues {
 }
 
 export interface StoreCodeProposalValues extends BaseProposalValues {
-  instantiatePermission?: {
-    address: string;
-    permission: "Everybody" | "Nobody" | "OnlyAddress";
-  };
+  instantiatePermission?: AccessConfig;
   type: ProposalType.STORE_CODE;
   wasmByteCode: Uint8Array;
-}
-
-export interface AccessConfig {
-  address?: string;
-  permission: "Everybody" | "Nobody" | "OnlyAddress";
 }
 
 export type ProposalFormValues = StoreCodeProposalValues; // union with other types as they're added

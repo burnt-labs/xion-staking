@@ -1,16 +1,10 @@
-import {
-  Button,
-  Heading2,
-  Heading8,
-  HeroText,
-} from "@/features/core/components/base";
+import { Button, Heading8, HeroText } from "@/features/core/components/base";
 import CommonModal, {
   ModalDescription,
 } from "@/features/core/components/common-modal";
 import { loader2 } from "@/features/core/lib/icons";
 
 interface ProposalModalProps {
-  description?: string;
   error?: null | string;
   isOpen: boolean;
   onClose: () => void;
@@ -20,7 +14,6 @@ interface ProposalModalProps {
 }
 
 export const ProposalModal = ({
-  description,
   error,
   isOpen,
   onClose,
@@ -38,15 +31,13 @@ export const ProposalModal = ({
                 <HeroText>REVIEW PROPOSAL</HeroText>
               </div>
               <ModalDescription>
-                Please review your proposal details before submitting.
+                Please confirm your proposal details before submitting.
               </ModalDescription>
               {error && <div className="mt-4 text-sm text-danger">{error}</div>}
             </div>
             <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
               <Heading8>Title</Heading8>
-              <Heading2>{title}</Heading2>
-              <Heading8>Description</Heading8>
-              <p className="text-center">{description}</p>
+              <p className="text-center">{title}</p>
             </div>
             <Button onClick={onConfirm}>CONFIRM</Button>
           </div>

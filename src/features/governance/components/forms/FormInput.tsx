@@ -28,7 +28,7 @@ export const FormInput = ({
     </label>
     <div className="flex flex-grow flex-col">
       <input
-        className="font-['Akkurat LL'] mt-2 w-full bg-transparent text-sm font-normal leading-tight text-[#f2f2f2]"
+        className="font-['Akkurat LL'] mt-2 w-full border-0 border-b border-[#949494] bg-transparent pb-2 text-sm font-normal leading-tight text-[#f2f2f2] focus:border-[#f2f2f2] focus:outline-none"
         id={id}
         readOnly={readOnly}
         type={type}
@@ -36,7 +36,6 @@ export const FormInput = ({
           required: required ? `${label} is required` : false,
         })}
       />
-      <div className="mt-2 h-[1px] w-full border-t border-[#949494]" />
     </div>
     <div className="flex flex-col">
       <p className="mt-2 text-sm text-red-500">{error}</p>

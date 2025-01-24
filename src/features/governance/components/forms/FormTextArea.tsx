@@ -23,15 +23,13 @@ export const FormTextArea = ({
       {label}
     </label>
     <div className="mt-[26px] flex flex-grow">
-      <div className="flex h-[120px] w-full border border-[#6b6969]">
-        <textarea
-          className="font-['Akkurat LL'] m-3 flex-grow resize-none bg-transparent text-sm font-normal leading-tight text-white"
-          id={id}
-          {...register(id, {
-            required: required ? `${label} is required` : false,
-          })}
-        />
-      </div>
+      <textarea
+        className="font-['Akkurat LL'] h-[120px] w-full resize-none border border-[#6b6969] bg-transparent p-3 text-sm font-normal leading-tight text-white"
+        id={id}
+        {...register(id, {
+          required: required ? `${label} is required` : false,
+        })}
+      />
     </div>
     {error && (
       <div className="flex flex-col">

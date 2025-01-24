@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
 
-import { LoadingBanner, Title } from "@/features/core/components/base";
+import { Button, LoadingBanner, Title } from "@/features/core/components/base";
 
 import { useProposals } from "../context/hooks";
 import { FilterControls } from "./FilterControls";
@@ -21,6 +21,7 @@ export default function GovernancePage() {
   const { data: proposals, isLoading } = useProposals();
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFilter, setActiveFilter] = useState<FilterOption>("all");
+
   const pageSize = 9;
 
   const filteredProposals = useMemo(() => {
@@ -49,10 +50,15 @@ export default function GovernancePage() {
     <div className="page-container flex flex-col gap-6 px-[12px] pb-[24px] md:px-[24px]">
       <div className="mt-[40px] flex w-full flex-col justify-between gap-4 text-left lg:flex-row lg:gap-0">
         <Title>Proposals</Title>
-        <FilterControls
-          activeFilter={activeFilter}
-          onFilterChange={handleFilterChange}
-        />
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
+          <FilterControls
+            activeFilter={activeFilter}
+            onFilterChange={handleFilterChange}
+          />
+          <Link href="/governance/create_proposal">
+            <Button className="!w-auto min-w-[140px]">New Proposal</Button>
+          </Link>
+        </div>
       </div>
       {isLoading ? (
         <LoadingBanner />

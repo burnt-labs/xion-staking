@@ -1,6 +1,8 @@
+import MDEditor from "@uiw/react-md-editor";
 import BigNumber from "bignumber.js";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/features/core/components/base";
 import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
@@ -11,8 +13,6 @@ import type { StoreCodeProposalValues } from "../lib/types";
 import { ProposalType } from "../lib/types";
 import { FileUpload } from "./forms/FileUpload";
 import { FormInput } from "./forms/FormInput";
-import { FormSelect } from "./forms/FormSelect";
-import { FormTextArea } from "./forms/FormTextArea";
 import { ProposalModal } from "./modals/ProposalModal";
 
 enum Step {
@@ -26,20 +26,11 @@ interface FormValues extends Omit<StoreCodeProposalValues, "wasmByteCode"> {
   wasmByteCode: File;
 }
 
-const PERMISSION_OPTIONS = [
-  { label: "Everybody", value: "Everybody" },
-  { label: "Nobody", value: "Nobody" },
-  { label: "Only Address", value: "OnlyAddress" },
-];
-
 export const SubmitProposalForm = () => {
   const [step, setStep] = useState<Step>(Step.Form);
   const [error, setError] = useState<null | string>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<FormValues | null>(null);
-
-  const [selectedPermission, setSelectedPermission] =
-    useState<string>("Everybody");
 
   const { data: depositParams } = useDepositParams();
   const { getBalanceByDenom } = useAccountBalance();
@@ -51,7 +42,10 @@ export const SubmitProposalForm = () => {
     submitProposal,
   } = useSubmitProposal();
 
+  const router = useRouter();
+
   const {
+    control,
     formState: { errors },
     handleSubmit,
     register,
@@ -59,6 +53,8 @@ export const SubmitProposalForm = () => {
     unregister,
   } = useForm<FormValues>({
     defaultValues: {
+      description:
+        "## Developer Information \n### Link to Developer/Company \n### Developer Description\n\n## Contract Details\n### Contract Name\n### Contract Source Link\n### Contract Description and Intended Use\n\n## Audit and Execution Information\n### Audit Report Link\n### Audit Process Description\n### Execution Messages Description\n\n## Deployment Information\n### Testnet Explorer Link\n",
       type: ProposalType.STORE_CODE,
     },
     mode: "onSubmit",
@@ -102,22 +98,13 @@ export const SubmitProposalForm = () => {
     });
   }, [register, uploadedFile]);
 
-  const handlePermissionChange = (value: string) => {
-    setSelectedPermission(value);
-
-    setValue(
-      "instantiatePermission.permission",
-      value as "Everybody" | "Nobody" | "OnlyAddress",
-    );
-  };
-
   const handleFormSubmit = async (data: FormValues) => {
     try {
       if (!balance?.decimals)
         throw new Error("Unable to determine token decimals");
 
       const microAmount = new BigNumber(data.initialDeposit?.amount || "0")
-        .multipliedBy(new BigNumber(10).pow(balance.decimals))
+        .multipliedBy(1_000_000)
         .toString();
 
       const requiredAmount = new BigNumber(microAmount);
@@ -133,7 +120,15 @@ export const SubmitProposalForm = () => {
         );
       }
 
-      setFormData(data);
+      setFormData({
+        ...data,
+        initialDeposit: {
+          ...data.initialDeposit,
+          amount: microAmount,
+          denom: "uxion",
+        },
+      });
+
       setStep(Step.Review);
     } catch (err) {
       setError(
@@ -158,6 +153,7 @@ export const SubmitProposalForm = () => {
       });
 
       setStep(Step.Completed);
+      router.push("/governance");
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setStep(Step.Review);
@@ -168,6 +164,7 @@ export const SubmitProposalForm = () => {
     setStep(Step.Form);
     setError(null);
     setFormData(null);
+    router.push("/governance");
   };
 
   return (
@@ -184,13 +181,36 @@ export const SubmitProposalForm = () => {
           required
         />
 
-        <FormTextArea
-          error={errors.description?.message}
-          id="description"
-          label="Contract Description and intended uses"
-          register={register}
-          required
-        />
+        <div className="flex flex-col space-y-2">
+          <label
+            className="font-['Akkurat LL'] text-sm font-normal leading-5 text-white"
+            htmlFor="description-editor"
+          >
+            Description
+          </label>
+          <Controller
+            control={control}
+            defaultValue=""
+            name="description"
+            render={({ field: { onChange, value } }) => (
+              <div data-color-mode="dark">
+                <MDEditor
+                  highlightEnable={false}
+                  id="description-editor"
+                  onChange={onChange}
+                  preview="edit"
+                  value={value}
+                />
+              </div>
+            )}
+            rules={{ required: "Description is required" }}
+          />
+          {errors.description && (
+            <span className="text-sm text-red-500">
+              {errors.description.message}
+            </span>
+          )}
+        </div>
 
         <FileUpload
           error={errors.wasmByteCode?.message}
@@ -201,31 +221,6 @@ export const SubmitProposalForm = () => {
           unregister={unregister}
           uploadedFile={uploadedFile}
         />
-
-        <div className="flex w-full flex-col">
-          <div className="font-['Akkurat LL'] text-2xl font-bold leading-7 text-white">
-            Contract Permissions
-          </div>
-        </div>
-
-        <FormSelect
-          id="instantiatePermission.permission"
-          label="Instantiate Permission"
-          onChange={handlePermissionChange}
-          options={PERMISSION_OPTIONS}
-          register={register}
-          value={selectedPermission}
-        />
-
-        {selectedPermission === "OnlyAddress" && (
-          <FormInput
-            error={errors.instantiatePermission?.address?.message}
-            id="instantiatePermission.address"
-            label="Authorized Address"
-            register={register}
-            required={selectedPermission === "OnlyAddress"}
-          />
-        )}
 
         <div className="flex w-full flex-col">
           <div className="font-['Akkurat LL'] text-2xl font-bold leading-7 text-white">
@@ -258,7 +253,6 @@ export const SubmitProposalForm = () => {
       </form>
 
       <ProposalModal
-        description={formData?.description}
         error={error}
         isOpen={step !== Step.Form}
         onClose={handleClose}
