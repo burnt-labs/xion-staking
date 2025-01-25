@@ -75,7 +75,7 @@ export const GAS_CONFIG = {
   price: "0.001",
 } as const;
 
-// Whether the app is in pro mode (uses Graz instead of Abstraxion)
+// Whether the app is in pro mode (uses CosmosKit instead of Abstraxion)
 export const IS_PRO_MODE = getEnvBooleanOrThrow(
   "NEXT_PUBLIC_IS_PRO_MODE",
   process.env.NEXT_PUBLIC_IS_PRO_MODE,

@@ -1,15 +1,15 @@
 "use client";
 
 import { useModal } from "@burnt-labs/abstraxion";
-import { useConnect } from "graz";
+import { Button, ClipboardCopy, FloatingDropdown } from "./base";
 import { IS_PRO_MODE, mainNavItems, IS_TESTNET } from "@/config";
-import { useCore } from "@/features/core/context/hooks";
-import { setPopupOpenId } from "@/features/core/context/reducer";
 import AddressShort from "@/features/staking/components/address-short";
 import { wallet } from "../lib/icons";
-import { Button, ClipboardCopy, FloatingDropdown } from "./base";
 import NavLink from "./nav-link";
 import { useChainAccount } from "@/features/core/hooks/useChainAccount";
+import { useCore } from "@/features/core/context/hooks";
+import { setPopupOpenId } from "@/features/core/context/reducer";
+import { useChain } from "@cosmos-kit/react";
 
 const Account = () => (
   <span className="flex flex-row items-center gap-[8px] rounded-[8px] bg-bg-600 px-[16px] py-[18px]">
@@ -19,9 +19,12 @@ const Account = () => (
 
 const NavAccount = () => {
   const [, setShowAbstraxion] = useModal();
-  const { connect: grazConnect } = useConnect();
-  const { account, isConnected, logout } = useChainAccount();
   const { core } = useCore();
+  const { account, isConnected, logout } = useChainAccount();
+
+  const { connect } = useChain(IS_PRO_MODE ? (IS_TESTNET
+    ? "xion-testnet-1"
+    : "xion-mainnet-1") : "");
 
   const closeDropdown = () => {
     core.dispatch(setPopupOpenId(null));
@@ -29,9 +32,7 @@ const NavAccount = () => {
 
   const handleLogin = () => {
     if (IS_PRO_MODE) {
-      grazConnect({
-        chainId: IS_TESTNET ? "xion-testnet-1" : "xion-mainnet-1",
-      });
+      connect();
     } else {
       setShowAbstraxion(true);
     }

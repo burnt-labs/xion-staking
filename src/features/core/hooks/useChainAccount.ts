@@ -1,55 +1,62 @@
 import { useAbstraxionAccount, useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
-import { useAccount, useCosmWasmSigningClient, useDisconnect } from "graz";
-import { GasPrice } from "graz/node_modules/@cosmjs/stargate";
+// import { GasPrice } from "graz/node_modules/@cosmjs/stargate";
+
+import { useChain } from "@cosmos-kit/react";
+import { useEffect, useState } from "react";
 
 import { IS_PRO_MODE } from "@/config";
 
 /**
  * A unifying interface for chain account data.
- * Returns data from either Graz (in pro mode) or Abstraxion (in regular mode).
  */
 export function useChainAccount() {
-  // Abstraxion data:
+  // Abstraxion
   const { data: abstraxionData, isConnected: abstraxionIsConnected } =
     useAbstraxionAccount();
 
   const { client: abstraxionClient, logout: abstraxionLogout } =
     useAbstraxionSigningClient();
 
-  // Graz data:
-  const { data: grazData, isConnected: grazIsConnected } = useAccount();
+  // CosmosKit
+  const { address: cosmosKitAddress, status, getSigningCosmWasmClient, disconnect } =
+    useChain(IS_PRO_MODE ? (process.env.NEXT_PUBLIC_IS_TESTNET
+      ? "xion-testnet-1"
+      : "xion-testnet-1") : "");
+  const cosmosKitIsConnected = status === "Connected";
 
-  const { data: grazClient } = useCosmWasmSigningClient({
-    opts: {
-      gasPrice: GasPrice.fromString(process.env.NEXT_PUBLIC_GAS_PRICE || "0.025"),
-      },
-    },
-  );
+  const [cosmosKitClient, setCosmosKitClient] = useState<any>(undefined);
 
-  const { disconnect: grazLogout } = useDisconnect();
-
-  const isProMode = IS_PRO_MODE;
-
-  const isConnected = isProMode ? grazIsConnected : abstraxionIsConnected;
-
-  const account = isProMode ? grazData : abstraxionData;
-
-  const address = isProMode 
-    ? grazData?.bech32Address 
-    : abstraxionData?.bech32Address;
-
-  const client = isProMode ? grazClient : abstraxionClient;
+  useEffect(() => {
+    if (!IS_PRO_MODE) return;
+    async function fetchWasmClient() {
+      const cosmWasmClient = await getSigningCosmWasmClient();
+      setCosmosKitClient(cosmWasmClient);
+    }
+    if (cosmosKitIsConnected) {
+      fetchWasmClient();
+    }
+  }, [IS_PRO_MODE, cosmosKitIsConnected, getSigningCosmWasmClient]);
 
   const logout = () => {
-    if (isProMode) {
-      grazLogout();
+    if (IS_PRO_MODE) {
+      disconnect();
     } else {
       abstraxionLogout?.();
     }
   };
 
+  const isConnected = IS_PRO_MODE ? cosmosKitIsConnected : abstraxionIsConnected;
+
+  const account = IS_PRO_MODE
+    ? { bech32Address: cosmosKitAddress }
+    : abstraxionData;
+  const address = IS_PRO_MODE
+    ? cosmosKitAddress
+    : abstraxionData?.bech32Address;
+  const client = IS_PRO_MODE ? cosmosKitClient : abstraxionClient;
+
   return {
-    account,     // same structure as Abstraxion's "data"
+    account,     
     address,     // bech32 address
     client,      // signing client
     isConnected,

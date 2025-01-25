@@ -163,19 +163,13 @@ async function estimateGasViaRest(
     const response = await fetch(`${REST_API_URL}${REST_ENDPOINTS.simulate}`, {
       body: JSON.stringify(body),
       headers: {
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
       },
       method: "POST",
-      mode: "cors",
     });
 
     if (!response.ok) {
-      console.warn("Gas estimation failed:", response.status, response.statusText);
-
-      return estimateGasStatic();
+      throw new Error("Failed to simulate transaction");
     }
 
     const data = await response.json();
