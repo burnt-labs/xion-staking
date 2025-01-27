@@ -1,6 +1,6 @@
 import type { Coin } from "@cosmjs/proto-signing";
 
-import type { AbstraxionSigningClient } from "@/features/staking/lib/core/client";
+import type { SigningClient } from "@/features/staking/lib/core/client";
 
 // Enums
 export enum ProposalStatus {
@@ -220,7 +220,7 @@ export interface StakingPoolResponse {
 }
 
 export type ExecuteVoteParams = {
-  client: NonNullable<AbstraxionSigningClient>;
+  client: NonNullable<SigningClient>;
   memo?: string;
   option: number;
   proposalId: string;
