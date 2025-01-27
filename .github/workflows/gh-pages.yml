@@ -31,6 +31,7 @@ jobs:
           npm run build
         env:
           NEXT_PUBLIC_IS_DEPLOYMENT: "true"
+          NEXT_PUBLIC_IS_PRO_MODE: "false"
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
