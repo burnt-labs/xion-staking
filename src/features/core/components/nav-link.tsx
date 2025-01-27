@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import type { NavItem } from "@/config";
+
 import { useProMode } from "../context/pro-mode";
 
 type NavLinkProps = NavItem & {
   className?: string;
   onClick?: () => void;
-}
+};
 
 const NavLink = ({ className, href, label, onClick }: NavLinkProps) => {
   const pathname = usePathname();

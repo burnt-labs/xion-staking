@@ -19,8 +19,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { FAUCET_CONTRACT_ADDRESS } from "@/config";
 import { REST_URL, RPC_URL } from "@/constants";
 import BaseWrapper from "@/features/core/components/base-wrapper";
-import { CoreProvider } from "@/features/core/context/provider";
 import { ProModeProvider } from "@/features/core/context/pro-mode";
+import { CoreProvider } from "@/features/core/context/provider";
 import { StakingProvider } from "@/features/staking/context/provider";
 import { assets, chains } from "@/features/staking/lib/chains/xion";
 

@@ -16,6 +16,7 @@ import {
   HeaderTitleBase,
   ValidatorLogo,
 } from "@/features/core/components/table";
+import { useProMode } from "@/features/core/context/pro-mode";
 import { sortUtil } from "@/features/core/utils";
 
 import { useStaking } from "../context/hooks";
@@ -35,7 +36,6 @@ import {
 import AddressShort from "./address-short";
 import { DivisorHorizontal } from "./divisor";
 import TokenColors from "./token-colors";
-import { useProMode } from "@/features/core/context/pro-mode";
 
 const minGridWidth = 1000;
 

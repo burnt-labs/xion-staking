@@ -25,7 +25,10 @@ export default function BaseWrapper({
       >
         <div className="page-container m-auto flex h-[80px] flex-row items-center justify-between px-[16px]">
           <div className="flex w-[200px] flex-row items-center">
-            <Link className="flex cursor-pointer items-center" href={getLink("staking")}>
+            <Link
+              className="flex cursor-pointer items-center"
+              href={getLink("staking")}
+            >
               <img alt="Xion Logo" src={`${BASE_PATH}/xion-logo.svg`} />
               <span
                 className={[

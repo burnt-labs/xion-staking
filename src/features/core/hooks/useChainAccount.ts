@@ -5,9 +5,10 @@ import {
 } from "@burnt-labs/abstraxion";
 import { useChain } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
-import { useProMode } from "../context/pro-mode";
 
 import { IS_TESTNET } from "@/config";
+
+import { useProMode } from "../context/pro-mode";
 
 /**
  * A unifying interface for chain account data.
@@ -57,7 +58,7 @@ export function useChainAccount() {
     }
 
     if (cosmosKitIsConnected) {
-    fetchWasmClient();
+      fetchWasmClient();
     }
   }, [cosmosKitIsConnected, isProMode, getSigningCosmWasmClient]);
 
@@ -77,17 +78,13 @@ export function useChainAccount() {
     }
   };
 
-  const isConnected = isProMode
-    ? cosmosKitIsConnected
-    : abstraxionIsConnected;
+  const isConnected = isProMode ? cosmosKitIsConnected : abstraxionIsConnected;
 
   const account = isProMode
     ? { bech32Address: cosmosKitAddress }
     : abstraxionData;
 
-  const address = isProMode
-    ? cosmosKitAddress
-    : abstraxionData?.bech32Address;
+  const address = isProMode ? cosmosKitAddress : abstraxionData?.bech32Address;
 
   const client = isProMode ? cosmosKitClient : abstraxionClient;
 
