@@ -11,11 +11,11 @@ import { AbstraxionProvider } from "@burnt-labs/abstraxion";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Analytics } from "@vercel/analytics/react";
 import { ToastContainer } from "react-toastify";
-import { wallets as keplrWallets } from "@cosmos-kit/keplr";
+import { wallets as keplrWallets } from "@cosmos-kit/keplr-extension";
 import { chains, assets } from "@/features/staking/lib/chains/xion";
-import { SignerOptions } from "@cosmos-kit/core";
+import type { SignerOptions } from "@cosmos-kit/core";
+import { GasPrice } from "@cosmjs/stargate";
 import type { Chain } from "@chain-registry/types";
-import { Decimal } from "@cosmjs/math";
 
 import { FAUCET_CONTRACT_ADDRESS } from "@/config";
 import { REST_URL, RPC_URL } from "@/constants";
@@ -42,47 +42,32 @@ const queryClient = new QueryClient({
 });
 
 const signerOptions: SignerOptions = {
-  signingStargate: (chain: string | Chain) => {
-    console.log('signingStargate called with chain:', chain);
-    console.log('NEXT_PUBLIC_GAS_PRICE:', process.env.NEXT_PUBLIC_GAS_PRICE);
+  signingCosmwasm: (chain: Chain | string) => {
+    if (typeof chain === 'string') return undefined;
     
-    if (typeof chain === 'string' || !chain.chain_name.includes('xion')) {
-      console.log('Skipping non-xion chain');
-      return undefined;
+    switch (chain.chain_name) {
+      case "xion-testnet-1":
+      case "xion-mainnet-1":
+        return {
+          gasPrice: GasPrice.fromString("0.001uxion")
+        };
+      default:
+        return undefined;
     }
-
-    const gasAmount = process.env.NEXT_PUBLIC_GAS_PRICE?.split('u')[0] || "0.001";
-    console.log('Using gas amount:', gasAmount);
-
-    const gasPrice = {
-      amount: Decimal.fromUserInput(gasAmount, 6),
-      denom: "uxion"
-    };
-    console.log('Configured gas price:', gasPrice);
-
-    return { gasPrice };
   },
-  signingCosmwasm: (chain: string | Chain) => {
-    console.log('signingCosmwasm called with chain:', chain);
-    console.log('NEXT_PUBLIC_GAS_PRICE:', process.env.NEXT_PUBLIC_GAS_PRICE);
+  signingStargate: (chain: Chain | string) => {
+    if (typeof chain === 'string') return undefined;
     
-    if (typeof chain === 'string' || !chain.chain_name.includes('xion')) {
-      console.log('Skipping non-xion chain');
-      return undefined;
+    switch (chain.chain_name) {
+      case "xion-testnet-1":
+      case "xion-mainnet-1":
+        return {
+          gasPrice: GasPrice.fromString("0.001uxion")
+        };
+      default:
+        return undefined;
     }
-
-    const gasAmount = process.env.NEXT_PUBLIC_GAS_PRICE?.split('u')[0] || "0.001";
-    console.log('Using gas amount:', gasAmount);
-
-    const gasPrice = {
-      amount: Decimal.fromUserInput(gasAmount, 6),
-      denom: "uxion"
-    };
-    console.log('Configured gas price:', gasPrice);
-
-    return { gasPrice };
-  },
-  preferredSignType: () => 'amino'
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -91,22 +76,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <QueryClientProvider client={queryClient}>
           <ChainProvider 
-            chains={chains} 
             assetLists={assets}
-            wallets={[...keplrWallets]}
-            signerOptions={signerOptions}
-            walletConnectOptions={{
-              signClient: {
-                projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
-                relayUrl: "wss://relay.walletconnect.org",
-                metadata: {
-                  name: "Xion Staking",
-                  description: "Xion Staking Interface",
-                  url: "https://staking.xion.burnt.com",
-                  icons: ["https://staking.xion.burnt.com/favicon.ico"]
+            chains={chains} 
+            endpointOptions={{
+              endpoints: {
+                "xion-mainnet-1": {
+                  rest: [REST_URL],
+                  rpc: [RPC_URL]
+                },
+                "xion-testnet-1": {
+                  rest: [REST_URL],
+                  rpc: [RPC_URL]
                 }
               }
             }}
+            signerOptions={signerOptions}
+            wallets={[...keplrWallets]}
           >
             <AbstraxionProvider config={abstraxionConfig}>
               <CoreProvider>

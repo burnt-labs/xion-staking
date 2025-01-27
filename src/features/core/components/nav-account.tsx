@@ -1,15 +1,13 @@
 "use client";
 
-import { useModal } from "@burnt-labs/abstraxion";
 import { Button, ClipboardCopy, FloatingDropdown } from "./base";
-import { IS_PRO_MODE, mainNavItems, IS_TESTNET } from "@/config";
+import { mainNavItems } from "@/config";
 import AddressShort from "@/features/staking/components/address-short";
 import { wallet } from "../lib/icons";
 import NavLink from "./nav-link";
 import { useChainAccount } from "@/features/core/hooks/useChainAccount";
 import { useCore } from "@/features/core/context/hooks";
 import { setPopupOpenId } from "@/features/core/context/reducer";
-import { useChain } from "@cosmos-kit/react";
 
 const Account = () => (
   <span className="flex flex-row items-center gap-[8px] rounded-[8px] bg-bg-600 px-[16px] py-[18px]">
@@ -17,25 +15,12 @@ const Account = () => (
   </span>
 );
 
-const NavAccount = () => {
-  const [, setShowAbstraxion] = useModal();
+function NavAccount() {
   const { core } = useCore();
-  const { account, isConnected, logout } = useChainAccount();
-
-  const { connect } = useChain(IS_PRO_MODE ? (IS_TESTNET
-    ? "xion-testnet-1"
-    : "xion-mainnet-1") : "");
+  const { account, isConnected, login, logout } = useChainAccount();
 
   const closeDropdown = () => {
     core.dispatch(setPopupOpenId(null));
-  };
-
-  const handleLogin = () => {
-    if (IS_PRO_MODE) {
-      connect();
-    } else {
-      setShowAbstraxion(true);
-    }
   };
 
   return (
@@ -77,12 +62,12 @@ const NavAccount = () => {
           </div>
         </FloatingDropdown>
       ) : (
-        <Button onClick={handleLogin}>
+        <Button onClick={login}>
           Log in
         </Button>
       )}
     </div>
   );
-};
+}
 
 export default NavAccount;

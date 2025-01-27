@@ -45,7 +45,7 @@ const Divisor = () => (
 );
 
 const StakingOverview = () => {
-  const { isConnected } = useChainAccount();
+  const { isConnected, login } = useChainAccount();
   const { staking } = useStaking();
   const { getBalanceByDenom } = useAccountBalance();
 
@@ -65,12 +65,7 @@ const StakingOverview = () => {
       >
         <HeroText className="text-center">Please Log In To View</HeroText>
         <div>
-          <Button
-            className="min-w-[150px]"
-            onClick={() => {
-              // This will be handled by the useChainAccount hook
-            }}
-          >
+          <Button className="min-w-[150px]" onClick={login}>
             Log In
           </Button>
         </div>

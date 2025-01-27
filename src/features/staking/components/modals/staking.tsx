@@ -40,12 +40,12 @@ const StakingModal = () => {
   const xionBalance = getBalanceByDenom("uxion");
   const xionPrice = xionBalance?.price;
 
-  const [amountXION, setAmount] = useState("");
-  const [memo, setMemo] = useState("");
-
   const [formError, setFormError] = useState<
     Record<string, string | undefined>
   >({ amount: undefined, memo: undefined });
+
+  const [amountXION, setAmount] = useState("");
+  const [memo, setMemo] = useState<string>("");
 
   const { account, staking } = stakingRef;
   const { modal } = staking.state;
@@ -101,7 +101,7 @@ const StakingModal = () => {
       return true;
     }
 
-    if (!account) {
+    if (!account?.bech32Address) {
       setFormError({
         ...formError,
         amount: "Please connect your wallet",
@@ -143,7 +143,7 @@ const StakingModal = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!account || !client) {
+    if (!account?.bech32Address || !client) {
       return;
     }
 
@@ -157,7 +157,7 @@ const StakingModal = () => {
   };
 
   const onConfirm = async () => {
-    if (!account || !client) {
+    if (!account?.bech32Address || !client) {
       return;
     }
 
