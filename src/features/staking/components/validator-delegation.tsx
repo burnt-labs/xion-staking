@@ -55,7 +55,7 @@ export default function ValidatorDelegation() {
   const xionBalance = getBalanceByDenom("uxion");
   const xionPrice = xionBalance?.price;
 
-  const { isConnected } = useChainAccount();
+  const { isConnected, login } = useChainAccount();
   const [isShowingDetails, setIsShowingDetails] = useState(true);
 
   const { staking } = stakingRef;
@@ -98,9 +98,7 @@ export default function ValidatorDelegation() {
       <div>
         <Button
           className="[&]:min-w-[150px]"
-          onClick={() => {
-            // The login functionality is handled by useChainAccount
-          }}
+          onClick={login}
         >
           Log in
         </Button>

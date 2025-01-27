@@ -14,7 +14,6 @@ import {
 } from "@/features/core/components/base";
 import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
 import { useChainAccount } from "@/features/core/hooks/useChainAccount";
-import { useBalances } from "@/features/core/hooks/useBalances";
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
@@ -48,11 +47,11 @@ const Divisor = () => (
 );
 
 const StakingOverview = () => {
-  const { account, isConnected, login } = useChainAccount();
+  const { isConnected, login } = useChainAccount();
   const { staking } = useStaking();
-  const { getBalanceByDenom } = useAccountBalance();
-  const { isLoading: isBalanceLoading } = useBalances(account?.bech32Address || "");
+  const { assetList, getBalanceByDenom } = useAccountBalance();
 
+  const isBalanceLoading = !assetList;
   const { isLoading: isStakingLoading } = useStaking();
 
   const xionBalance = getBalanceByDenom("uxion");
