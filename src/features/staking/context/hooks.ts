@@ -1,9 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { StakingContext } from "./state";
-import type { StakingContextType } from "./state";
+
+import { useChainAccount } from "@/features/core/hooks/useChainAccount";
+
 import { fetchStakingDataAction, fetchUserDataAction } from "./actions";
 import { logout } from "./reducer";
-import { useChainAccount } from "@/features/core/hooks/useChainAccount";
+import { StakingContext } from "./state";
+import type { StakingContextType } from "./state";
 
 export const useStaking = () => {
   const stakingRef = useRef<StakingContextType>({} as StakingContextType);

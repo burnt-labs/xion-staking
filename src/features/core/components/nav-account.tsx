@@ -1,13 +1,14 @@
 "use client";
 
-import { Button, ClipboardCopy, FloatingDropdown } from "./base";
 import { mainNavItems } from "@/config";
-import AddressShort from "@/features/staking/components/address-short";
-import { wallet } from "../lib/icons";
-import NavLink from "./nav-link";
-import { useChainAccount } from "@/features/core/hooks/useChainAccount";
 import { useCore } from "@/features/core/context/hooks";
 import { setPopupOpenId } from "@/features/core/context/reducer";
+import { useChainAccount } from "@/features/core/hooks/useChainAccount";
+import AddressShort from "@/features/staking/components/address-short";
+
+import { wallet } from "../lib/icons";
+import { Button, ClipboardCopy, FloatingDropdown } from "./base";
+import NavLink from "./nav-link";
 
 const Account = () => (
   <span className="flex flex-row items-center gap-[8px] rounded-[8px] bg-bg-600 px-[16px] py-[18px]">
@@ -62,9 +63,7 @@ function NavAccount() {
           </div>
         </FloatingDropdown>
       ) : (
-        <Button onClick={login}>
-          Log in
-        </Button>
+        <Button onClick={login}>Log in</Button>
       )}
     </div>
   );

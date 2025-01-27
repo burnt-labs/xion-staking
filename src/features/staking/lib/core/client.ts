@@ -18,9 +18,9 @@ import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 
 import { RPC_URL } from "@/constants";
 
-export type SigningClient = NonNullable<
-  ReturnType<typeof useAbstraxionSigningClient>["client"]
-> | SigningCosmWasmClient;
+export type SigningClient =
+  | NonNullable<ReturnType<typeof useAbstraxionSigningClient>["client"]>
+  | SigningCosmWasmClient;
 
 let stakingQueryClientPromise:
   | Promise<

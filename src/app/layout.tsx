@@ -1,29 +1,28 @@
 "use client";
 
+import { AbstraxionProvider } from "@burnt-labs/abstraxion";
 import "@burnt-labs/abstraxion/dist/index.css";
 import "@burnt-labs/ui/dist/index.css";
-import "react-toastify/dist/ReactToastify.css";
-import "./globals.css";
-
-import React from "react";
+import type { Chain } from "@chain-registry/types";
+import { GasPrice } from "@cosmjs/stargate";
+import type { SignerOptions } from "@cosmos-kit/core";
+import { wallets as keplrWallets } from "@cosmos-kit/keplr-extension";
 import { ChainProvider } from "@cosmos-kit/react";
-import { AbstraxionProvider } from "@burnt-labs/abstraxion";
+import "@interchain-ui/react/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Analytics } from "@vercel/analytics/react";
+import React from "react";
 import { ToastContainer } from "react-toastify";
-import { wallets as keplrWallets } from "@cosmos-kit/keplr-extension";
-import { chains, assets } from "@/features/staking/lib/chains/xion";
-import type { SignerOptions } from "@cosmos-kit/core";
-import { GasPrice } from "@cosmjs/stargate";
-import type { Chain } from "@chain-registry/types";
+import "react-toastify/dist/ReactToastify.css";
 
 import { FAUCET_CONTRACT_ADDRESS } from "@/config";
 import { REST_URL, RPC_URL } from "@/constants";
 import BaseWrapper from "@/features/core/components/base-wrapper";
 import { CoreProvider } from "@/features/core/context/provider";
 import { StakingProvider } from "@/features/staking/context/provider";
+import { assets, chains } from "@/features/staking/lib/chains/xion";
 
-import "@interchain-ui/react/styles";
+import "./globals.css";
 
 // Abstraxion config
 const abstraxionConfig = {
@@ -43,52 +42,56 @@ const queryClient = new QueryClient({
 
 const signerOptions: SignerOptions = {
   signingCosmwasm: (chain: Chain | string) => {
-    if (typeof chain === 'string') return undefined;
-    
+    if (typeof chain === "string") return undefined;
+
     switch (chain.chain_name) {
       case "xion-testnet-1":
       case "xion-mainnet-1":
         return {
-          gasPrice: GasPrice.fromString("0.001uxion")
+          gasPrice: GasPrice.fromString("0.001uxion"),
         };
       default:
         return undefined;
     }
   },
   signingStargate: (chain: Chain | string) => {
-    if (typeof chain === 'string') return undefined;
-    
+    if (typeof chain === "string") return undefined;
+
     switch (chain.chain_name) {
       case "xion-testnet-1":
       case "xion-mainnet-1":
         return {
-          gasPrice: GasPrice.fromString("0.001uxion")
+          gasPrice: GasPrice.fromString("0.001uxion"),
         };
       default:
         return undefined;
     }
-  }
+  },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>
         <QueryClientProvider client={queryClient}>
-          <ChainProvider 
+          <ChainProvider
             assetLists={assets}
-            chains={chains} 
+            chains={chains}
             endpointOptions={{
               endpoints: {
                 "xion-mainnet-1": {
                   rest: [REST_URL],
-                  rpc: [RPC_URL]
+                  rpc: [RPC_URL],
                 },
                 "xion-testnet-1": {
                   rest: [REST_URL],
-                  rpc: [RPC_URL]
-                }
-              }
+                  rpc: [RPC_URL],
+                },
+              },
             }}
             signerOptions={signerOptions}
             wallets={[...keplrWallets]}

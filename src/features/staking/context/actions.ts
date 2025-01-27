@@ -215,7 +215,7 @@ export const stakeValidatorAction = async (
   await stakeAmount(addresses, client, amount, memo);
   await fetchUserDataAction(addresses.delegator, staking);
   await fetchStakingDataAction(staking);
-  
+
   return async () => {
     await fetchUserDataAction(addresses.delegator, staking);
   };

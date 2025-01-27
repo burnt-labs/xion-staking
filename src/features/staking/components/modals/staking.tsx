@@ -252,10 +252,7 @@ const StakingModal = () => {
                   </ModalDescription>
                 </div>
                 {getStakingSummary()}
-                <Button
-                  isLoading={isLoading}
-                  onClick={onConfirm}
-                >
+                <Button isLoading={isLoading} onClick={onConfirm}>
                   CONFIRM
                 </Button>
               </>

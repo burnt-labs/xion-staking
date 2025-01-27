@@ -51,7 +51,7 @@ export const getTxVerifier =
     }
 
     return result;
-};
+  };
 
 export const handleTxError = (err: unknown) => {
   // eslint-disable-next-line no-console
@@ -172,7 +172,6 @@ export const claimRewards = async (
     .signAndBroadcast(addresses.delegator, messageWrapper, 2.3)
     .then(getTxVerifier("withdraw_rewards"))
     .catch(handleTxError);
-
 };
 
 export const getCanClaimRewards = (rewards?: Coin) => {
@@ -190,7 +189,7 @@ export const cancelUnbonding = async (
   unbonding: Unbonding,
   client: SigningClient,
 ) => {
-  if ('registry' in client) {
+  if ("registry" in client) {
     client.registry.register(
       MsgCancelUnbondingDelegation.typeUrl,
       MsgCancelUnbondingDelegation,
@@ -217,7 +216,7 @@ export const cancelUnbonding = async (
     .catch(handleTxError);
 };
 
-export type BatchClaimAddresses = {
+type BatchClaimAddresses = {
   delegator: string;
   validators: string[];
 };

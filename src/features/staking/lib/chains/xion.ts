@@ -1,6 +1,6 @@
 import type { AssetList, Chain } from "@chain-registry/types";
 
-export interface Coin {
+interface Coin {
   coinDecimals: number;
   coinDenom: string;
   coinGeckoId?: string;
@@ -26,7 +26,7 @@ interface Bip44 {
   coinType: number;
 }
 
-export interface ChainInfo {
+interface ChainInfo {
   bech32Config: Bech32Config;
   bip44: Bip44;
   chainId: string;
@@ -46,10 +46,11 @@ export interface ChainInfo {
   walletUrlForStaking?: string;
 }
 
-export const xionCoin: Coin = {
+const xionCoin: Coin = {
   coinDecimals: 6,
   coinDenom: "XION",
-  coinImageUrl: "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-testnet/chain.png",
+  coinImageUrl:
+    "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-testnet/chain.png",
   coinMinimalDenom: "uxion",
   gasPriceStep: {
     average: 0.01,
@@ -58,11 +59,12 @@ export const xionCoin: Coin = {
   },
 };
 
-export const mainnetCoin: Coin = {
+const mainnetCoin: Coin = {
   coinDecimals: 6,
   coinDenom: "XION",
   coinGeckoId: "xion-2",
-  coinImageUrl: "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-mainnet/chain.png",
+  coinImageUrl:
+    "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-mainnet/chain.png",
   coinMinimalDenom: "uxion",
   gasPriceStep: {
     average: 0.001,
@@ -85,54 +87,62 @@ const commonInfo: ChainInfo = {
   },
   chainId: "base",
   chainName: "Xion Testnet",
-  chainSymbolImageUrl: "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-testnet/chain.png",
+  chainSymbolImageUrl:
+    "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-testnet/chain.png",
   currencies: [xionCoin],
   features: ["cosmwasm"],
-  feeCurrencies: [{
-    ...xionCoin,
-    gasPriceStep: {
-      average: 0.01,
-      high: 0.02,
-      low: 0.005,
-    }
-  }],
+  feeCurrencies: [
+    {
+      ...xionCoin,
+      gasPriceStep: {
+        average: 0.01,
+        high: 0.02,
+        low: 0.005,
+      },
+    },
+  ],
   nodeProvider: {
     email: "security@lavenderfive.com",
     name: "Dylan Schultzie",
-    website: "https://lavenderfive.com"
+    website: "https://lavenderfive.com",
   },
   rest: "undefined",
   rpc: "undefined",
   stakeCurrency: {
     ...xionCoin,
-    coinImageUrl: "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-testnet/chain.png"
-  }
+    coinImageUrl:
+      "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-testnet/chain.png",
+  },
 };
 
-export const mainnetChainInfo: ChainInfo = {
+const mainnetChainInfo: ChainInfo = {
   ...commonInfo,
   chainId: "xion-mainnet-1",
   chainName: "XION",
-  chainSymbolImageUrl: "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-mainnet/chain.png",
+  chainSymbolImageUrl:
+    "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-mainnet/chain.png",
   currencies: [mainnetCoin],
-  feeCurrencies: [{
-    ...mainnetCoin,
-    gasPriceStep: {
-      average: 0.001,
-      high: 0.002,
-      low: 0.0005,
-    }
-  }],
+  feeCurrencies: [
+    {
+      ...mainnetCoin,
+      gasPriceStep: {
+        average: 0.001,
+        high: 0.002,
+        low: 0.0005,
+      },
+    },
+  ],
   rest: "https://lcd-xion.keplr.app",
   rpc: "https://rpc-xion.keplr.app",
   stakeCurrency: {
     ...mainnetCoin,
-    coinImageUrl: "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-mainnet/chain.png"
+    coinImageUrl:
+      "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-mainnet/chain.png",
   },
-  walletUrlForStaking: "https://wallet.keplr.app/chains/xion"
+  walletUrlForStaking: "https://wallet.keplr.app/chains/xion",
 };
 
-export const testnetChainInfo: ChainInfo = {
+const testnetChainInfo: ChainInfo = {
   ...commonInfo,
   chainId: "xion-testnet-1",
   chainName: "Xion Testnet",
@@ -140,7 +150,7 @@ export const testnetChainInfo: ChainInfo = {
   rpc: "https://rpc.xion-testnet-1.burnt.com/",
 };
 
-export const testChainInfo: ChainInfo = {
+const testChainInfo: ChainInfo = {
   ...commonInfo,
   chainId: "xion-local-testnet-1",
   chainName: "Xion Testnet Local",
@@ -169,7 +179,8 @@ function buildCosmosKitChainSpecification(burntChainInfo: ChainInfo): Chain {
     fees: {
       fee_tokens: [
         {
-          average_gas_price: burntChainInfo.feeCurrencies[0].gasPriceStep.average,
+          average_gas_price:
+            burntChainInfo.feeCurrencies[0].gasPriceStep.average,
           denom: burntChainInfo.feeCurrencies[0].coinMinimalDenom,
           fixed_min_gas_price: burntChainInfo.feeCurrencies[0].gasPriceStep.low,
           high_gas_price: burntChainInfo.feeCurrencies[0].gasPriceStep.high,
@@ -177,7 +188,9 @@ function buildCosmosKitChainSpecification(burntChainInfo: ChainInfo): Chain {
         },
       ],
     },
-    network_type: burntChainInfo.chainId.includes("mainnet") ? "mainnet" : "testnet",
+    network_type: burntChainInfo.chainId.includes("mainnet")
+      ? "mainnet"
+      : "testnet",
     staking: {
       staking_tokens: [],
     },
@@ -186,7 +199,7 @@ function buildCosmosKitChainSpecification(burntChainInfo: ChainInfo): Chain {
 }
 
 function buildCosmosKitAssetSpecification(
-  burntChainInfo: ChainInfo
+  burntChainInfo: ChainInfo,
 ): AssetList {
   return {
     assets: [
@@ -213,14 +226,9 @@ function buildCosmosKitAssetSpecification(
   };
 }
 
-export const keplrChainInfos = [mainnetChainInfo, testnetChainInfo, testChainInfo];
 export const assets = [mainnetChainInfo, testnetChainInfo, testChainInfo].map(
-  buildCosmosKitAssetSpecification
+  buildCosmosKitAssetSpecification,
 );
 export const chains = [mainnetChainInfo, testnetChainInfo, testChainInfo].map(
-  buildCosmosKitChainSpecification
+  buildCosmosKitChainSpecification,
 );
-export const defaultFee = {
-  amount: [{ amount: ".5", denom: "uxion" }],
-  gas: "500000",
-};

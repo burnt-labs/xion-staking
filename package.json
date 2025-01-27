@@ -8,6 +8,7 @@
     "lint": "bash ./scripts/check_unused_exports.sh && npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint . --ext .ts,.tsx",
     "lint:prettier": "prettier --check .",
+    "lint:prettier:fix": "prettier --write .",
     "start": "http-server -p 4000 out",
     "test": "echo No tests yet",
     "type-check": "tsc --noEmit"

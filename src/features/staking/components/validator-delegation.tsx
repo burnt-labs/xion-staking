@@ -96,10 +96,7 @@ export default function ValidatorDelegation() {
     <div className="flex h-[220px] min-w-[1000px] flex-col items-center justify-center gap-[32px] rounded-[24px] bg-bg-600 uppercase">
       <HeroText>Please log in to view</HeroText>
       <div>
-        <Button
-          className="[&]:min-w-[150px]"
-          onClick={login}
-        >
+        <Button className="[&]:min-w-[150px]" onClick={login}>
           Log in
         </Button>
       </div>

@@ -1,5 +1,5 @@
-import { memo } from "react";
 import BigNumber from "bignumber.js";
+import { memo } from "react";
 
 import { BASE_PATH } from "@/config";
 import { SkeletonWrapper } from "@/features/core/components/SkeletonWrapper";
@@ -26,9 +26,9 @@ import {
 import { getEmptyXionCoin, normaliseCoin } from "../lib/core/coins";
 import {
   formatAPR,
+  formatCoin,
   formatToSmallDisplay,
   formatXionToUSD,
-  formatCoin,
 } from "../lib/formatters";
 import { DivisorHorizontal, DivisorVertical } from "./divisor";
 
