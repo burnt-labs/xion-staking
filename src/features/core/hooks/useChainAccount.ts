@@ -1,5 +1,4 @@
 import { useAbstraxionAccount, useAbstraxionSigningClient, useModal } from "@burnt-labs/abstraxion";
-// import { GasPrice } from "graz/node_modules/@cosmjs/stargate";
 
 import { useChain } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";

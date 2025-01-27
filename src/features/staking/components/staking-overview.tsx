@@ -10,9 +10,11 @@ import {
   Heading2,
   Heading8,
   HeroText,
+  NavLink,
 } from "@/features/core/components/base";
 import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
 import { useChainAccount } from "@/features/core/hooks/useChainAccount";
+import { useBalances } from "@/features/core/hooks/useBalances";
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
@@ -27,6 +29,7 @@ import {
   formatAPR,
   formatToSmallDisplay,
   formatXionToUSD,
+  formatCoin,
 } from "../lib/formatters";
 import { DivisorHorizontal, DivisorVertical } from "./divisor";
 
@@ -45,9 +48,10 @@ const Divisor = () => (
 );
 
 const StakingOverview = () => {
-  const { isConnected, login } = useChainAccount();
+  const { account, isConnected, login } = useChainAccount();
   const { staking } = useStaking();
   const { getBalanceByDenom } = useAccountBalance();
+  const { isLoading: isBalanceLoading } = useBalances(account?.bech32Address || "");
 
   const { isLoading: isStakingLoading } = useStaking();
 
@@ -128,40 +132,44 @@ const StakingOverview = () => {
         <Divisor />
       </div>
       <div className={columnStyle}>
-        <Heading8>Total Staked (XION)</Heading8>
-        <div className="flex flex-row flex-wrap items-center gap-4">
-          <SkeletonWrapper isLoading={isStakingLoading} width="120px">
-            <Heading2 title={[totalDelegation.amount, "XION"].join(" ")}>
-              {formatToSmallDisplay(new BigNumber(totalDelegation.amount))}
-            </Heading2>
-          </SkeletonWrapper>
-        </div>
+        <Heading8>APR</Heading8>
+        <SkeletonWrapper isLoading={isStakingLoading} width="80px">
+          <Heading2>{formatAPR(apr)}</Heading2>
+        </SkeletonWrapper>
+        <Divisor />
+      </div>
+      <div className={columnStyle}>
+        <Heading8>Delegated Amount (XION)</Heading8>
+        <SkeletonWrapper isLoading={isStakingLoading} width="120px">
+          <Heading2 title={formatCoin(totalDelegation)}>
+            {formatToSmallDisplay(
+              new BigNumber(totalDelegation.amount),
+              undefined,
+              2,
+            )}
+          </Heading2>
+        </SkeletonWrapper>
         <BodyMedium>
           {formatXionToUSD(totalDelegation, xionPrice || 0)}
         </BodyMedium>
         <Divisor />
       </div>
       <div className={columnStyle}>
-        <Heading8>Available For Staking (XION)</Heading8>
-        <div className="flex flex-row flex-wrap items-center gap-4">
-          <SkeletonWrapper isLoading={isStakingLoading} width="120px">
-            <Heading2 title={[availableDelegation.amount, "XION"].join(" ")}>
-              {formatToSmallDisplay(new BigNumber(availableDelegation.amount))}
-            </Heading2>
-          </SkeletonWrapper>
-        </div>
+        <Heading8>Available For Delegation (XION)</Heading8>
+        <SkeletonWrapper
+          isLoading={isBalanceLoading || isStakingLoading}
+          width="120px"
+        >
+          <Heading2 title={formatCoin(availableDelegation)}>
+            {formatCoin(availableDelegation, undefined, true)}
+          </Heading2>
+        </SkeletonWrapper>
         <BodyMedium>
           {formatXionToUSD(availableDelegation, xionPrice || 0)}
         </BodyMedium>
-        <Divisor />
-      </div>
-      <div className={columnStyle}>
-        <Heading8>APR</Heading8>
-        <div className="flex flex-row flex-wrap items-center gap-4">
-          <SkeletonWrapper isLoading={isStakingLoading} width="120px">
-            <Heading2>{formatAPR(apr)}</Heading2>
-          </SkeletonWrapper>
-        </div>
+        <NavLink href="https://xion.burnt.com/get-xion" isExternal>
+          Get XION
+        </NavLink>
       </div>
     </div>
   );
