@@ -5,6 +5,8 @@
   "scripts": {
     "build": "next build",
     "dev": "PORT=4000 next dev",
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "pages:dev": "npm run pages:build && wrangler pages dev",
     "lint": "bash ./scripts/check_unused_exports.sh && npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint . --ext .ts,.tsx",
     "lint:prettier": "prettier --check .",
@@ -43,6 +45,7 @@
     "react-tooltip": "^5.26.3"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.7",
     "@stylistic/eslint-plugin": "^1.6.2",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^20.11.21",
