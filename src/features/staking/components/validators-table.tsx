@@ -35,6 +35,7 @@ import {
 import AddressShort from "./address-short";
 import { DivisorHorizontal } from "./divisor";
 import TokenColors from "./token-colors";
+import { useProMode } from "@/features/core/context/pro-mode";
 
 const minGridWidth = 1000;
 
@@ -59,6 +60,7 @@ const ValidatorRow = ({
   staking,
   validator,
 }: ValidatorItemProps) => {
+  const { getLink } = useProMode();
   const { identity } = validator.description;
   const logo = useValidatorLogo(identity, validator.operatorAddress);
 
@@ -80,7 +82,7 @@ const ValidatorRow = ({
   );
 
   const detailsEl = (
-    <NavLink href={`/validator?address=${validator.operatorAddress}`}>
+    <NavLink href={getLink(`validator?address=${validator.operatorAddress}`)}>
       Details
     </NavLink>
   );

@@ -3,16 +3,18 @@
 import { Abstraxion, useModal } from "@burnt-labs/abstraxion";
 import Link from "next/link";
 
-import { BASE_PATH, IS_PRO_MODE, IS_TESTNET, mainNavItems } from "@/config";
+import { BASE_PATH, IS_TESTNET, mainNavItems } from "@/config";
+import { useProMode } from "@/features/core/context/pro-mode";
 
 import NavAccount from "./nav-account";
 import NavLink from "./nav-link";
 
-export default function RootLayout({
+export default function BaseWrapper({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { getLink, isProMode } = useProMode();
   const [, setShowAbstraxion] = useModal();
 
   return (
@@ -23,7 +25,7 @@ export default function RootLayout({
       >
         <div className="page-container m-auto flex h-[80px] flex-row items-center justify-between px-[16px]">
           <div className="flex w-[200px] flex-row items-center">
-            <Link className="flex cursor-pointer items-center" href="/">
+            <Link className="flex cursor-pointer items-center" href={getLink("staking")}>
               <img alt="Xion Logo" src={`${BASE_PATH}/xion-logo.svg`} />
               <span
                 className={[
@@ -48,7 +50,7 @@ export default function RootLayout({
         </div>
       </nav>
       {children}
-      {!IS_PRO_MODE && (
+      {!isProMode && (
         <Abstraxion
           onClose={() => {
             setShowAbstraxion(false);

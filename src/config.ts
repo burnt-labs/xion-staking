@@ -36,13 +36,12 @@ export const IS_TESTNET = NETWORK_TYPE === "testnet";
 
 export interface NavItem {
   href: string;
-  isRootLink?: boolean;
   label: string;
 }
 
 export const mainNavItems: NavItem[] = [
-  { href: "/staking", isRootLink: true, label: "Staking" },
-  { href: "/governance", label: "Governance" },
+  { href: "staking", label: "Staking" },
+  { href: "governance", label: "Governance" },
 ];
 
 const ASSET_ENDPOINTS = {
@@ -74,9 +73,3 @@ export const GAS_CONFIG = {
   defaultStakeEstimate: 200000,
   price: "0.001",
 } as const;
-
-// Whether the app is in pro mode (uses CosmosKit instead of Abstraxion)
-export const IS_PRO_MODE = getEnvBooleanOrThrow(
-  "NEXT_PUBLIC_IS_PRO_MODE",
-  process.env.NEXT_PUBLIC_IS_PRO_MODE,
-);

@@ -1,11 +1,7 @@
-import type { Metadata } from "next";
+"use client";
 
-import StakingPage from "@/features/staking/components/main-page";
-
-export const metadata: Metadata = {
-  title: "XION Staking",
-};
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return <StakingPage />;
+  redirect("/staking");
 }

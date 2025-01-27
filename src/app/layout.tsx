@@ -7,6 +7,7 @@ import type { Chain } from "@chain-registry/types";
 import { GasPrice } from "@cosmjs/stargate";
 import type { SignerOptions } from "@cosmos-kit/core";
 import { wallets as keplrWallets } from "@cosmos-kit/keplr-extension";
+import { wallets as okxWallets } from "@cosmos-kit/okxwallet-extension";
 import { ChainProvider } from "@cosmos-kit/react";
 import "@interchain-ui/react/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -19,6 +20,7 @@ import { FAUCET_CONTRACT_ADDRESS } from "@/config";
 import { REST_URL, RPC_URL } from "@/constants";
 import BaseWrapper from "@/features/core/components/base-wrapper";
 import { CoreProvider } from "@/features/core/context/provider";
+import { ProModeProvider } from "@/features/core/context/pro-mode";
 import { StakingProvider } from "@/features/staking/context/provider";
 import { assets, chains } from "@/features/staking/lib/chains/xion";
 
@@ -78,33 +80,35 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <QueryClientProvider client={queryClient}>
-          <ChainProvider
-            assetLists={assets}
-            chains={chains}
-            endpointOptions={{
-              endpoints: {
-                "xion-mainnet-1": {
-                  rest: [REST_URL],
-                  rpc: [RPC_URL],
+          <ProModeProvider>
+            <ChainProvider
+              assetLists={assets}
+              chains={chains}
+              endpointOptions={{
+                endpoints: {
+                  "xion-mainnet-1": {
+                    rest: [REST_URL],
+                    rpc: [RPC_URL],
+                  },
+                  "xion-testnet-1": {
+                    rest: [REST_URL],
+                    rpc: [RPC_URL],
+                  },
                 },
-                "xion-testnet-1": {
-                  rest: [REST_URL],
-                  rpc: [RPC_URL],
-                },
-              },
-            }}
-            signerOptions={signerOptions}
-            wallets={[...keplrWallets]}
-          >
-            <AbstraxionProvider config={abstraxionConfig}>
-              <CoreProvider>
-                <StakingProvider>
-                  <BaseWrapper>{children}</BaseWrapper>
-                  <Analytics />
-                </StakingProvider>
-              </CoreProvider>
-            </AbstraxionProvider>
-          </ChainProvider>
+              }}
+              signerOptions={signerOptions}
+              wallets={[...keplrWallets, ...okxWallets]}
+            >
+              <AbstraxionProvider config={abstraxionConfig}>
+                <CoreProvider>
+                  <StakingProvider>
+                    <BaseWrapper>{children}</BaseWrapper>
+                    <Analytics />
+                  </StakingProvider>
+                </CoreProvider>
+              </AbstraxionProvider>
+            </ChainProvider>
+          </ProModeProvider>
         </QueryClientProvider>
         <ToastContainer closeOnClick />
       </body>

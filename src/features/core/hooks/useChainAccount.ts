@@ -5,13 +5,14 @@ import {
 } from "@burnt-labs/abstraxion";
 import { useChain } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
+import { useProMode } from "../context/pro-mode";
 
-import { IS_PRO_MODE, IS_TESTNET } from "@/config";
+import { IS_TESTNET } from "@/config";
 
 /**
  * A unifying interface for chain account data.
  * Provides a consistent way to access account data and signing clients across different wallet providers.
- * Handles both Abstraxion and CosmosKit wallet connections based on the IS_PRO_MODE flag.
+ * Handles both Abstraxion and CosmosKit wallet connections based on the current route.
  *
  * @returns {Object} Account data and methods
  * @returns {Object} account - The connected account data
@@ -22,7 +23,9 @@ import { IS_PRO_MODE, IS_TESTNET } from "@/config";
  * @returns {Function} logout - Method to disconnect the current wallet
  */
 export function useChainAccount() {
-  // Abstraxion
+  const { isProMode } = useProMode();
+
+  // Standard mode hooks
   const { data: abstraxionData, isConnected: abstraxionIsConnected } =
     useAbstraxionAccount();
 
@@ -31,7 +34,7 @@ export function useChainAccount() {
   const { client: abstraxionClient, logout: abstraxionLogout } =
     useAbstraxionSigningClient();
 
-  // CosmosKit
+  // Pro mode hooks
   const {
     address: cosmosKitAddress,
     connect: cosmosKitConnect,
@@ -45,7 +48,7 @@ export function useChainAccount() {
   const [cosmosKitClient, setCosmosKitClient] = useState<any>(undefined);
 
   useEffect(() => {
-    if (!IS_PRO_MODE) return;
+    if (!isProMode) return;
 
     async function fetchWasmClient() {
       const cosmWasmClient = await getSigningCosmWasmClient();
@@ -54,12 +57,12 @@ export function useChainAccount() {
     }
 
     if (cosmosKitIsConnected) {
-      fetchWasmClient();
+    fetchWasmClient();
     }
-  }, [cosmosKitIsConnected, getSigningCosmWasmClient]);
+  }, [cosmosKitIsConnected, isProMode, getSigningCosmWasmClient]);
 
   const login = async () => {
-    if (IS_PRO_MODE) {
+    if (isProMode) {
       await cosmosKitConnect();
     } else {
       setModalOpen(true);
@@ -67,26 +70,26 @@ export function useChainAccount() {
   };
 
   const logout = () => {
-    if (IS_PRO_MODE) {
+    if (isProMode) {
       disconnect();
     } else {
       abstraxionLogout?.();
     }
   };
 
-  const isConnected = IS_PRO_MODE
+  const isConnected = isProMode
     ? cosmosKitIsConnected
     : abstraxionIsConnected;
 
-  const account = IS_PRO_MODE
+  const account = isProMode
     ? { bech32Address: cosmosKitAddress }
     : abstraxionData;
 
-  const address = IS_PRO_MODE
+  const address = isProMode
     ? cosmosKitAddress
     : abstraxionData?.bech32Address;
 
-  const client = IS_PRO_MODE ? cosmosKitClient : abstraxionClient;
+  const client = isProMode ? cosmosKitClient : abstraxionClient;
 
   return {
     account,
