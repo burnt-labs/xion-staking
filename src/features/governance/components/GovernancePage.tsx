@@ -4,6 +4,7 @@ import Link from "next/link";
 import React, { useMemo, useState } from "react";
 
 import { LoadingBanner, Title } from "@/features/core/components/base";
+import { useProMode } from "@/features/core/context/pro-mode";
 
 import { useProposals } from "../context/hooks";
 import { FilterControls } from "./FilterControls";
@@ -21,6 +22,7 @@ export default function GovernancePage() {
   const { data: proposals, isLoading } = useProposals();
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFilter, setActiveFilter] = useState<FilterOption>("all");
+  const { getLink } = useProMode();
   const pageSize = 9;
 
   const filteredProposals = useMemo(() => {
@@ -65,7 +67,9 @@ export default function GovernancePage() {
               {currentProposals.map((proposal) => (
                 <Link
                   className="flex justify-center"
-                  href={`/governance/proposal?proposal_id=${proposal.id}`}
+                  href={getLink(
+                    `governance/proposal?proposal_id=${proposal.id}`,
+                  )}
                   key={proposal.id}
                 >
                   <ProposalCard proposal={proposal} />

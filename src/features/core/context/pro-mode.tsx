@@ -37,8 +37,7 @@ export function ProModeProvider({ children }: { children: React.ReactNode }) {
     // Remove leading slash if present
     const cleanPath = path.startsWith("/") ? path.slice(1) : path;
 
-    // Only apply pro mode to non-governance paths
-    if (isProMode && !cleanPath.startsWith("governance")) {
+    if (isProMode) {
       return `/pro/${cleanPath}`;
     }
 
