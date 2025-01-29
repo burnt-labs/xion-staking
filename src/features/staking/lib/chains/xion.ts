@@ -119,7 +119,7 @@ const commonInfo: ChainInfo = {
 const mainnetChainInfo: ChainInfo = {
   ...commonInfo,
   chainId: "xion-mainnet-1",
-  chainName: "XION",
+  chainName: "xion",
   chainSymbolImageUrl:
     "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/xion-mainnet/chain.png",
   currencies: [mainnetCoin],
@@ -147,7 +147,7 @@ const mainnetChainInfo: ChainInfo = {
 const testnetChainInfo: ChainInfo = {
   ...commonInfo,
   chainId: "xion-testnet-1",
-  chainName: "Xion Testnet",
+  chainName: "xiontestnet",
   pretty_name: "Xion Testnet",
   rest: "https://api.xion-testnet-1.burnt.com/",
   rpc: "https://rpc.xion-testnet-1.burnt.com/",
@@ -178,7 +178,7 @@ function buildCosmosKitChainSpecification(burntChainInfo: ChainInfo): Chain {
     },
     bech32_prefix: burntChainInfo.bech32Config.bech32PrefixAccAddr,
     chain_id: burntChainInfo.chainId,
-    chain_name: burntChainInfo.chainId,
+    chain_name: burntChainInfo.chainName,
     chain_type: "cosmos" as const,
     fees: {
       fee_tokens: [
@@ -228,7 +228,7 @@ function buildCosmosKitAssetSpecification(
         type_asset: "sdk.coin",
       },
     ],
-    chain_name: burntChainInfo.chainId,
+    chain_name: burntChainInfo.chainName,
   };
 }
 

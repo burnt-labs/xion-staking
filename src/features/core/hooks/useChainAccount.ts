@@ -42,7 +42,7 @@ export function useChainAccount() {
     disconnect,
     getSigningCosmWasmClient,
     status,
-  } = useChain(IS_TESTNET ? "xion-testnet-1" : "xion-mainnet-1");
+  } = useChain(IS_TESTNET ? "xiontestnet" : "xion");
 
   const cosmosKitIsConnected = status === "Connected";
 

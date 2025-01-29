@@ -86,11 +86,11 @@ export default function RootLayout({
               chains={chains}
               endpointOptions={{
                 endpoints: {
-                  "xion-mainnet-1": {
+                  xion: {
                     rest: [REST_URL],
                     rpc: [RPC_URL],
                   },
-                  "xion-testnet-1": {
+                  xiontestnet: {
                     rest: [REST_URL],
                     rpc: [RPC_URL],
                   },
