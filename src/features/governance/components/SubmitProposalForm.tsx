@@ -1,18 +1,17 @@
-import MDEditor from "@uiw/react-md-editor";
 import BigNumber from "bignumber.js";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { Button } from "@/features/core/components/base";
 import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
 import { formatCoin } from "@/features/staking/lib/formatters";
 
 import { useDepositParams, useSubmitProposal } from "../context/hooks";
-import type { StoreCodeProposalValues } from "../lib/types";
-import { ProposalType } from "../lib/types";
+import { ProposalType, type StoreCodeProposalValues } from "../lib/types";
 import { FileUpload } from "./forms/FileUpload";
 import { FormInput } from "./forms/FormInput";
+import { FormTextArea } from "./forms/FormTextArea";
 import { ProposalModal } from "./modals/ProposalModal";
 
 enum Step {
@@ -45,7 +44,6 @@ export const SubmitProposalForm = () => {
   const router = useRouter();
 
   const {
-    control,
     formState: { errors },
     handleSubmit,
     register,
@@ -54,7 +52,7 @@ export const SubmitProposalForm = () => {
   } = useForm<FormValues>({
     defaultValues: {
       description:
-        "## Developer Information \n### Link to Developer/Company \n### Developer Description\n\n## Contract Details\n### Contract Name\n### Contract Source Link\n### Contract Description and Intended Use\n\n## Audit and Execution Information\n### Audit Report Link\n### Audit Process Description\n### Execution Messages Description\n\n## Deployment Information\n### Testnet Explorer Link\n",
+        "## Developer Information \n\n### Link to Developer/Company \n\n### Developer Description\n\n\n\n## Contract Details\n\n### Contract Name\n\n### Contract Source Link\n\n### Contract Description and Intended Use\n\n\n\n## Audit and Execution Information\n\n### Audit Report Link\n\n### Audit Process Description\n\n### Execution Messages Description\n\n\n\n## Deployment Information\n\n### Testnet Explorer Link\n\n",
       type: ProposalType.STORE_CODE,
     },
     mode: "onSubmit",
@@ -153,7 +151,6 @@ export const SubmitProposalForm = () => {
       });
 
       setStep(Step.Completed);
-      router.push("/governance");
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setStep(Step.Review);
@@ -168,7 +165,7 @@ export const SubmitProposalForm = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${step !== Step.Form ? "modal-open" : ""}`}>
       <form
         className="flex flex-col space-y-4"
         onSubmit={handleSubmit(handleFormSubmit)}
@@ -182,28 +179,17 @@ export const SubmitProposalForm = () => {
         />
 
         <div className="flex flex-col space-y-2">
-          <label
-            className="font-['Akkurat LL'] text-sm font-normal leading-5 text-white"
-            htmlFor="description-editor"
-          >
-            Description
-          </label>
-          <Controller
-            control={control}
-            defaultValue=""
-            name="description"
-            render={({ field: { onChange, value } }) => (
-              <div data-color-mode="dark">
-                <MDEditor
-                  highlightEnable={false}
-                  id="description-editor"
-                  onChange={onChange}
-                  preview="edit"
-                  value={value}
-                />
-              </div>
-            )}
-            rules={{ required: "Description is required" }}
+          <FormTextArea
+            error={errors.description?.message}
+            id="description"
+            label="Description"
+            register={register}
+            required
+            {...register("description", {
+              required: "Description is required",
+              value:
+                "## Developer Information \n\n### Link to Developer/Company \n\n### Developer Description\n\n\n\n## Contract Details\n\n### Contract Name\n\n### Contract Source Link\n\n### Contract Description and Intended Use\n\n\n\n## Audit and Execution Information\n\n### Audit Report Link\n\n### Audit Process Description\n\n### Execution Messages Description\n\n\n\n## Deployment Information\n\n### Testnet Explorer Link\n\n",
+            })}
           />
           {errors.description && (
             <span className="text-sm text-red-500">

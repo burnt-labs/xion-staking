@@ -24,7 +24,7 @@ export const FormTextArea = ({
     </label>
     <div className="mt-[26px] flex flex-grow">
       <textarea
-        className="font-['Akkurat LL'] h-[120px] w-full resize-none border border-[#6b6969] bg-transparent p-3 text-sm font-normal leading-tight text-white"
+        className="font-['Akkurat LL'] h-[240px] w-full resize-none border border-[#6b6969] bg-transparent p-3 text-sm font-normal leading-tight text-white"
         id={id}
         {...register(id, {
           required: required ? `${label} is required` : false,
