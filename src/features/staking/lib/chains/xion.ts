@@ -40,6 +40,7 @@ interface ChainInfo {
     name: string;
     website: string;
   };
+  pretty_name?: string;
   rest: string;
   rpc: string;
   stakeCurrency: Coin;
@@ -132,6 +133,7 @@ const mainnetChainInfo: ChainInfo = {
       },
     },
   ],
+  pretty_name: "Xion",
   rest: "https://lcd-xion.keplr.app",
   rpc: "https://rpc-xion.keplr.app",
   stakeCurrency: {
@@ -146,6 +148,7 @@ const testnetChainInfo: ChainInfo = {
   ...commonInfo,
   chainId: "xion-testnet-1",
   chainName: "Xion Testnet",
+  pretty_name: "Xion Testnet",
   rest: "https://api.xion-testnet-1.burnt.com/",
   rpc: "https://rpc.xion-testnet-1.burnt.com/",
 };
@@ -154,6 +157,7 @@ const testChainInfo: ChainInfo = {
   ...commonInfo,
   chainId: "xion-local-testnet-1",
   chainName: "Xion Testnet Local",
+  pretty_name: "Xion Local Testnet",
   rest: "http://localhost:26656",
   rpc: "http://localhost:26657",
 };
@@ -191,6 +195,8 @@ function buildCosmosKitChainSpecification(burntChainInfo: ChainInfo): Chain {
     network_type: burntChainInfo.chainId.includes("mainnet")
       ? "mainnet"
       : "testnet",
+    pretty_name: burntChainInfo.pretty_name,
+    slip44: burntChainInfo.bip44.coinType,
     staking: {
       staking_tokens: [],
     },
