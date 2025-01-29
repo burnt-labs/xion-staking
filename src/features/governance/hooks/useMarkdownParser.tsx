@@ -11,7 +11,7 @@ function useMarkdownParser() {
       if (line.startsWith("# ")) {
         result.push(
           <h1
-            className="font-['Akkurat LL'] mb-4 font-bold leading-none text-white"
+            className="font-['Akkurat LL'] mb-4 text-4xl font-bold leading-none text-white"
             key={i}
           >
             {line.replace("# ", "")}
@@ -20,7 +20,7 @@ function useMarkdownParser() {
       } else if (line.startsWith("## ")) {
         result.push(
           <h2
-            className="font-['Akkurat LL'] mb-4 font-bold leading-none text-white"
+            className="font-['Akkurat LL'] mb-4 text-2xl font-bold leading-none text-white"
             key={i}
           >
             {line.replace("## ", "")}
@@ -29,7 +29,7 @@ function useMarkdownParser() {
       } else if (line.startsWith("### ")) {
         result.push(
           <h3
-            className="font-['Akkurat LL'] mb-4 font-bold leading-none text-white"
+            className="font-['Akkurat LL'] mb-4 text-lg font-bold leading-none text-white"
             key={i}
           >
             {line.replace("### ", "")}
@@ -37,6 +37,22 @@ function useMarkdownParser() {
         );
       } else {
         const lineResult: (React.ReactNode | string)[] = [];
+
+        if (/^https?:\/\/\S+$/.test(line.trim())) {
+          result.push(
+            <p key={i}>
+              <Link
+                href={line.trim()}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {line.trim()}
+              </Link>
+            </p>,
+          );
+
+          return;
+        }
 
         const pattern =
           /\*\*(.*?)\*\*|`(.*?)`|(https?:\/\/[^\s]+)|\[(.*?)\]\((https?:\/\/[^\s]+)\)/g;

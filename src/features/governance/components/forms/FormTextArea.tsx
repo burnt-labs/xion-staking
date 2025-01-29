@@ -2,6 +2,7 @@ import type { UseFormRegister } from "react-hook-form";
 
 interface FormTextAreaProps {
   error?: string;
+  height?: number;
   id: string;
   label: string;
   register: UseFormRegister<any>;
@@ -10,6 +11,7 @@ interface FormTextAreaProps {
 
 export const FormTextArea = ({
   error,
+  height = 120,
   id,
   label,
   register,
@@ -24,8 +26,9 @@ export const FormTextArea = ({
     </label>
     <div className="mt-[26px] flex flex-grow">
       <textarea
-        className="font-['Akkurat LL'] h-[240px] w-full resize-none border border-[#6b6969] bg-transparent p-3 text-sm font-normal leading-tight text-white"
+        className={`font-['Akkurat LL'] w-full resize-none border border-[#6b6969] bg-transparent p-3 text-sm font-normal leading-tight text-white`}
         id={id}
+        style={{ height: `${height}px` }}
         {...register(id, {
           required: required ? `${label} is required` : false,
         })}

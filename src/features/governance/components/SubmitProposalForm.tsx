@@ -21,9 +21,49 @@ enum Step {
   Submitting = "submitting",
 }
 
-interface FormValues extends Omit<StoreCodeProposalValues, "wasmByteCode"> {
+interface FormValues
+  extends Omit<StoreCodeProposalValues, "description" | "wasmByteCode"> {
+  // Audit Information
+  auditProcessDescription: string;
+  auditReportLink: string;
+  // Contract Details
+  contractDescription: string;
+  contractName: string;
+  contractSourceLink: string;
+  // Developer Information
+  developerDescription: string;
+  developerLink: string;
+  // Execution Information
+  executionMessagesDescription: string;
+  // Deployment Information
+  testnetExplorerLink: string;
+  // File Upload
   wasmByteCode: File;
 }
+
+const VALIDATION_MESSAGES = {
+  AUDIT: {
+    EXECUTION_REQUIRED: "Execution messages description is required",
+    PROCESS_REQUIRED: "Audit process description is required",
+    REPORT_REQUIRED: "Audit report link is required",
+  },
+  CONTRACT: {
+    DESCRIPTION_REQUIRED: "Contract description is required",
+    NAME_REQUIRED: "Contract name is required",
+    SOURCE_REQUIRED: "Contract source link is required",
+  },
+  DEVELOPER: {
+    DESCRIPTION_REQUIRED: "Developer description is required",
+    LINK_REQUIRED: "Developer link is required",
+  },
+  TESTNET: {
+    EXPLORER_REQUIRED: "Testnet explorer link is required",
+  },
+  URL_PATTERN: "Please enter a valid URL starting with http:// or https://",
+  WASM_REQUIRED: "Please upload a WASM binary file",
+} as const;
+
+const URL_PATTERN = /^https?:\/\/.+/;
 
 export const SubmitProposalForm = () => {
   const [step, setStep] = useState<Step>(Step.Form);
@@ -51,8 +91,6 @@ export const SubmitProposalForm = () => {
     unregister,
   } = useForm<FormValues>({
     defaultValues: {
-      description:
-        "## Developer Information \n\n### Link to Developer/Company \n\n### Developer Description\n\n\n\n## Contract Details\n\n### Contract Name\n\n### Contract Source Link\n\n### Contract Description and Intended Use\n\n\n\n## Audit and Execution Information\n\n### Audit Report Link\n\n### Audit Process Description\n\n### Execution Messages Description\n\n\n\n## Deployment Information\n\n### Testnet Explorer Link\n\n",
       type: ProposalType.STORE_CODE,
     },
     mode: "onSubmit",
@@ -85,16 +123,19 @@ export const SubmitProposalForm = () => {
 
   useEffect(() => {
     register("wasmByteCode", {
-      required: "Please upload a WASM binary file",
+      required: VALIDATION_MESSAGES.WASM_REQUIRED,
       validate: () => {
         if (!uploadedFile) {
-          return "Please upload a WASM binary file";
+          return VALIDATION_MESSAGES.WASM_REQUIRED;
         }
 
         return true;
       },
     });
   }, [register, uploadedFile]);
+
+  const generateDescription = (data: FormValues): string =>
+    `## Developer Information\n\n### Link to Developer/Company\n${data.developerLink}\n\n### Developer Description\n${data.developerDescription}\n\n## Contract Details\n\n### Contract Name\n${data.contractName}\n\n### Contract Source Link\n${data.contractSourceLink}\n\n### Contract Description and Intended Use\n${data.contractDescription}\n\n## Audit and Execution Information\n\n### Audit Report Link\n${data.auditReportLink}\n\n### Audit Process Description\n${data.auditProcessDescription}\n\n### Execution Messages Description\n${data.executionMessagesDescription}\n\n## Deployment Information\n\n### Testnet Explorer Link\n${data.testnetExplorerLink}\n`;
 
   const handleFormSubmit = async (data: FormValues) => {
     try {
@@ -118,15 +159,17 @@ export const SubmitProposalForm = () => {
         );
       }
 
-      setFormData({
+      const formDataWithDescription = {
         ...data,
+        description: generateDescription(data),
         initialDeposit: {
           ...data.initialDeposit,
           amount: microAmount,
           denom: "uxion",
         },
-      });
+      };
 
+      setFormData(formDataWithDescription);
       setStep(Step.Review);
     } catch (err) {
       setError(
@@ -145,8 +188,11 @@ export const SubmitProposalForm = () => {
       const arrayBuffer = await formData.wasmByteCode.arrayBuffer();
       const wasmByteCode = new Uint8Array(arrayBuffer);
 
+      const description = generateDescription(formData);
+
       await submitProposal({
         ...formData,
+        description,
         wasmByteCode,
       });
 
@@ -178,37 +224,149 @@ export const SubmitProposalForm = () => {
           required
         />
 
-        <div className="flex flex-col space-y-2">
-          <FormTextArea
-            error={errors.description?.message}
-            id="description"
-            label="Description"
-            register={register}
-            required
-            {...register("description", {
-              required: "Description is required",
-              value:
-                "## Developer Information \n\n### Link to Developer/Company \n\n### Developer Description\n\n\n\n## Contract Details\n\n### Contract Name\n\n### Contract Source Link\n\n### Contract Description and Intended Use\n\n\n\n## Audit and Execution Information\n\n### Audit Report Link\n\n### Audit Process Description\n\n### Execution Messages Description\n\n\n\n## Deployment Information\n\n### Testnet Explorer Link\n\n",
-            })}
-          />
-          {errors.description && (
-            <span className="text-sm text-red-500">
-              {errors.description.message}
-            </span>
-          )}
+        <div className="font-['Akkurat LL'] mt-6 text-2xl font-bold leading-7 text-white">
+          Developer Information
         </div>
+
+        <FormInput
+          error={errors.developerLink?.message}
+          id="developerLink"
+          label="Link to Developer/Company"
+          register={register}
+          {...register("developerLink", {
+            pattern: {
+              message: VALIDATION_MESSAGES.URL_PATTERN,
+              value: URL_PATTERN,
+            },
+            required: VALIDATION_MESSAGES.DEVELOPER.LINK_REQUIRED,
+          })}
+        />
+
+        <FormTextArea
+          error={errors.developerDescription?.message}
+          height={180}
+          id="developerDescription"
+          label="Developer Description"
+          register={register}
+          required
+          {...register("developerDescription", {
+            required: VALIDATION_MESSAGES.DEVELOPER.DESCRIPTION_REQUIRED,
+          })}
+        />
+
+        <div className="font-['Akkurat LL'] mt-6 text-2xl font-bold leading-7 text-white">
+          Contract Details
+        </div>
+
+        <FormInput
+          error={errors.contractName?.message}
+          id="contractName"
+          label="Contract Name"
+          register={register}
+          required
+          {...register("contractName", {
+            required: VALIDATION_MESSAGES.CONTRACT.NAME_REQUIRED,
+          })}
+        />
+
+        <FormInput
+          error={errors.contractSourceLink?.message}
+          id="contractSourceLink"
+          label="Contract Source Link"
+          register={register}
+          required
+          {...register("contractSourceLink", {
+            pattern: {
+              message: VALIDATION_MESSAGES.URL_PATTERN,
+              value: URL_PATTERN,
+            },
+            required: VALIDATION_MESSAGES.CONTRACT.SOURCE_REQUIRED,
+          })}
+        />
+
+        <FormTextArea
+          error={errors.contractDescription?.message}
+          height={180}
+          id="contractDescription"
+          label="Contract Description and Intended Use"
+          register={register}
+          required
+          {...register("contractDescription", {
+            required: VALIDATION_MESSAGES.CONTRACT.DESCRIPTION_REQUIRED,
+          })}
+        />
+
+        <div className="font-['Akkurat LL'] mt-6 text-2xl font-bold leading-7 text-white">
+          Audit and Execution Information
+        </div>
+
+        <FormInput
+          error={errors.auditReportLink?.message}
+          id="auditReportLink"
+          label="Audit Report Link"
+          register={register}
+          required
+          {...register("auditReportLink", {
+            pattern: {
+              message: VALIDATION_MESSAGES.URL_PATTERN,
+              value: URL_PATTERN,
+            },
+            required: VALIDATION_MESSAGES.AUDIT.REPORT_REQUIRED,
+          })}
+        />
+
+        <FormTextArea
+          error={errors.auditProcessDescription?.message}
+          id="auditProcessDescription"
+          label="Audit Process Description"
+          register={register}
+          required
+          {...register("auditProcessDescription", {
+            required: VALIDATION_MESSAGES.AUDIT.PROCESS_REQUIRED,
+          })}
+        />
+
+        <FormTextArea
+          error={errors.executionMessagesDescription?.message}
+          id="executionMessagesDescription"
+          label="Execution Messages Description"
+          register={register}
+          required
+          {...register("executionMessagesDescription", {
+            required: VALIDATION_MESSAGES.AUDIT.EXECUTION_REQUIRED,
+          })}
+        />
+
+        <div className="font-['Akkurat LL'] mt-6 text-2xl font-bold leading-7 text-white">
+          Deployment Information
+        </div>
+
+        <FormInput
+          error={errors.testnetExplorerLink?.message}
+          id="testnetExplorerLink"
+          label="Testnet Explorer Link"
+          register={register}
+          required
+          {...register("testnetExplorerLink", {
+            pattern: {
+              message: VALIDATION_MESSAGES.URL_PATTERN,
+              value: URL_PATTERN,
+            },
+            required: VALIDATION_MESSAGES.TESTNET.EXPLORER_REQUIRED,
+          })}
+        />
 
         <FileUpload
           error={errors.wasmByteCode?.message}
           id="wasmByteCode"
-          label="Deployment Information"
+          label="WASM Binary File"
           setUploadedFile={setUploadedFile}
           setValue={setValue}
           unregister={unregister}
           uploadedFile={uploadedFile}
         />
 
-        <div className="flex w-full flex-col">
+        <div className="mt-6 flex w-full flex-col">
           <div className="font-['Akkurat LL'] text-2xl font-bold leading-7 text-white">
             Deposit
           </div>
