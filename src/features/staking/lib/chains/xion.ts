@@ -41,8 +41,6 @@ interface ChainInfo {
     website: string;
   };
   pretty_name?: string;
-  rest: string;
-  rpc: string;
   stakeCurrency: Coin;
   walletUrlForStaking?: string;
 }
@@ -107,8 +105,6 @@ const commonInfo: ChainInfo = {
     name: "Dylan Schultzie",
     website: "https://lavenderfive.com",
   },
-  rest: "undefined",
-  rpc: "undefined",
   stakeCurrency: {
     ...xionCoin,
     coinImageUrl:
@@ -134,8 +130,6 @@ const mainnetChainInfo: ChainInfo = {
     },
   ],
   pretty_name: "Xion",
-  rest: "https://lcd-xion.keplr.app",
-  rpc: "https://rpc-xion.keplr.app",
   stakeCurrency: {
     ...mainnetCoin,
     coinImageUrl:
@@ -149,8 +143,6 @@ const testnetChainInfo: ChainInfo = {
   chainId: "xion-testnet-1",
   chainName: "xiontestnet",
   pretty_name: "Xion Testnet",
-  rest: "https://api.xion-testnet-1.burnt.com/",
-  rpc: "https://rpc.xion-testnet-1.burnt.com/",
 };
 
 const testChainInfo: ChainInfo = {
@@ -158,24 +150,10 @@ const testChainInfo: ChainInfo = {
   chainId: "xion-local-testnet-1",
   chainName: "Xion Testnet Local",
   pretty_name: "Xion Local Testnet",
-  rest: "http://localhost:26656",
-  rpc: "http://localhost:26657",
 };
 
 function buildCosmosKitChainSpecification(burntChainInfo: ChainInfo): Chain {
   return {
-    apis: {
-      rest: [
-        {
-          address: burntChainInfo.rest,
-        },
-      ],
-      rpc: [
-        {
-          address: burntChainInfo.rpc,
-        },
-      ],
-    },
     bech32_prefix: burntChainInfo.bech32Config.bech32PrefixAccAddr,
     chain_id: burntChainInfo.chainId,
     chain_name: burntChainInfo.chainName,

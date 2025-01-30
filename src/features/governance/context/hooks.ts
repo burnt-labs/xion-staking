@@ -1,10 +1,7 @@
-import {
-  useAbstraxionAccount,
-  useAbstraxionSigningClient,
-} from "@burnt-labs/abstraxion";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 
+import { useChainAccount } from "@/features/core/hooks/useChainAccount";
 import type {
   ExecuteVoteParams,
   GovDepositParamsResponse,
@@ -172,7 +169,7 @@ const useStakingPool = () =>
 export const useProposalDetails = (
   proposalId: string,
 ): null | ProposalDetailsResult => {
-  const { data: abstraxionAccount } = useAbstraxionAccount();
+  const { account } = useChainAccount();
   const { data: proposal } = useProposal(proposalId);
   const { data: deposits } = useProposalDeposits(proposalId);
   const { data: pool } = useStakingPool();
@@ -182,7 +179,7 @@ export const useProposalDetails = (
 
   const { data: voteData } = useVote(
     proposalId,
-    abstraxionAccount?.bech32Address ?? "",
+    account?.bech32Address ?? "",
   );
 
   return useMemo(() => {
@@ -277,11 +274,8 @@ export const useProposalDetails = (
  * @returns The governance context.
  */
 export const useGovernanceTx = () => {
-  const { client } = useAbstraxionSigningClient();
-  const { data: account, isConnected } = useAbstraxionAccount();
+  const { address, client, isConnected } = useChainAccount();
   const queryClient = useQueryClient();
-
-  const address = account?.bech32Address;
 
   const voteMutation = useMutation({
     mutationFn: async (params: ExecuteVoteParams) => {
@@ -300,7 +294,6 @@ export const useGovernanceTx = () => {
   });
 
   return {
-    account,
     address,
     client: isConnected ? client : undefined,
     isConnected,
