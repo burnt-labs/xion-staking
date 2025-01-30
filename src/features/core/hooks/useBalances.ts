@@ -6,7 +6,7 @@ import { REST_API_URL, REST_ENDPOINTS } from "../../../config";
 
 const fetchBalances = async (address?: string): Promise<Coin[]> => {
   if (!address) return [];
-  
+
   try {
     const response = await axios.get(
       `${REST_API_URL}${REST_ENDPOINTS.balances}/${address}`,

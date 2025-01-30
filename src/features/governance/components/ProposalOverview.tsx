@@ -1,6 +1,7 @@
 import React from "react";
 
 import { useChainAccount } from "@/features/core/hooks/useChainAccount";
+
 import type { VoteOptionType } from "../lib/types";
 import { ProposalStatus } from "../lib/types";
 import { formatProposalDate } from "../lib/utils";

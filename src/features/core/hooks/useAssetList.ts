@@ -23,11 +23,11 @@ const fetchAssetList = async (): Promise<AssetList> => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    console.log('Asset List Response:', {
+    console.log("Asset List Response:", {
       endpoint: ASSET_ENDPOINT,
       chainName: response.data.chain_name,
       assetCount: response.data.assets?.length,
-      fullData: response.data
+      fullData: response.data,
     });
 
     return response.data;

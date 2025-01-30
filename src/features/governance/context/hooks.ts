@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import { useChainAccount } from "@/features/core/hooks/useChainAccount";
+
 import type {
   ExecuteVoteParams,
   GovDepositParamsResponse,
@@ -177,10 +178,7 @@ export const useProposalDetails = (
   const { data: tallyParams } = useTallyParams();
   const { data: depositParams } = useDepositParams();
 
-  const { data: voteData } = useVote(
-    proposalId,
-    account?.bech32Address ?? "",
-  );
+  const { data: voteData } = useVote(proposalId, account?.bech32Address ?? "");
 
   return useMemo(() => {
     if (
