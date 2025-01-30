@@ -1,16 +1,13 @@
-import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
 import { useMemo } from "react";
 
 import { useAssetList } from "./useAssetList";
 import { useBalances } from "./useBalances";
+import { useChainAccount } from "./useChainAccount";
 
 export function useAccountBalance() {
-  const { data: account } = useAbstraxionAccount();
+  const { address } = useChainAccount();
 
-  const { data: balances, refetch: refetchBalances } = useBalances(
-    account?.bech32Address,
-  );
-
+  const { data: balances, refetch: refetchBalances } = useBalances(address);
   const { data: assetList } = useAssetList();
 
   const { processedBalances, totalDollarValue } = useMemo(() => {

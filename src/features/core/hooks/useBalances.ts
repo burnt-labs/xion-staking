@@ -4,7 +4,9 @@ import { type Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
 
 import { REST_API_URL, REST_ENDPOINTS } from "../../../config";
 
-const fetchBalances = async (address: string): Promise<Coin[]> => {
+const fetchBalances = async (address?: string): Promise<Coin[]> => {
+  if (!address) return [];
+
   try {
     const response = await axios.get(
       `${REST_API_URL}${REST_ENDPOINTS.balances}/${address}`,
@@ -26,7 +28,7 @@ const fetchBalances = async (address: string): Promise<Coin[]> => {
  * @param address - The address to fetch balances for
  * @returns The balances and query info
  */
-export const useBalances = (address: string) =>
+export const useBalances = (address?: string) =>
   useQuery({
     enabled: Boolean(address), // Only run the query when address exists
     queryFn: () => fetchBalances(address),

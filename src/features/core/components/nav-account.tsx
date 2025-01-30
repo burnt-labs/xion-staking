@@ -1,14 +1,9 @@
 "use client";
 
-import {
-  useAbstraxionAccount,
-  useAbstraxionSigningClient,
-  useModal,
-} from "@burnt-labs/abstraxion";
-
 import { mainNavItems } from "@/config";
 import { useCore } from "@/features/core/context/hooks";
 import { setPopupOpenId } from "@/features/core/context/reducer";
+import { useChainAccount } from "@/features/core/hooks/useChainAccount";
 import AddressShort from "@/features/staking/components/address-short";
 
 import { wallet } from "../lib/icons";
@@ -21,11 +16,9 @@ const Account = () => (
   </span>
 );
 
-const NavAccount = () => {
-  const [, setShowAbstraxion] = useModal();
-  const { data, isConnected } = useAbstraxionAccount();
-  const { logout } = useAbstraxionSigningClient();
+function NavAccount() {
   const { core } = useCore();
+  const { account, isConnected, login, logout } = useChainAccount();
 
   const closeDropdown = () => {
     core.dispatch(setPopupOpenId(null));
@@ -44,11 +37,15 @@ const NavAccount = () => {
             <div className="flex flex-col gap-[12px]">
               <div className="text-[14px]">XION Address</div>
               <div className="flex min-w-[250px] flex-row justify-between rounded-[8px] bg-[#000] px-[16px] py-[20px] text-[#fff]">
-                <AddressShort
-                  address={data.bech32Address}
-                  className="text-[16px] text-[#fff]"
-                />
-                <ClipboardCopy textToCopy={data.bech32Address} />
+                {account?.bech32Address && (
+                  <AddressShort
+                    address={account.bech32Address}
+                    className="text-[16px] text-[#fff]"
+                  />
+                )}
+                {account?.bech32Address && (
+                  <ClipboardCopy textToCopy={account.bech32Address} />
+                )}
               </div>
             </div>
             <div className="relative inline-flex flex-col items-center gap-8 px-0">
@@ -58,9 +55,7 @@ const NavAccount = () => {
             </div>
             <Button
               className="w-full flex-1 py-[8px] uppercase"
-              onClick={() => {
-                logout?.();
-              }}
+              onClick={logout}
               variant="danger-naked"
             >
               Log out
@@ -68,16 +63,10 @@ const NavAccount = () => {
           </div>
         </FloatingDropdown>
       ) : (
-        <Button
-          onClick={() => {
-            setShowAbstraxion(true);
-          }}
-        >
-          Log in
-        </Button>
+        <Button onClick={login}>Log in</Button>
       )}
     </div>
   );
-};
+}
 
 export default NavAccount;

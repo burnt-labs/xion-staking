@@ -1,6 +1,5 @@
 "use client";
 
-import { useModal } from "@burnt-labs/abstraxion";
 import BigNumber from "bignumber.js";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,6 +15,7 @@ import {
   Title,
 } from "@/features/core/components/base";
 import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
+import { useChainAccount } from "@/features/core/hooks/useChainAccount";
 
 import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
@@ -55,10 +55,10 @@ export default function ValidatorDelegation() {
   const xionBalance = getBalanceByDenom("uxion");
   const xionPrice = xionBalance?.price;
 
-  const [, setShowAbstraxion] = useModal();
+  const { isConnected, login } = useChainAccount();
   const [isShowingDetails, setIsShowingDetails] = useState(true);
 
-  const { isConnected, staking } = stakingRef;
+  const { staking } = stakingRef;
 
   const [validatorDetails, setValidatorDetails] = useState<Awaited<
     ReturnType<typeof getValidatorDetailsAction>
@@ -96,12 +96,7 @@ export default function ValidatorDelegation() {
     <div className="flex h-[220px] min-w-[1000px] flex-col items-center justify-center gap-[32px] rounded-[24px] bg-bg-600 uppercase">
       <HeroText>Please log in to view</HeroText>
       <div>
-        <Button
-          className="[&]:min-w-[150px]"
-          onClick={() => {
-            setShowAbstraxion(true);
-          }}
-        >
+        <Button className="[&]:min-w-[150px]" onClick={login}>
           Log in
         </Button>
       </div>

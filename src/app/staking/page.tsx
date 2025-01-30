@@ -1,1 +1,7 @@
-export { default } from "../page";
+"use client";
+
+import StakingPage from "@/features/staking/components/main-page";
+
+export default function Page() {
+  return <StakingPage />;
+}

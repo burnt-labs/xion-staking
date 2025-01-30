@@ -10,7 +10,7 @@ export function BreadCrumbNav({ proposalId }: BreadCrumbProps) {
       <div>
         <Link
           className="font-['Akkurat LL'] text-sm font-normal uppercase leading-tight text-white underline"
-          href="/governance/"
+          href="/governance"
         >
           Governance
         </Link>
