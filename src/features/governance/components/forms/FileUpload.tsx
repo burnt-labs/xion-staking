@@ -32,13 +32,24 @@ export const FileUpload = ({
     [id, setUploadedFile, setValue],
   );
 
-  const { getInputProps, getRootProps } = useDropzone({
+  const handleRemoveFile = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setUploadedFile(null);
+      unregister(id);
+      setValue(id, null);
+    },
+    [id, setUploadedFile, unregister, setValue],
+  );
+
+  const { getInputProps, getRootProps, isDragActive } = useDropzone({
     accept: {
       "application/wasm": [".wasm"],
     },
     maxFiles: 1,
-    noClick: false,
-    noKeyboard: false,
+    noClick: uploadedFile !== null,
+    noKeyboard: uploadedFile !== null,
     onDrop,
   });
 
@@ -52,9 +63,14 @@ export const FileUpload = ({
           WASM Binary File Upload
         </label>
 
-        <div {...getRootProps()} className="mt-[26px] flex flex-col">
+        <div
+          {...getRootProps()}
+          className={`mt-[26px] flex flex-col ${uploadedFile ? "pointer-events-none" : ""}`}
+        >
           <input className="hidden" {...getInputProps()} />
-          <div className="relative flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg bg-white/10 transition-colors hover:bg-white/20">
+          <div
+            className={`relative flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg bg-white/10 transition-colors ${!uploadedFile && !isDragActive ? "hover:bg-white/20" : ""}`}
+          >
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/10">
               <span dangerouslySetInnerHTML={{ __html: upload }} />
             </div>
@@ -84,11 +100,7 @@ export const FileUpload = ({
             </div>
             <button
               className="mr-4 flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 hover:bg-white/20"
-              onClick={(e) => {
-                e.preventDefault();
-                setUploadedFile(null);
-                unregister(id);
-              }}
+              onClick={handleRemoveFile}
               type="button"
             >
               <span dangerouslySetInnerHTML={{ __html: trash }} />
