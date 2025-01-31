@@ -58,6 +58,10 @@ export const ASSET_ENDPOINT = IS_TESTNET
 export const COINGECKO_API_URL =
   "https://api.coingecko.com/api/v3/simple/price";
 
+export const RPC_URL = IS_TESTNET
+  ? "https://rpc.xion-testnet-1.burnt.com:443"
+  : "https://rpc.xion-mainnet-1.burnt.com:443";
+
 export const REST_API_URL = IS_TESTNET
   ? "https://api.xion-testnet-1.burnt.com"
   : "https://api.xion-mainnet-1.burnt.com";
