@@ -1,4 +1,5 @@
 import type { Coin } from "@cosmjs/proto-signing";
+import { type AccessConfig } from "cosmjs-types/cosmwasm/wasm/v1/types";
 
 import type { SigningClient } from "@/features/staking/lib/core/client";
 
@@ -296,3 +297,31 @@ export const getReadableVoteOption = (vote: VoteOptionType): string => {
       return "Unknown";
   }
 };
+
+export enum ProposalType {
+  PARAMS = "Parameter change",
+  SPEND = "Community pool spend",
+  STORE_CODE = "Store code",
+  TEXT = "Text proposal",
+}
+
+interface BaseProposalValues {
+  description: string;
+  initialDeposit?: Coin;
+  title: string;
+}
+
+export interface StoreCodeProposalValues extends BaseProposalValues {
+  instantiatePermission?: AccessConfig;
+  type: ProposalType.STORE_CODE;
+  wasmByteCode: Uint8Array;
+}
+
+export type ProposalFormValues = StoreCodeProposalValues; // union with other types as they're added
+
+export interface SubmitProposalParams {
+  client: SigningClient;
+  memo?: string;
+  proposer: string;
+  values: ProposalFormValues;
+}

@@ -1,11 +1,16 @@
 import BigNumber from "bignumber.js";
+import { MsgSubmitProposal } from "cosmjs-types/cosmos/gov/v1/tx";
 import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
+import { MsgStoreCode } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 
 import { fetchFromAPI } from "@/features/core/utils";
 import { getTxVerifier, handleTxError } from "@/features/staking/lib/core/tx";
 
 import { GOVERNANCE_ENDPOINTS } from "../config/api";
-import { GOVERNANCE_PAGE_LIMIT } from "../config/constants";
+import {
+  GOVERNANCE_MODULE_ADDRESS,
+  GOVERNANCE_PAGE_LIMIT,
+} from "../config/constants";
 import type {
   ExecuteVoteParams,
   GovDepositParamsResponse,
@@ -20,6 +25,7 @@ import type {
   ProposalTallyResult,
   StakingPool,
   StakingPoolResponse,
+  SubmitProposalParams,
 } from "../lib/types";
 import { ProposalStatus, VoteType } from "../lib/types";
 
@@ -200,5 +206,41 @@ export const submitVote = async ({
   return await client
     .signAndBroadcast(voter, [messageWrapper], 2.5, memo)
     .then(getTxVerifier("proposal_vote"))
+    .catch(handleTxError);
+};
+
+export const submitStoreCodeProposal = async ({
+  client,
+  memo = "",
+  proposer,
+  values,
+}: SubmitProposalParams) => {
+  const storeCodeMsg = MsgStoreCode.fromPartial({
+    sender: GOVERNANCE_MODULE_ADDRESS,
+    wasmByteCode: values.wasmByteCode,
+  });
+
+  const msg = MsgSubmitProposal.fromPartial({
+    initialDeposit: values.initialDeposit ? [values.initialDeposit] : [],
+    messages: [
+      {
+        typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
+        value: MsgStoreCode.encode(storeCodeMsg).finish(),
+      },
+    ],
+    metadata: "",
+    proposer,
+    summary: values.description,
+    title: values.title,
+  });
+
+  const messageWrapper = {
+    typeUrl: "/cosmos.gov.v1.MsgSubmitProposal",
+    value: msg,
+  };
+
+  return await client
+    .signAndBroadcast(proposer, [messageWrapper], 2.5, memo)
+    .then(getTxVerifier("submit_proposal"))
     .catch(handleTxError);
 };
