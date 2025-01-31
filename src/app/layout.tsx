@@ -86,11 +86,11 @@ export default function RootLayout({
               endpointOptions={{
                 endpoints: {
                   xion: {
-                    rest: [REST_URL],
+                    rest: [REST_API_URL],
                     rpc: [RPC_URL],
                   },
                   xiontestnet: {
-                    rest: [REST_URL],
+                    rest: [REST_API_URL],
                     rpc: [RPC_URL],
                   },
                 },

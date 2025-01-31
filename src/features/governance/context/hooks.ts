@@ -1,3 +1,7 @@
+import {
+  useAbstraxionAccount,
+  useAbstraxionSigningClient,
+} from "@burnt-labs/abstraxion";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 
