@@ -16,8 +16,7 @@ import React from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { FAUCET_CONTRACT_ADDRESS } from "@/config";
-import { REST_URL, RPC_URL } from "@/constants";
+import { FAUCET_CONTRACT_ADDRESS, REST_API_URL, RPC_URL } from "@/config";
 import BaseWrapper from "@/features/core/components/base-wrapper";
 import { ProModeProvider } from "@/features/core/context/pro-mode";
 import { CoreProvider } from "@/features/core/context/provider";
@@ -29,7 +28,7 @@ import "./globals.css";
 // Abstraxion config
 const abstraxionConfig = {
   contracts: [FAUCET_CONTRACT_ADDRESS],
-  restUrl: REST_URL,
+  restUrl: REST_API_URL,
   rpcUrl: RPC_URL,
   stake: true,
 };
