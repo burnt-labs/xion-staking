@@ -320,7 +320,7 @@ export interface StoreCodeProposalValues extends BaseProposalValues {
 export type ProposalFormValues = StoreCodeProposalValues; // union with other types as they're added
 
 export interface SubmitProposalParams {
-  client: AbstraxionSigningClient;
+  client: SigningClient;
   memo?: string;
   proposer: string;
   values: ProposalFormValues;
