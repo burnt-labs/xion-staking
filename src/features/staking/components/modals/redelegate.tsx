@@ -194,6 +194,10 @@ const RedelegateModal = () => {
     }
 
     try {
+      if (!account?.bech32Address) {
+        throw new Error("Delegator address is not defined");
+      }
+
       const gasEstimate = await estimateGas({
         amount: getXionCoin(amountXIONParsed),
         delegator: account.bech32Address,
@@ -319,6 +323,13 @@ const RedelegateModal = () => {
                     if (!client || !dstValidator) return;
 
                     setIsLoading(true);
+
+                    if (!account?.bech32Address) {
+                      toast("Account address not found", { type: "error" });
+                      setIsLoading(false);
+
+                      return;
+                    }
 
                     redelegateAction(
                       {

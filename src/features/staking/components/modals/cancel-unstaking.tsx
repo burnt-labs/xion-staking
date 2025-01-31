@@ -52,12 +52,16 @@ const CancelUnstakingModal = () => {
 
               setIsLoading(true);
 
+              if (!account.bech32Address) {
+                throw new Error("Delegator address is undefined");
+              }
+
               unbondings
                 .reduce(async (promise, unbonding) => {
                   await promise;
 
                   const addresses: StakeAddresses = {
-                    delegator: account.bech32Address,
+                    delegator: account.bech32Address as string,
                     validator: unbonding.validator,
                   };
 
@@ -65,7 +69,7 @@ const CancelUnstakingModal = () => {
                 }, Promise.resolve())
                 .then(() => {
                   // Don't await for this so the button can be enabled earlier
-                  fetchUserDataAction(account.bech32Address, staking);
+                  fetchUserDataAction(account.bech32Address as string, staking);
 
                   setStep("completed");
                 })

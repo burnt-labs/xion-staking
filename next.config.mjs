@@ -1,22 +1,25 @@
+import { setupDevPlatform } from "@cloudflare/next-on-pages/next-dev";
+
 const useProxy = false;
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: process.env.QUICK_BUILD === "true",
   },
-  trailingSlash: true, // This is important when deploying in GH pages
-  typescript: {
-    ignoreBuildErrors: process.env.QUICK_BUILD === "true",
-  },
   images: {
     remotePatterns: [
       {
-        protocol: "https",
         hostname: "s3.amazonaws.com",
-        port: "",
         pathname: "**",
+        port: "",
+        protocol: "https",
       },
     ],
+  },
+  trailingSlash: true, // This is important when deploying in GH pages
+  typescript: {
+    ignoreBuildErrors: process.env.QUICK_BUILD === "true",
   },
   ...(useProxy
     ? {
@@ -35,5 +38,9 @@ const nextConfig = {
         output: "export",
       }),
 };
+
+if (process.env.NODE_ENV === "development") {
+  await setupDevPlatform();
+}
 
 export default nextConfig;

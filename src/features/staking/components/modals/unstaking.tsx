@@ -190,31 +190,41 @@ const UnstakingModal = () => {
 
                     setIsLoading(true);
 
-                    const addresses: StakeAddresses = {
-                      delegator: account.bech32Address,
-                      validator: validator.operatorAddress,
-                    };
+                    try {
+                      if (!account?.bech32Address) {
+                        throw new Error("Delegator address is not defined");
+                      }
 
-                    unstakeValidatorAction(
-                      addresses,
-                      getXionCoin(amountXIONParsed),
-                      memo,
-                      client,
-                      staking,
-                    )
-                      .then((fetchDataFn) => {
-                        setStep("completed");
+                      const addresses: StakeAddresses = {
+                        delegator: account.bech32Address,
+                        validator: validator.operatorAddress,
+                      };
 
-                        return fetchDataFn();
-                      })
-                      .catch(() => {
-                        toast("Staking error", {
-                          type: "error",
+                      unstakeValidatorAction(
+                        addresses,
+                        getXionCoin(amountXIONParsed),
+                        memo,
+                        client,
+                        staking,
+                      )
+                        .then((fetchDataFn) => {
+                          setStep("completed");
+
+                          return fetchDataFn();
+                        })
+                        .catch(() => {
+                          toast("Staking error", {
+                            type: "error",
+                          });
+                        })
+                        .finally(() => {
+                          setIsLoading(false);
                         });
-                      })
-                      .finally(() => {
-                        setIsLoading(false);
+                    } catch (error) {
+                      toast("Staking error", {
+                        type: "error",
                       });
+                    }
                   }}
                 >
                   CONFIRM

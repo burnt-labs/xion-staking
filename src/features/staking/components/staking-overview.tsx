@@ -1,4 +1,3 @@
-import { useAbstraxionAccount, useModal } from "@burnt-labs/abstraxion";
 import BigNumber from "bignumber.js";
 import { memo } from "react";
 
@@ -14,6 +13,7 @@ import {
   NavLink,
 } from "@/features/core/components/base";
 import { useAccountBalance } from "@/features/core/hooks/useAccountBalance";
+import { useChainAccount } from "@/features/core/hooks/useChainAccount";
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
@@ -47,7 +47,7 @@ const Divisor = () => (
 );
 
 const StakingOverview = () => {
-  const { isConnected } = useAbstraxionAccount();
+  const { isConnected, login } = useChainAccount();
   const { staking } = useStaking();
   const { assetList, getBalanceByDenom } = useAccountBalance();
 
@@ -56,8 +56,6 @@ const StakingOverview = () => {
 
   const xionBalance = getBalanceByDenom("uxion");
   const xionPrice = xionBalance?.price;
-
-  const [, setShowAbstraxion] = useModal();
 
   if (!isConnected) {
     return (
@@ -70,12 +68,7 @@ const StakingOverview = () => {
       >
         <HeroText className="text-center">Please Log In To View</HeroText>
         <div>
-          <Button
-            className="min-w-[150px]"
-            onClick={() => {
-              setShowAbstraxion(true);
-            }}
-          >
+          <Button className="min-w-[150px]" onClick={login}>
             Log In
           </Button>
         </div>

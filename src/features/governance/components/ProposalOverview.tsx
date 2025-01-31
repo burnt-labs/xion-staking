@@ -1,5 +1,6 @@
-import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
 import React from "react";
+
+import { useChainAccount } from "@/features/core/hooks/useChainAccount";
 
 import type { VoteOptionType } from "../lib/types";
 import { ProposalStatus } from "../lib/types";
@@ -65,7 +66,7 @@ export const ProposalOverview: React.FC<ProposalOverviewProps> = ({
   voteValue,
   yesPercentage,
 }) => {
-  const { isConnected } = useAbstraxionAccount();
+  const { isConnected } = useChainAccount();
 
   return (
     <div className="rounded-lg bg-white/10 p-6 text-white shadow-lg">

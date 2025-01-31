@@ -32,6 +32,10 @@ const claimRewardsLoop = async (
   const delegatorAddress = stakingRef.account.bech32Address;
 
   try {
+    if (!delegatorAddress) {
+      throw new Error("Delegator address is not defined");
+    }
+
     // Handle single claim case
     if ("validatorAddress" in modal.content) {
       await claimRewards(
