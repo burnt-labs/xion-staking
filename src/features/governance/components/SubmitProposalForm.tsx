@@ -33,6 +33,8 @@ interface FormValues
   // Developer Information
   developerDescription: string;
   developerLink: string;
+  // Discourse Post announcing intent
+  discoursePostLink: string;
   // Execution Information
   executionMessagesDescription: string;
   // Deployment Information
@@ -55,6 +57,9 @@ const VALIDATION_MESSAGES = {
   DEVELOPER: {
     DESCRIPTION_REQUIRED: "Developer description is required",
     LINK_REQUIRED: "Developer link is required",
+  },
+  DISCOURSE: {
+    LINK_REQUIRED: "Discourse post link is required",
   },
   TESTNET: {
     EXPLORER_REQUIRED: "Testnet explorer link is required",
@@ -135,7 +140,7 @@ export const SubmitProposalForm = () => {
   }, [register, uploadedFiles]);
 
   const generateDescription = (data: FormValues): string =>
-    `## Developer Information\n\n### Link to Developer/Company\n${data.developerLink}\n\n### Developer Description\n${data.developerDescription}\n\n## Contract Details\n\n### Contract Name\n${data.contractName}\n\n### Contract Source Link\n${data.contractSourceLink}\n\n### Contract Description and Intended Use\n${data.contractDescription}\n\n## Audit and Execution Information\n\n### Audit Report Link\n${data.auditReportLink}\n\n### Audit Process Description\n${data.auditProcessDescription}\n\n### Execution Messages Description\n${data.executionMessagesDescription}\n\n## Deployment Information\n\n### Testnet Explorer Link\n${data.testnetExplorerLink}\n`;
+    `### Link to discourse post\n${data.discoursePostLink}\n\n## Developer Information\n\n### Link to Developer/Company\n${data.developerLink}\n\n### Developer Description\n${data.developerDescription}\n\n## Contract Details\n\n### Contract Name\n${data.contractName}\n\n### Contract Source Link\n${data.contractSourceLink}\n\n### Contract Description and Intended Use\n${data.contractDescription}\n\n## Audit and Execution Information\n\n### Audit Report Link\n${data.auditReportLink}\n\n### Audit Process Description\n${data.auditProcessDescription}\n\n### Execution Messages Description\n${data.executionMessagesDescription}\n\n## Deployment Information\n\n### Testnet Explorer Link\n${data.testnetExplorerLink}\n`;
 
   const handleFormSubmit = async (data: FormValues) => {
     try {
@@ -227,6 +232,20 @@ export const SubmitProposalForm = () => {
           label="Title"
           register={register}
           required
+        />
+
+        <FormInput
+          error={errors.developerLink?.message}
+          id="discoursePostLink"
+          label="Link to Discourse Post"
+          register={register}
+          {...register("discoursePostLink", {
+            pattern: {
+              message: VALIDATION_MESSAGES.URL_PATTERN,
+              value: URL_PATTERN,
+            },
+            required: VALIDATION_MESSAGES.DISCOURSE.LINK_REQUIRED,
+          })}
         />
 
         <div className="font-['Akkurat LL'] mt-6 text-2xl font-bold leading-7 text-white">
