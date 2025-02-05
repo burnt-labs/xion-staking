@@ -22,7 +22,7 @@ enum Step {
 }
 
 interface FormValues
-  extends Omit<StoreCodeProposalValues, "description" | "wasmByteCode"> {
+  extends Omit<StoreCodeProposalValues, "description" | "wasmByteCodes"> {
   // Audit Information
   auditProcessDescription: string;
   auditReportLink: string;
@@ -38,7 +38,7 @@ interface FormValues
   // Deployment Information
   testnetExplorerLink: string;
   // File Upload
-  wasmByteCode: File;
+  wasmByteCode: File[];
 }
 
 const VALIDATION_MESSAGES = {
@@ -60,7 +60,7 @@ const VALIDATION_MESSAGES = {
     EXPLORER_REQUIRED: "Testnet explorer link is required",
   },
   URL_PATTERN: "Please enter a valid URL starting with http:// or https://",
-  WASM_REQUIRED: "Please upload a WASM binary file",
+  WASM_REQUIRED: "Please upload at least one WASM binary file",
 } as const;
 
 const URL_PATTERN = /^https?:\/\/.+/;
@@ -68,7 +68,7 @@ const URL_PATTERN = /^https?:\/\/.+/;
 export const SubmitProposalForm = () => {
   const [step, setStep] = useState<Step>(Step.Form);
   const [error, setError] = useState<null | string>(null);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<File[] | null>(null);
   const [formData, setFormData] = useState<FormValues | null>(null);
 
   const { data: depositParams } = useDepositParams();
@@ -125,14 +125,14 @@ export const SubmitProposalForm = () => {
     register("wasmByteCode", {
       required: VALIDATION_MESSAGES.WASM_REQUIRED,
       validate: () => {
-        if (!uploadedFile) {
+        if (!uploadedFiles || uploadedFiles.length === 0) {
           return VALIDATION_MESSAGES.WASM_REQUIRED;
         }
 
         return true;
       },
     });
-  }, [register, uploadedFile]);
+  }, [register, uploadedFiles]);
 
   const generateDescription = (data: FormValues): string =>
     `## Developer Information\n\n### Link to Developer/Company\n${data.developerLink}\n\n### Developer Description\n${data.developerDescription}\n\n## Contract Details\n\n### Contract Name\n${data.contractName}\n\n### Contract Source Link\n${data.contractSourceLink}\n\n### Contract Description and Intended Use\n${data.contractDescription}\n\n## Audit and Execution Information\n\n### Audit Report Link\n${data.auditReportLink}\n\n### Audit Process Description\n${data.auditProcessDescription}\n\n### Execution Messages Description\n${data.executionMessagesDescription}\n\n## Deployment Information\n\n### Testnet Explorer Link\n${data.testnetExplorerLink}\n`;
@@ -185,15 +185,20 @@ export const SubmitProposalForm = () => {
     setError(null);
 
     try {
-      const arrayBuffer = await formData.wasmByteCode.arrayBuffer();
-      const wasmByteCode = new Uint8Array(arrayBuffer);
+      const wasmByteCodes = await Promise.all(
+        formData.wasmByteCode.map(async (file) => {
+          const arrayBuffer = await file.arrayBuffer();
+
+          return new Uint8Array(arrayBuffer);
+        }),
+      );
 
       const description = generateDescription(formData);
 
       await submitProposal({
         ...formData,
         description,
-        wasmByteCode,
+        wasmByteCodes,
       });
 
       setStep(Step.Completed);
@@ -359,11 +364,11 @@ export const SubmitProposalForm = () => {
         <FileUpload
           error={errors.wasmByteCode?.message}
           id="wasmByteCode"
-          label="WASM Binary File"
-          setUploadedFile={setUploadedFile}
+          label="WASM Binary Files"
+          setUploadedFiles={setUploadedFiles}
           setValue={setValue}
           unregister={unregister}
-          uploadedFile={uploadedFile}
+          uploadedFiles={uploadedFiles}
         />
 
         <div className="mt-6 flex w-full flex-col">

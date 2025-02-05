@@ -8,48 +8,50 @@ interface FileUploadProps {
   error?: string;
   id: string;
   label?: string;
-  setUploadedFile: (file: File | null) => void;
+  setUploadedFiles: (files: File[] | null) => void;
   setValue: UseFormSetValue<any>;
   unregister: UseFormUnregister<any>;
-  uploadedFile: File | null;
+  uploadedFiles: File[] | null;
 }
 
 export const FileUpload = ({
   error,
   id,
-  setUploadedFile,
+  setUploadedFiles,
   setValue,
   unregister,
-  uploadedFile,
+  uploadedFiles,
 }: FileUploadProps) => {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      if (acceptedFiles?.[0]) {
-        setUploadedFile(acceptedFiles[0]);
-        setValue(id, acceptedFiles[0]);
+      if (acceptedFiles.length > 0) {
+        setUploadedFiles([...acceptedFiles, ...(uploadedFiles || [])]);
+        setValue(id, acceptedFiles);
       }
     },
-    [id, setUploadedFile, setValue],
+    [id, setUploadedFiles, setValue, uploadedFiles],
   );
 
   const handleRemoveFile = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setUploadedFile(null);
-      unregister(id);
-      setValue(id, null);
+    (fileToRemove: File) => {
+      const updatedFiles =
+        uploadedFiles?.filter((file) => file !== fileToRemove) || [];
+
+      setUploadedFiles(updatedFiles.length > 0 ? updatedFiles : null);
+      setValue(id, updatedFiles);
+
+      if (updatedFiles.length === 0) {
+        unregister(id);
+      }
     },
-    [id, setUploadedFile, unregister, setValue],
+    [id, uploadedFiles, setUploadedFiles, unregister, setValue],
   );
 
   const { getInputProps, getRootProps, isDragActive } = useDropzone({
     accept: {
       "application/wasm": [".wasm"],
     },
-    maxFiles: 1,
-    noClick: uploadedFile !== null,
-    noKeyboard: uploadedFile !== null,
+    multiple: true,
     onDrop,
   });
 
@@ -63,13 +65,10 @@ export const FileUpload = ({
           WASM Binary File Upload
         </label>
 
-        <div
-          {...getRootProps()}
-          className={`mt-[26px] flex flex-col ${uploadedFile ? "pointer-events-none" : ""}`}
-        >
+        <div {...getRootProps()} className="mt-[26px] flex flex-col">
           <input className="hidden" {...getInputProps()} />
           <div
-            className={`relative flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg bg-white/10 transition-colors ${!uploadedFile && !isDragActive ? "hover:bg-white/20" : ""}`}
+            className={`relative flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg bg-white/10 transition-colors ${!isDragActive ? "hover:bg-white/20" : ""}`}
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/10">
               <span dangerouslySetInnerHTML={{ __html: upload }} />
@@ -85,28 +84,31 @@ export const FileUpload = ({
           </div>
         </div>
 
-        {uploadedFile && (
-          <div className="mt-4 flex h-20 w-full items-center justify-between rounded-lg border border-white border-opacity-20">
+        {uploadedFiles?.map((file, index) => (
+          <div
+            className="mt-4 flex h-20 w-full items-center justify-between rounded-lg border border-white border-opacity-20"
+            key={index}
+          >
             <div className="flex items-center">
               <div className="ml-4 h-12 w-12 rounded-lg bg-white bg-opacity-10" />
               <div className="ml-[27px] flex flex-col">
                 <span className="font-['Akkurat LL'] text-sm font-bold leading-tight text-white">
-                  {uploadedFile.name}
+                  {file.name}
                 </span>
                 <span className="font-['Akkurat LL'] mt-2 text-xs font-normal leading-tight text-[#949494]">
-                  {(uploadedFile.size / 1024).toFixed(0)}KB
+                  {(file.size / 1024).toFixed(0)}KB
                 </span>
               </div>
             </div>
             <button
               className="mr-4 flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 hover:bg-white/20"
-              onClick={handleRemoveFile}
+              onClick={() => handleRemoveFile(file)}
               type="button"
             >
               <span dangerouslySetInnerHTML={{ __html: trash }} />
             </button>
           </div>
-        )}
+        ))}
       </div>
 
       {error && <p className="mt-2 text-sm text-red-500">{error}</p>}

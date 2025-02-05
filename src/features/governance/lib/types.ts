@@ -314,7 +314,7 @@ interface BaseProposalValues {
 export interface StoreCodeProposalValues extends BaseProposalValues {
   instantiatePermission?: AccessConfig;
   type: ProposalType.STORE_CODE;
-  wasmByteCode: Uint8Array;
+  wasmByteCodes: Uint8Array[];
 }
 
 export type ProposalFormValues = StoreCodeProposalValues; // union with other types as they're added

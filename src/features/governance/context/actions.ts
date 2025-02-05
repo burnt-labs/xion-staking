@@ -215,19 +215,19 @@ export const submitStoreCodeProposal = async ({
   proposer,
   values,
 }: SubmitProposalParams) => {
-  const storeCodeMsg = MsgStoreCode.fromPartial({
-    sender: GOVERNANCE_MODULE_ADDRESS,
-    wasmByteCode: values.wasmByteCode,
-  });
+  const storeCodeMessages = values.wasmByteCodes.map((wasmByteCode) => ({
+    typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
+    value: MsgStoreCode.encode(
+      MsgStoreCode.fromPartial({
+        sender: GOVERNANCE_MODULE_ADDRESS,
+        wasmByteCode,
+      }),
+    ).finish(),
+  }));
 
   const msg = MsgSubmitProposal.fromPartial({
     initialDeposit: values.initialDeposit ? [values.initialDeposit] : [],
-    messages: [
-      {
-        typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
-        value: MsgStoreCode.encode(storeCodeMsg).finish(),
-      },
-    ],
+    messages: storeCodeMessages,
     metadata: "",
     proposer,
     summary: values.description,
