@@ -6,11 +6,7 @@ import "@burnt-labs/ui/dist/index.css";
 import type { Chain } from "@chain-registry/types";
 import { GasPrice } from "@cosmjs/stargate";
 import type { SignerOptions } from "@cosmos-kit/core";
-import { wallets as metamaskWallets } from "@cosmos-kit/cosmos-extension-metamask";
 import { wallets as keplrWallets } from "@cosmos-kit/keplr-extension";
-import { wallets as leapWallets } from "@cosmos-kit/leap-extension";
-import { wallets as ledgerWallets } from "@cosmos-kit/ledger";
-import { wallets as okxWallets } from "@cosmos-kit/okxwallet-extension";
 import { ChainProvider } from "@cosmos-kit/react";
 import "@interchain-ui/react/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -103,13 +99,7 @@ export default function RootLayout({
                 },
               }}
               signerOptions={signerOptions}
-              wallets={[
-                ...keplrWallets,
-                ...okxWallets,
-                ...leapWallets,
-                ...ledgerWallets,
-                ...metamaskWallets,
-              ]}
+              wallets={[...keplrWallets]}
             >
               <AbstraxionProvider config={abstraxionConfig}>
                 <CoreProvider>
