@@ -48,28 +48,32 @@ const signerOptions: SignerOptions = {
   signingCosmwasm: (chain: Chain | string) => {
     if (typeof chain === "string") return undefined;
 
-    switch (chain.chain_name) {
-      case "xiontestnet":
-      case "xion":
-        return {
-          gasPrice: GasPrice.fromString("0.001uxion"),
-        };
-      default:
-        return undefined;
+    // Assuming there is only one fee token.
+    if (chain?.fees?.fee_tokens.length !== 1) {
+      return undefined;
     }
+
+    // These values are optional in the type def. Will need to alter this code if we move to a dynamic gas model
+    const { denom, fixed_min_gas_price } = chain?.fees?.fee_tokens[0];
+
+    return {
+      gasPrice: GasPrice.fromString(`${fixed_min_gas_price}${denom}`),
+    };
   },
   signingStargate: (chain: Chain | string) => {
     if (typeof chain === "string") return undefined;
 
-    switch (chain.chain_name) {
-      case "xiontestnet":
-      case "xion":
-        return {
-          gasPrice: GasPrice.fromString("0.001uxion"),
-        };
-      default:
-        return undefined;
+    // Assuming there is only one fee token.
+    if (chain?.fees?.fee_tokens.length !== 1) {
+      return undefined;
     }
+
+    // These values are optional in the type def. Will need to alter this code if we move to a dynamic gas model
+    const { denom, fixed_min_gas_price } = chain?.fees?.fee_tokens[0];
+
+    return {
+      gasPrice: GasPrice.fromString(`${fixed_min_gas_price}${denom}`),
+    };
   },
 };
 
