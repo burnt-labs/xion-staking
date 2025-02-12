@@ -8,6 +8,9 @@ import { GasPrice } from "@cosmjs/stargate";
 import type { SignerOptions } from "@cosmos-kit/core";
 import { wallets as keplrWallets } from "@cosmos-kit/keplr-extension";
 import { wallets as okxWallets } from "@cosmos-kit/okxwallet-extension";
+import { wallets as leapWallets } from "@cosmos-kit/leap-extension";
+import { wallets as ledgerWallets } from "@cosmos-kit/ledger";
+import { wallets as metamaskWallets } from "@cosmos-kit/cosmos-extension-metamask";
 import { ChainProvider } from "@cosmos-kit/react";
 import "@interchain-ui/react/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -46,8 +49,8 @@ const signerOptions: SignerOptions = {
     if (typeof chain === "string") return undefined;
 
     switch (chain.chain_name) {
-      case "xion-testnet-1":
-      case "xion-mainnet-1":
+      case "xiontestnet":
+      case "xion":
         return {
           gasPrice: GasPrice.fromString("0.001uxion"),
         };
@@ -59,8 +62,8 @@ const signerOptions: SignerOptions = {
     if (typeof chain === "string") return undefined;
 
     switch (chain.chain_name) {
-      case "xion-testnet-1":
-      case "xion-mainnet-1":
+      case "xiontestnet":
+      case "xion":
         return {
           gasPrice: GasPrice.fromString("0.001uxion"),
         };
@@ -96,7 +99,7 @@ export default function RootLayout({
                 },
               }}
               signerOptions={signerOptions}
-              wallets={[...keplrWallets, ...okxWallets]}
+              wallets={[...keplrWallets, ...okxWallets, ...leapWallets, ...ledgerWallets, ...metamaskWallets]}
             >
               <AbstraxionProvider config={abstraxionConfig}>
                 <CoreProvider>
