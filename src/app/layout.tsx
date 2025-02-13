@@ -7,7 +7,6 @@ import type { Chain } from "@chain-registry/types";
 import { GasPrice } from "@cosmjs/stargate";
 import type { SignerOptions } from "@cosmos-kit/core";
 import { wallets as keplrWallets } from "@cosmos-kit/keplr-extension";
-import { wallets as okxWallets } from "@cosmos-kit/okxwallet-extension";
 import { ChainProvider } from "@cosmos-kit/react";
 import "@interchain-ui/react/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -45,28 +44,32 @@ const signerOptions: SignerOptions = {
   signingCosmwasm: (chain: Chain | string) => {
     if (typeof chain === "string") return undefined;
 
-    switch (chain.chain_name) {
-      case "xion-testnet-1":
-      case "xion-mainnet-1":
-        return {
-          gasPrice: GasPrice.fromString("0.001uxion"),
-        };
-      default:
-        return undefined;
+    // Assuming there is only one fee token.
+    if (chain?.fees?.fee_tokens.length !== 1) {
+      return undefined;
     }
+
+    // These values are optional in the type def. Will need to alter this code if we move to a dynamic gas model
+    const { denom, fixed_min_gas_price } = chain?.fees?.fee_tokens[0];
+
+    return {
+      gasPrice: GasPrice.fromString(`${fixed_min_gas_price}${denom}`),
+    };
   },
   signingStargate: (chain: Chain | string) => {
     if (typeof chain === "string") return undefined;
 
-    switch (chain.chain_name) {
-      case "xion-testnet-1":
-      case "xion-mainnet-1":
-        return {
-          gasPrice: GasPrice.fromString("0.001uxion"),
-        };
-      default:
-        return undefined;
+    // Assuming there is only one fee token.
+    if (chain?.fees?.fee_tokens.length !== 1) {
+      return undefined;
     }
+
+    // These values are optional in the type def. Will need to alter this code if we move to a dynamic gas model
+    const { denom, fixed_min_gas_price } = chain?.fees?.fee_tokens[0];
+
+    return {
+      gasPrice: GasPrice.fromString(`${fixed_min_gas_price}${denom}`),
+    };
   },
 };
 
@@ -96,7 +99,7 @@ export default function RootLayout({
                 },
               }}
               signerOptions={signerOptions}
-              wallets={[...keplrWallets, ...okxWallets]}
+              wallets={[...keplrWallets]}
             >
               <AbstraxionProvider config={abstraxionConfig}>
                 <CoreProvider>
