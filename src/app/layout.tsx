@@ -6,7 +6,11 @@ import "@burnt-labs/ui/dist/index.css";
 import type { Chain } from "@chain-registry/types";
 import { GasPrice } from "@cosmjs/stargate";
 import type { SignerOptions } from "@cosmos-kit/core";
+import { wallets as metamaskWallets } from "@cosmos-kit/cosmos-extension-metamask";
 import { wallets as keplrWallets } from "@cosmos-kit/keplr-extension";
+import { wallets as leapWallets } from "@cosmos-kit/leap-extension";
+import { wallets as ledgerWallets } from "@cosmos-kit/ledger";
+import { wallets as okxWallets } from "@cosmos-kit/okxwallet-extension";
 import { ChainProvider } from "@cosmos-kit/react";
 import "@interchain-ui/react/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -15,7 +19,12 @@ import React from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { FAUCET_CONTRACT_ADDRESS, REST_API_URL, RPC_URL } from "@/config";
+import {
+  FAUCET_CONTRACT_ADDRESS,
+  IS_TESTNET,
+  REST_API_URL,
+  RPC_URL,
+} from "@/config";
 import BaseWrapper from "@/features/core/components/base-wrapper";
 import { ProModeProvider } from "@/features/core/context/pro-mode";
 import { CoreProvider } from "@/features/core/context/provider";
@@ -73,6 +82,10 @@ const signerOptions: SignerOptions = {
   },
 };
 
+const proWallets = [...keplrWallets, ...ledgerWallets];
+
+const testnetProWallets = [...okxWallets, ...leapWallets, ...metamaskWallets];
+
 export default function RootLayout({
   children,
 }: {
@@ -99,7 +112,7 @@ export default function RootLayout({
                 },
               }}
               signerOptions={signerOptions}
-              wallets={[...keplrWallets]}
+              wallets={[...(IS_TESTNET ? testnetProWallets : []), ...proWallets]}
             >
               <AbstraxionProvider config={abstraxionConfig}>
                 <CoreProvider>
