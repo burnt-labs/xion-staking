@@ -82,7 +82,7 @@ const signerOptions: SignerOptions = {
   },
 };
 
-const wallets = [...keplrWallets, ...ledgerWallets];
+const proWallets = [...keplrWallets, ...ledgerWallets];
 
 const testnetProWallets = [...okxWallets, ...leapWallets, ...metamaskWallets];
 
@@ -112,7 +112,7 @@ export default function RootLayout({
                 },
               }}
               signerOptions={signerOptions}
-              wallets={[...(IS_TESTNET ? testnetProWallets : []), ...wallets]}
+              wallets={[...(IS_TESTNET ? testnetProWallets : []), ...proWallets]}
             >
               <AbstraxionProvider config={abstraxionConfig}>
                 <CoreProvider>
