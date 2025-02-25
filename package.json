@@ -51,6 +51,7 @@
     "react-tooltip": "^5.26.3"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.28.1",
     "@cloudflare/next-on-pages": "^1.13.7",
     "@stylistic/eslint-plugin": "^1.6.2",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
