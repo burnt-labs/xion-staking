@@ -112,7 +112,10 @@ export default function RootLayout({
                 },
               }}
               signerOptions={signerOptions}
-              wallets={[...(IS_TESTNET ? testnetProWallets : []), ...proWallets]}
+              wallets={[
+                ...(IS_TESTNET ? testnetProWallets : []),
+                ...proWallets,
+              ]}
             >
               <AbstraxionProvider config={abstraxionConfig}>
                 <CoreProvider>
