@@ -27,7 +27,7 @@ export const BASE_PATH = getEnvBooleanOrThrow(
 export const FAUCET_CONTRACT_ADDRESS =
   "xion1mczdpmlc2lcng2ktly3fapdc24zqhxsyn5eek8uu3egmrd97c73qqtss3u";
 
-export const NETWORK_TYPES = {
+const NETWORK_TYPES = {
   MAINNET: {
     id: "mainnet",
     version: "1",
@@ -42,7 +42,7 @@ export const NETWORK_TYPES = {
   },
 } as const;
 
-export type NetworkType = keyof typeof NETWORK_TYPES;
+type NetworkType = keyof typeof NETWORK_TYPES;
 
 const NETWORK_ID = getEnvStringOrThrow(
   "NEXT_PUBLIC_NETWORK_TYPE",
@@ -55,11 +55,11 @@ const NETWORK_TYPE =
     (key) => NETWORK_TYPES[key].id === NETWORK_ID,
   ) || ("TESTNET_1" as NetworkType);
 
-export const NETWORK_CONFIG = NETWORK_TYPES[NETWORK_TYPE];
+const NETWORK_CONFIG = NETWORK_TYPES[NETWORK_TYPE];
 
 export const IS_TESTNET = NETWORK_TYPE !== "MAINNET";
 
-export const NETWORK_VERSION = NETWORK_CONFIG.version;
+const NETWORK_VERSION = NETWORK_CONFIG.version;
 
 export interface NavItem {
   href: string;
