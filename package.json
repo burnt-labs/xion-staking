@@ -16,8 +16,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@burnt-labs/abstraxion": "^1.0.0-alpha.54",
-    "@burnt-labs/constants": "^0.1.0-alpha.6",
+    "@burnt-labs/abstraxion": "^1.0.0-alpha.57",
+    "@burnt-labs/constants": "^0.1.0-alpha.15",
     "@burnt-labs/ui": "^0.1.0-alpha.7",
     "@chain-registry/types": "^0.50.56",
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
