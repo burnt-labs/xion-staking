@@ -50,9 +50,10 @@ const NETWORK_ID = getEnvStringOrThrow(
 );
 
 // Find the network type based on the ID
-const NETWORK_TYPE = (Object.keys(NETWORK_TYPES) as NetworkType[]).find(
-  (key) => NETWORK_TYPES[key].id === NETWORK_ID
-) || "TESTNET_1" as NetworkType;
+const NETWORK_TYPE =
+  (Object.keys(NETWORK_TYPES) as NetworkType[]).find(
+    (key) => NETWORK_TYPES[key].id === NETWORK_ID,
+  ) || ("TESTNET_1" as NetworkType);
 
 export const NETWORK_CONFIG = NETWORK_TYPES[NETWORK_TYPE];
 
@@ -72,7 +73,8 @@ export const mainNavItems: NavItem[] = [
 
 const ASSET_ENDPOINTS = {
   mainnet: "https://assets.xion.burnt.com/chain-registry/xion/assetlist.json",
-  testnet: "https://assets.xion.burnt.com/chain-registry/testnets/xiontestnet/assetlist.json",
+  testnet:
+    "https://assets.xion.burnt.com/chain-registry/testnets/xiontestnet/assetlist.json",
 } as const;
 
 export const ASSET_ENDPOINT = IS_TESTNET
