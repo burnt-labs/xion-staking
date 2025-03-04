@@ -51,7 +51,7 @@ export function useChainAccount(): ChainAccount {
     disconnect,
     getSigningCosmWasmClient,
     status,
-  } = useChain(IS_MAINNET ? "xion" : "xiontesnet");
+  } = useChain(IS_MAINNET ? "xion" : "xiontestnet");
 
   const cosmosKitIsConnected = status === "Connected";
 
