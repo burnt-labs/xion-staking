@@ -5,15 +5,15 @@ compatibility_date = "2024-07-17"
 compatibility_flags = [ "nodejs_compat" ]
 
 [vars]
+NEXT_PUBLIC_CHAIN_ID = "xion-mainnet-1"
 NEXT_PUBLIC_IS_DEPLOYMENT = "false"
 NEXT_PUBLIC_IS_PRO_MODE = "false"
-NEXT_PUBLIC_NETWORK_TYPE = "mainnet"
 NEXT_PUBLIC_RPC_ENDPOINT = "https://rpc.xion-mainnet-1.burnt.com:443"
 VITE_FEE_GRANTER_ADDRESS = "xion1aqpmfnr9uxatc9yfhmutenwtqlpyhk8s3csdkm"
 
 [env.production.vars]
+NEXT_PUBLIC_CHAIN_ID = "xion-mainnet-1"
 NEXT_PUBLIC_IS_DEPLOYMENT = "false"
 NEXT_PUBLIC_IS_PRO_MODE = "false"
-NEXT_PUBLIC_NETWORK_TYPE = "mainnet"
 NEXT_PUBLIC_RPC_ENDPOINT = "https://rpc.xion-mainnet-1.burnt.com:443"
 VITE_FEE_GRANTER_ADDRESS = "xion1aqpmfnr9uxatc9yfhmutenwtqlpyhk8s3csdkm"

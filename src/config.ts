@@ -26,31 +26,7 @@ type ChainId =
   | "xion-testnet-1"
   | "xion-testnet-2";
 
-const DEFAULT_TESTNET_CHAIN_ID = "xion-testnet-1";
-
-const CHAIN_ID: ChainId = (() => {
-  const envChainId = process.env.NEXT_PUBLIC_CHAIN_ID;
-
-  if (envChainId) {
-    return envChainId as ChainId;
-  }
-
-  const { hostname } = window.location;
-
-  if (hostname.endsWith("mainnet.burnt.com")) {
-    return "xion-mainnet-1";
-  }
-
-  if (hostname.endsWith("testnet.burnt.com")) {
-    return DEFAULT_TESTNET_CHAIN_ID;
-  }
-
-  if (hostname.endsWith("localhost")) {
-    return "xion-devnet-1";
-  }
-
-  throw new Error("Could not determine chain ID");
-})();
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID as ChainId;
 
 export const IS_MAINNET = CHAIN_ID === "xion-mainnet-1";
 
@@ -75,7 +51,8 @@ const ASSET_ENDPOINTS = {
     "https://assets.xion.burnt.com/chain-registry/testnets/xiontestnet2/assetlist.json",
 } as const;
 
-export const ASSET_ENDPOINT = ASSET_ENDPOINTS[CHAIN_ID];
+export const ASSET_ENDPOINT = process.env.NEXT_PUBLIC_ASSET_ENDPOINT ?
+  process.env.NEXT_PUBLIC_ASSET_ENDPOINT : ASSET_ENDPOINTS[CHAIN_ID];
 
 const FAUCET_CONTRACT_ADDRESSES = {
   "xion-devnet-1":
@@ -100,7 +77,8 @@ const RPC_URLS = {
   "xion-testnet-2": "https://rpc.xion-testnet-2.burnt.com:443",
 };
 
-export const RPC_URL = RPC_URLS[CHAIN_ID];
+export const RPC_URL = process.env.NEXT_PUBLIC_RPC_ENDPOINT ?
+  process.env.NEXT_PUBLIC_RPC_ENDPOINT : RPC_URLS[CHAIN_ID];
 
 const REST_API_URLS = {
   "xion-devnet-1": "http://localhost:1317",
@@ -109,7 +87,8 @@ const REST_API_URLS = {
   "xion-testnet-2": "https://api.xion-testnet-2.burnt.com",
 };
 
-export const REST_API_URL = REST_API_URLS[CHAIN_ID];
+export const REST_API_URL = process.env.NEXT_PUBLIC_REST_API_URL ?
+  process.env.NEXT_PUBLIC_REST_API_URL : REST_API_URLS[CHAIN_ID];
 
 export const REST_ENDPOINTS = {
   balances: "/cosmos/bank/v1beta1/balances",

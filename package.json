@@ -5,15 +5,18 @@
   "scripts": {
     "build": "next build",
     "dev": "PORT=4000 next dev",
-    "pages:build": "npx @cloudflare/next-on-pages",
-    "pages:dev": "npm run pages:build && wrangler pages dev",
     "lint": "bash ./scripts/check_unused_exports.sh && npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint . --ext .ts,.tsx",
     "lint:prettier": "prettier --check .",
     "lint:prettier:fix": "prettier --write .",
     "start": "http-server -p 4000 out",
     "test": "echo No tests yet",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "pages:dev": "npm run pages:build && wrangler pages dev",
+    "deploy:mainnet": "npm run pages:build && cd .deploy/mainnet && wrangler pages deploy",
+    "deploy:testnet": "npm run pages:build && cd .deploy/testnet2 && wrangler pages deploy",
+    "deploy:testnet-1": "npm run pages:build && cd .deploy/testnet && wrangler pages deploy"
   },
   "dependencies": {
     "@burnt-labs/abstraxion": "^1.0.0-alpha.57",
