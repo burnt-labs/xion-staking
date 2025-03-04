@@ -46,7 +46,7 @@ const ASSET_ENDPOINTS = {
   "xion-mainnet-1":
     "https://assets.xion.burnt.com/chain-registry/xion/assetlist.json",
   "xion-testnet-1":
-    "https://assets.xion.burnt.com/chain-registry/testnets/xiontestnet1/assetlist.json",
+    "https://assets.xion.burnt.com/chain-registry/testnets/xiontestnet/assetlist.json",
   "xion-testnet-2":
     "https://assets.xion.burnt.com/chain-registry/testnets/xiontestnet2/assetlist.json",
 } as const;
