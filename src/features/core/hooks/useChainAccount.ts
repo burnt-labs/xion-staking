@@ -6,9 +6,18 @@ import {
 import { useChain } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
 
-import { IS_TESTNET } from "@/config";
+import { IS_MAINNET } from "@/config";
 
 import { useProMode } from "../context/pro-mode";
+
+export interface ChainAccount {
+  account: { bech32Address?: string } | undefined;
+  address: string | undefined;
+  client: any;
+  isConnected: boolean;
+  login: () => Promise<void>;
+  logout: () => void;
+}
 
 /**
  * A unifying interface for chain account data.
@@ -23,7 +32,7 @@ import { useProMode } from "../context/pro-mode";
  * @returns {Function} login - Method to connect a wallet
  * @returns {Function} logout - Method to disconnect the current wallet
  */
-export function useChainAccount() {
+export function useChainAccount(): ChainAccount {
   const { isProMode } = useProMode();
 
   // Standard mode hooks
@@ -42,7 +51,7 @@ export function useChainAccount() {
     disconnect,
     getSigningCosmWasmClient,
     status,
-  } = useChain(IS_TESTNET ? "xiontestnet" : "xion");
+  } = useChain(IS_MAINNET ? "xion" : "xiontesnet");
 
   const cosmosKitIsConnected = status === "Connected";
 

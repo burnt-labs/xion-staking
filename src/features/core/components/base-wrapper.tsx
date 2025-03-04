@@ -3,7 +3,7 @@
 import { Abstraxion, useModal } from "@burnt-labs/abstraxion";
 import Link from "next/link";
 
-import { BASE_PATH, IS_TESTNET, mainNavItems } from "@/config";
+import { BASE_PATH, IS_MAINNET, mainNavItems } from "@/config";
 import { useProMode } from "@/features/core/context/pro-mode";
 
 import NavAccount from "./nav-account";
@@ -33,12 +33,12 @@ export default function BaseWrapper({
               <span
                 className={[
                   "ml-[8px] translate-y-[4px] rounded-[4px] p-[4px] text-[12px] uppercase",
-                  IS_TESTNET
-                    ? "bg-chain-testnetBg text-chain-testnetFg"
-                    : "bg-chain-mainnetBg text-chain-mainnetFg",
+                  IS_MAINNET
+                    ? "bg-chain-mainnetBg text-chain-mainnetFg"
+                    : "bg-chain-testnetBg text-chain-testnetFg",
                 ].join(" ")}
               >
-                {IS_TESTNET ? "Testnet" : "Mainnet"}
+                {IS_MAINNET ? "Mainnet" : "Testnet"}
               </span>
             </Link>
           </div>

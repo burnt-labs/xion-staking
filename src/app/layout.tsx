@@ -21,7 +21,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import {
   FAUCET_CONTRACT_ADDRESS,
-  IS_TESTNET,
+  IS_MAINNET,
   REST_API_URL,
   RPC_URL,
 } from "@/config";
@@ -113,7 +113,7 @@ export default function RootLayout({
               }}
               signerOptions={signerOptions}
               wallets={[
-                ...(IS_TESTNET ? testnetProWallets : []),
+                ...(IS_MAINNET ? [] : testnetProWallets),
                 ...proWallets,
               ]}
             >
