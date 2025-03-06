@@ -5,15 +5,24 @@
   "scripts": {
     "build": "next build",
     "dev": "PORT=4000 next dev",
-    "pages:build": "npx @cloudflare/next-on-pages",
-    "pages:dev": "npm run pages:build && wrangler pages dev",
     "lint": "bash ./scripts/check_unused_exports.sh && npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint . --ext .ts,.tsx",
     "lint:prettier": "prettier --check .",
     "lint:prettier:fix": "prettier --write .",
     "start": "http-server -p 4000 out",
     "test": "echo No tests yet",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "pages:dev": "wrangler pages dev",
+    "select:mainnet": "cp -rf .deploy/mainnet/ ./",
+    "select:testnet": "cp -rf .deploy/testnet/ ./",
+    "select:testnet2": "cp -rf .deploy/testnet2/ ./",
+    "build:mainnet": "npm run select:mainnet && npm run pages:build",
+    "build:testnet": "npm run select:testnet && npm run pages:build",
+    "build:testnet2": "npm run select:testnet2 && npm run pages:build",
+    "deploy:mainnet": "npm run build:mainnet && wrangler pages deploy",
+    "deploy:testnet": "npm run build:testnet && wrangler pages deploy",
+    "deploy:testnet2": "npm run build:testnet2 && wrangler pages deploy"
   },
   "dependencies": {
     "@burnt-labs/abstraxion": "^1.0.0-alpha.57",
@@ -48,7 +57,8 @@
     "react-hook-form": "^7.54.2",
     "react-modal": "^3.16.1",
     "react-toastify": "^10.0.4",
-    "react-tooltip": "^5.26.3"
+    "react-tooltip": "^5.26.3",
+    "wrangler": "^3.112.0"
   },
   "devDependencies": {
     "@changesets/cli": "^2.28.1",

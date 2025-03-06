@@ -29,7 +29,7 @@ const claimRewardsLoop = async (
 
   if (!client) return;
 
-  const delegatorAddress = stakingRef.account.bech32Address;
+  const delegatorAddress = stakingRef.account?.bech32Address;
 
   try {
     if (!delegatorAddress) {

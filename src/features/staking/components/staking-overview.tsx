@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import { memo } from "react";
 
-import { BASE_PATH } from "@/config";
 import { SkeletonWrapper } from "@/features/core/components/SkeletonWrapper";
 import {
   BodyMedium,
@@ -62,7 +61,7 @@ const StakingOverview = () => {
       <div
         className="flex min-h-[212px] flex-col items-center justify-center gap-[8px] px-[12px] uppercase"
         style={{
-          backgroundImage: `url(${BASE_PATH}/overview-bg.png)`,
+          backgroundImage: `url(/overview-bg.png)`,
           borderRadius: 24,
         }}
       >
@@ -92,7 +91,7 @@ const StakingOverview = () => {
     <div
       className="flex min-h-[144px] flex-col items-center justify-center gap-[8px] overflow-auto md:grid"
       style={{
-        backgroundImage: `url(${BASE_PATH}/overview-bg.png)`,
+        backgroundImage: `url(/overview-bg.png)`,
         backgroundSize: "cover",
         borderRadius: 24,
         gridTemplateColumns: "1fr 1fr 1fr 1fr",

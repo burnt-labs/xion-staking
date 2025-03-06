@@ -10,9 +10,6 @@ on:
 jobs:
   Lint:
     runs-on: ubuntu-latest
-    env:
-      NEXT_PUBLIC_IS_DEPLOYMENT: true
-      NEXT_PUBLIC_NETWORK_TYPE: "testnet"
 
     steps:
       - uses: actions/checkout@v3

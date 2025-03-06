@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { BASE_PATH } from "@/config";
 import {
   BodyMedium,
   Button,
@@ -116,7 +115,7 @@ export default function ValidatorPage() {
         <div
           className="flex flex-col gap-[24px] overflow-auto p-[24px]"
           style={{
-            backgroundImage: `url(${BASE_PATH}/overview-bg.png)`,
+            backgroundImage: `url(/overview-bg.png)`,
             backgroundSize: "cover",
             borderRadius: 16,
           }}

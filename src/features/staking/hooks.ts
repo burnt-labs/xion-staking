@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { BASE_PATH } from "@/config";
-
 import { keybaseClient } from "./lib/utils/keybase-client";
 
+// Fallback logos with paths relative to the public directory
 const fallbackLogoMap: Record<string, string | undefined> = {
   xionvaloper1mq85keggvh67m37035mnncsqjnpkmunl6s2w56: "/chains/bonus-block.png",
   xionvaloper1sprpvyqln2vxshq8c5jt3dshn480rfeelupqrj: "/chains/inf-stones.png",
@@ -33,7 +32,8 @@ export const useValidatorLogo = (
         const fallbackLogo = fallbackLogoMap[operatorAddress];
 
         if (fallbackLogo) {
-          setLogo(BASE_PATH + fallbackLogo);
+          // Use the path directly - Next.js will handle the basePath
+          setLogo(fallbackLogo);
         }
       }
     })();
