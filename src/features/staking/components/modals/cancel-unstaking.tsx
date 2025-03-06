@@ -52,7 +52,7 @@ const CancelUnstakingModal = () => {
 
               setIsLoading(true);
 
-              if (!account.bech32Address) {
+              if (!account?.bech32Address) {
                 throw new Error("Delegator address is undefined");
               }
 
