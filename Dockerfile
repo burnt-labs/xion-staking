@@ -1,5 +1,6 @@
 # Use a Node.js image for building the project
-FROM node:18-alpine AS builder
+#FROM node:18-alpine AS builder
+FROM node:18 AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -22,6 +23,9 @@ ENV NEXT_PUBLIC_IS_DEPLOYMENT="false" \
 
 # Build the project
 RUN npm run build
+RUN npm install wrangler@^4.0.0 --save-dev
 
-# Start the Nginx server
-CMD [wrangler pages dev ".vercel/output/static" --compatibility-flag "nodejs_compat"]
+EXPOSE 8788
+
+#
+CMD ["npx", "wrangler", "pages", "dev", ".vercel/output/static", "--compatibility-flag", "nodejs_compat"]
