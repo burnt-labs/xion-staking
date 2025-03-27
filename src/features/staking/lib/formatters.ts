@@ -94,6 +94,18 @@ export const formatUnbondingCompletionTime = (completionTime: number) => {
   const now = Date.now();
   const remainingMilliseconds = completionTimestamp - now;
 
+  const month = new Date(completionTimestamp).toLocaleString("en-US", {
+    month: "short",
+  });
+
+  const day = new Date(completionTimestamp).getDate();
+  const year = new Date(completionTimestamp).getFullYear();
+
+  // Handle case where completion time has already passed
+  if (remainingMilliseconds <= 0) {
+    return `Completed on ${month} ${day} ${year}`;
+  }
+
   const remainingDays = Math.floor(
     remainingMilliseconds / (1000 * 60 * 60 * 24),
   );
@@ -105,13 +117,6 @@ export const formatUnbondingCompletionTime = (completionTime: number) => {
   const remainingMinutes = Math.floor(
     (remainingMilliseconds % (1000 * 60 * 60)) / (1000 * 60),
   );
-
-  const month = new Date(completionTimestamp).toLocaleString("en-US", {
-    month: "short",
-  });
-
-  const day = new Date(completionTimestamp).getDate();
-  const year = new Date(completionTimestamp).getFullYear();
 
   let timeDisplay = "";
 
