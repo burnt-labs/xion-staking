@@ -91,10 +91,8 @@ export const formatXionToUSD = (
 
 export const formatUnbondingCompletionTime = (completionTime: number) => {
   const completionTimestamp = completionTime * 1000;
-
-  const remainingDays = Math.floor(
-    (completionTimestamp - Date.now()) / (1000 * 60 * 60 * 24),
-  );
+  const now = Date.now();
+  const remainingMilliseconds = completionTimestamp - now;
 
   const month = new Date(completionTimestamp).toLocaleString("en-US", {
     month: "short",
@@ -103,7 +101,32 @@ export const formatUnbondingCompletionTime = (completionTime: number) => {
   const day = new Date(completionTimestamp).getDate();
   const year = new Date(completionTimestamp).getFullYear();
 
-  return `in ${remainingDays} day${remainingDays === 1 ? "" : "s"}, ${month} ${day} ${year}`;
+  // Handle case where completion time has already passed
+  if (remainingMilliseconds <= 0) {
+    return `Completed on ${month} ${day} ${year}`;
+  }
+
+  const remainingDays = Math.floor(
+    remainingMilliseconds / (1000 * 60 * 60 * 24),
+  );
+
+  const remainingHours = Math.floor(
+    (remainingMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+  );
+
+  const remainingMinutes = Math.floor(
+    (remainingMilliseconds % (1000 * 60 * 60)) / (1000 * 60),
+  );
+
+  let timeDisplay = "";
+
+  if (remainingDays > 0) {
+    timeDisplay = `${remainingDays} day${remainingDays === 1 ? "" : "s"}`;
+  } else {
+    timeDisplay = `${remainingHours} hour${remainingHours === 1 ? "" : "s"}, ${remainingMinutes} minute${remainingMinutes === 1 ? "" : "s"}`;
+  }
+
+  return `in ${timeDisplay}, ${month} ${day} ${year}`;
 };
 
 export const formatAPR = (apr: BigNumber | null) => {
