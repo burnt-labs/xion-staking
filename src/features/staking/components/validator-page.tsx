@@ -55,7 +55,6 @@ export default function ValidatorPage() {
   > | null>(null);
 
   const logo = useValidatorLogo(
-    validatorDetails?.description.identity,
     validatorDetails?.operatorAddress,
   );
 

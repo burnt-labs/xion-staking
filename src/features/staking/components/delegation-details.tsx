@@ -115,7 +115,6 @@ const DelegationRowBase = ({
   }, [validatorAddress, staking]);
 
   const logo = useValidatorLogo(
-    validator?.description.identity,
     validator?.operatorAddress,
   );
 
@@ -291,8 +290,7 @@ const UnbondingRedelegationRow = ({
   const { staking } = stakingRef;
 
   const logo = useValidatorLogo(
-    validator?.description.identity,
-    validator?.operatorAddress,
+    validator?.description.identity
   );
 
   useEffect(() => {

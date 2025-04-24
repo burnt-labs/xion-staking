@@ -46,13 +46,13 @@ const initialStep: Step = "input";
 
 const ValidatorOption = ({
   validator: {
-    description: { identity, moniker },
+    description: { moniker },
     operatorAddress,
   },
 }: {
   validator: Validator;
 }) => {
-  const logo = useValidatorLogo(identity, operatorAddress);
+  const logo = useValidatorLogo(operatorAddress);
 
   return (
     <Option value={operatorAddress}>
@@ -80,7 +80,6 @@ const NoValidatorSelected = () => (
 
 const ValidatorSelected = ({ validator }: { validator: Validator }) => {
   const logo = useValidatorLogo(
-    validator.description.identity,
     validator.operatorAddress,
   );
 
