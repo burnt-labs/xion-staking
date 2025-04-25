@@ -33,6 +33,8 @@ export const ASSET_ENDPOINT = process.env.NEXT_PUBLIC_ASSET_ENDPOINT
   ? process.env.NEXT_PUBLIC_ASSET_ENDPOINT
   : ASSET_ENDPOINTS[CHAIN_ID];
 
+export const VALIDATOR_LOGO_ENDPOINT = "https://validator-logos.burnt.com";
+
 export const COINGECKO_API_URL =
   "https://api.coingecko.com/api/v3/simple/price";
 
