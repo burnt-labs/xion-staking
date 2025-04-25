@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { IS_MAINNET } from "../../config";
-
 import { fetchValidatorLogos } from "./lib/validator-logos";
 
 // Fallback logos with paths relative to the public directory
@@ -12,9 +11,9 @@ const fallbackLogoMap: Record<string, string | undefined> = {
   xionvaloper1ypwfnfuldmlp9u8asqzz6qx29p0utqzer5678k: "/chains/stake-lab.png",
 };
 
-export const validatorLogosQueryKey = "validator-logos";
+const validatorLogosQueryKey = "validator-logos";
 
-export function useValidatorLogos(chainId: string) {
+function useValidatorLogos(chainId: string) {
   return useQuery({
     queryFn: () => fetchValidatorLogos(chainId),
     queryKey: [validatorLogosQueryKey, chainId],
@@ -34,7 +33,7 @@ export const useValidatorLogo = (operatorAddress?: string) => {
   if (!operatorAddress || !validatorLogos) return null;
 
   const logo = validatorLogos.validators[operatorAddress];
-  
+
   if (!logo) {
     // Check fallback logos if no logo found in validator response
     const fallbackLogo = fallbackLogoMap[operatorAddress];

@@ -79,9 +79,7 @@ const NoValidatorSelected = () => (
 );
 
 const ValidatorSelected = ({ validator }: { validator: Validator }) => {
-  const logo = useValidatorLogo(
-    validator.operatorAddress,
-  );
+  const logo = useValidatorLogo(validator.operatorAddress);
 
   return (
     <div className="flex gap-2 bg-black ">

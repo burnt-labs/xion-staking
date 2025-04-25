@@ -114,9 +114,7 @@ const DelegationRowBase = ({
     }
   }, [validatorAddress, staking]);
 
-  const logo = useValidatorLogo(
-    validator?.operatorAddress,
-  );
+  const logo = useValidatorLogo(validator?.operatorAddress);
 
   const floatingDropdown = (isMobile: boolean) => (
     <FloatingDropdown
@@ -289,9 +287,7 @@ const UnbondingRedelegationRow = ({
 }: UnbondingRedelegationRowProps) => {
   const { staking } = stakingRef;
 
-  const logo = useValidatorLogo(
-    validator?.description.identity
-  );
+  const logo = useValidatorLogo(validator?.description.identity);
 
   useEffect(() => {
     if (validatorAddress) {
