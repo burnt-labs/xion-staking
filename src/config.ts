@@ -1,8 +1,4 @@
-type ChainId =
-  | "xion-devnet-1"
-  | "xion-mainnet-1"
-  | "xion-testnet-1"
-  | "xion-testnet-2";
+type ChainId = "xion-devnet-1" | "xion-mainnet-1" | "xion-testnet-2";
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID as ChainId;
 
@@ -23,8 +19,6 @@ const ASSET_ENDPOINTS = {
     "https://assets.xion.burnt.com/chain-registry/devnets/xiondevnet1/assetlist.json",
   "xion-mainnet-1":
     "https://assets.xion.burnt.com/chain-registry/xion/assetlist.json",
-  "xion-testnet-1":
-    "https://assets.xion.burnt.com/chain-registry/testnets/xiontestnet/assetlist.json",
   "xion-testnet-2":
     "https://assets.xion.burnt.com/chain-registry/testnets/xiontestnet2/assetlist.json",
 } as const;
@@ -41,7 +35,6 @@ export const COINGECKO_API_URL =
 const RPC_URLS = {
   "xion-devnet-1": "http://localhost:26657",
   "xion-mainnet-1": "https://rpc.xion-mainnet-1.burnt.com:443",
-  "xion-testnet-1": "https://rpc.xion-testnet-1.burnt.com:443",
   "xion-testnet-2": "https://rpc.xion-testnet-2.burnt.com:443",
 };
 
@@ -52,7 +45,6 @@ export const RPC_URL = process.env.NEXT_PUBLIC_RPC_ENDPOINT
 const REST_API_URLS = {
   "xion-devnet-1": "http://localhost:1317",
   "xion-mainnet-1": "https://api.xion-mainnet-1.burnt.com",
-  "xion-testnet-1": "https://api.xion-testnet-1.burnt.com",
   "xion-testnet-2": "https://api.xion-testnet-2.burnt.com",
 };
 
