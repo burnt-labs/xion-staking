@@ -125,7 +125,7 @@ export const getRewards = async (address: string, validatorAddress: string) => {
 export const getInflation = async () => {
   try {
     const response = await fetch(`${REST_API_URL}${REST_ENDPOINTS.inflation}`);
-    const data = await response.json();
+    const data = (await response.json()) as unknown as { inflation: string };
 
     return Number(data.inflation);
   } catch (error) {
@@ -141,7 +141,14 @@ export const getDistributionParams = async () => {
       `${REST_API_URL}${REST_ENDPOINTS.distributionParams}`,
     );
 
-    const data = await response.json();
+    const data = (await response.json()) as unknown as {
+      params: {
+        base_proposer_reward: string;
+        bonus_proposer_reward: string;
+        community_tax: string;
+        withdraw_addr_enabled: boolean;
+      };
+    };
 
     return Number(data.params.community_tax);
   } catch (error) {
