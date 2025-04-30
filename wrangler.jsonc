@@ -27,6 +27,16 @@
       "vars": {
         "NEXT_PUBLIC_CHAIN_ID": "xion-mainnet-1",
       },
+      "routes": [
+        {
+          "pattern": "xion.burnt.com/staking*",
+          "custom_domain": false,
+        },
+        {
+          "pattern": "xion.burnt.com/governance",
+          "custom_domain": false,
+        },
+      ],
     },
     "testnet": {
       "vars": {
