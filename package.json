@@ -1,5 +1,5 @@
 {
-  "name": "abstraxion-staking-poc",
+  "name": "xion-staking",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,20 +9,12 @@
     "lint:eslint": "eslint . --ext .ts,.tsx",
     "lint:prettier": "prettier --check .",
     "lint:prettier:fix": "prettier --write .",
-    "start": "http-server -p 4000 out",
     "test": "echo No tests yet",
     "type-check": "tsc --noEmit",
-    "pages:build": "npx @cloudflare/next-on-pages",
-    "pages:dev": "wrangler pages dev",
-    "select:mainnet": "cp -rf .deploy/mainnet/ ./",
-    "select:testnet": "cp -rf .deploy/testnet/ ./",
-    "select:testnet2": "cp -rf .deploy/testnet2/ ./",
-    "build:mainnet": "npm run select:mainnet && npm run pages:build",
-    "build:testnet": "npm run select:testnet && npm run pages:build",
-    "build:testnet2": "npm run select:testnet2 && npm run pages:build",
-    "deploy:mainnet": "npm run build:mainnet && wrangler pages deploy",
-    "deploy:testnet": "npm run build:testnet && wrangler pages deploy",
-    "deploy:testnet2": "npm run build:testnet2 && wrangler pages deploy"
+    "start": "next start",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@burnt-labs/abstraxion": "^1.0.0-alpha.57",
@@ -57,12 +49,11 @@
     "react-hook-form": "^7.54.2",
     "react-modal": "^3.16.1",
     "react-toastify": "^10.0.4",
-    "react-tooltip": "^5.26.3",
-    "wrangler": "^3.112.0"
+    "react-tooltip": "^5.26.3"
   },
   "devDependencies": {
     "@changesets/cli": "^2.28.1",
-    "@cloudflare/next-on-pages": "^1.13.7",
+    "@cloudflare/workers-types": "^4.20250410.0",
     "@stylistic/eslint-plugin": "^1.6.2",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^20.11.21",
@@ -72,6 +63,7 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "autoprefixer": "^10.4.17",
+    "esbuild": "^0.25.3",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.1.0",
     "eslint-plugin-import": "^2.29.1",
@@ -85,6 +77,7 @@
     "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.4.1",
     "ts-unused-exports": "^10.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "wrangler": "^4.10.0"
   }
 }

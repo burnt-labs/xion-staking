@@ -172,8 +172,8 @@ async function estimateGasViaRest(
       throw new Error("Failed to simulate transaction");
     }
 
-    const data = await response.json();
-    const gasUsed = data.gas_info?.gas_used || GAS_CONFIG.defaultStakeEstimate;
+    const data: { gas_info?: { gas_used: string } } = await response.json();
+    const gasUsed = data?.gas_info?.gas_used || GAS_CONFIG.defaultStakeEstimate;
 
     const gasPrice = new BigNumber(GAS_CONFIG.price);
 

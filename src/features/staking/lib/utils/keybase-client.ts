@@ -7,7 +7,7 @@ const getIdentityLogo = (identity: string) => {
     `https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}`,
   )
     .then((r) => r.json())
-    .then((id) => {
+    .then((id: any) => {
       const url = id?.them?.[0]?.pictures?.primary?.url;
 
       return url || null;
