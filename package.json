@@ -12,9 +12,9 @@
     "test": "echo No tests yet",
     "type-check": "tsc --noEmit",
     "start": "next start",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "pages:dev": "wrangler pages dev",
+    "deploy:mainnet": "wrangler pages deploy --env mainnet",
+    "deploy:testnet": "wrangler pages deploy --env testnet"
   },
   "dependencies": {
     "@burnt-labs/abstraxion": "^1.0.0-alpha.57",
