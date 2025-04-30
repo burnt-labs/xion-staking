@@ -12,7 +12,7 @@
     "test": "echo No tests yet",
     "type-check": "tsc --noEmit",
     "start": "next start",
-    "pages:dev": "wrangler pages dev",
+    "workers:dev": "wrangler dev",
     "deploy:mainnet": "wrangler pages deploy --env mainnet",
     "deploy:testnet": "wrangler pages deploy --env testnet"
   },
