@@ -1,5 +1,5 @@
 ---
-"abstraxion-staking-poc": patch
+"xion-staking": patch
 ---
 
 Added support for testnet-2
