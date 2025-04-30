@@ -1,7 +1,4 @@
-type ChainId =
-  | "xion-devnet-1"
-  | "xion-mainnet-1"
-  | "xion-testnet-2";
+type ChainId = "xion-devnet-1" | "xion-mainnet-1" | "xion-testnet-2";
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID as ChainId;
 

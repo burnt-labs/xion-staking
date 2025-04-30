@@ -6,4 +6,5 @@ set -e
   --excludePathsFromReport='next.config' \
   --excludePathsFromReport='tailwind.config' \
   --excludePathsFromReport='.*/app/.*' \
-  --excludePathsFromReport='.*\.next\.*'
+  --excludePathsFromReport='.*\.next\.*' \
+  --excludePathsFromReport='/server/index.ts'
