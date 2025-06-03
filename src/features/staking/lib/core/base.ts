@@ -131,7 +131,7 @@ export const getInflation = async () => {
   } catch (error) {
     console.error("Failed to fetch inflation:", error);
 
-    return 0.42;
+    return null;
   }
 };
 
@@ -154,6 +154,6 @@ export const getDistributionParams = async () => {
   } catch (error) {
     console.error("Failed to fetch distribution params:", error);
 
-    return 0.02;
+    return null;
   }
 };

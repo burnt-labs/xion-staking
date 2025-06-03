@@ -73,8 +73,14 @@ export const fetchStakingDataAction = async (staking: StakingContextType) => {
     });
 
     staking.dispatch(setPool(pool));
-    staking.dispatch(setInflation(inflation.toString()));
-    staking.dispatch(setCommunityTax(communityTax.toString()));
+
+    if (inflation !== null) {
+      staking.dispatch(setInflation(inflation.toString()));
+    }
+
+    if (communityTax !== null) {
+      staking.dispatch(setCommunityTax(communityTax.toString()));
+    }
 
     staking.dispatch(setIsInfoLoading(false));
   } catch (error) {

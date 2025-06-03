@@ -131,7 +131,7 @@ export const formatUnbondingCompletionTime = (completionTime: number) => {
 
 export const formatAPR = (apr: BigNumber | null) => {
   if (!apr) {
-    return "-";
+    return "—";
   }
 
   return `${apr.times(100).toFixed(2)}%`;
