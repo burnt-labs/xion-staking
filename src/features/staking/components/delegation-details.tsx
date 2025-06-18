@@ -287,7 +287,7 @@ const UnbondingRedelegationRow = ({
 }: UnbondingRedelegationRowProps) => {
   const { staking } = stakingRef;
 
-  const logo = useValidatorLogo(validator?.description.identity);
+  const logo = useValidatorLogo(validator?.operatorAddress);
 
   useEffect(() => {
     if (validatorAddress) {
