@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import { keybaseClient } from "./lib/utils/keybase-client";
+import { IS_MAINNET } from "../../config";
+import { fetchValidatorLogos } from "./lib/validator-logos";
 
 // Fallback logos with paths relative to the public directory
 const fallbackLogoMap: Record<string, string | undefined> = {
@@ -10,34 +11,35 @@ const fallbackLogoMap: Record<string, string | undefined> = {
   xionvaloper1ypwfnfuldmlp9u8asqzz6qx29p0utqzer5678k: "/chains/stake-lab.png",
 };
 
-export const useValidatorLogo = (
-  identity?: string,
-  operatorAddress?: string,
-) => {
-  const [logo, setLogo] = useState<null | string>(null);
+const validatorLogosQueryKey = "validator-logos";
 
-  useEffect(() => {
-    (async () => {
-      if (identity) {
-        const logoResponse = await keybaseClient.getIdentityLogo(identity);
+function useValidatorLogos(chainId: string) {
+  return useQuery({
+    queryFn: () => fetchValidatorLogos(chainId),
+    queryKey: [validatorLogosQueryKey, chainId],
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
+  });
+}
 
-        if (logoResponse) {
-          setLogo(logoResponse);
+export const useValidatorLogo = (operatorAddress?: string) => {
+  // todo: pull chain id from centralized store rather than ternary.
+  const { data: validatorLogos } = useValidatorLogos(
+    IS_MAINNET ? "xion-mainnet-1" : "xion-testnet-2",
+  );
 
-          return;
-        }
-      }
+  if (!operatorAddress || !validatorLogos) return null;
 
-      if (operatorAddress) {
-        const fallbackLogo = fallbackLogoMap[operatorAddress];
+  const logo = validatorLogos.validators[operatorAddress];
 
-        if (fallbackLogo) {
-          // Use the path directly - Next.js will handle the basePath
-          setLogo(fallbackLogo);
-        }
-      }
-    })();
-  }, [identity, operatorAddress]);
+  if (!logo) {
+    // Check fallback logos if no logo found in validator response
+    const fallbackLogo = fallbackLogoMap[operatorAddress];
+
+    return fallbackLogo ?? null;
+  }
 
   return logo;
 };

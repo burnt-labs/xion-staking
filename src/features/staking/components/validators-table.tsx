@@ -61,8 +61,7 @@ const ValidatorRow = ({
   validator,
 }: ValidatorItemProps) => {
   const { getLink } = useProMode();
-  const { identity } = validator.description;
-  const logo = useValidatorLogo(identity, validator.operatorAddress);
+  const logo = useValidatorLogo(validator.operatorAddress);
 
   const votingPowerPerc = getVotingPowerPerc(validator?.tokens, staking.state);
   const votingPowerPercStr = formatVotingPowerPerc(votingPowerPerc);

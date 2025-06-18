@@ -54,10 +54,7 @@ export default function ValidatorPage() {
     ReturnType<typeof getValidatorDetailsAction>
   > | null>(null);
 
-  const logo = useValidatorLogo(
-    validatorDetails?.description.identity,
-    validatorDetails?.operatorAddress,
-  );
+  const logo = useValidatorLogo(validatorDetails?.operatorAddress);
 
   useEffect(() => {
     (async () => {
