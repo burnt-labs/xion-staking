@@ -17,9 +17,9 @@
     "deploy:testnet": "wrangler pages deploy --env testnet"
   },
   "dependencies": {
-    "@burnt-labs/abstraxion": "^1.0.0-alpha.57",
-    "@burnt-labs/constants": "^0.1.0-alpha.15",
-    "@burnt-labs/ui": "^0.1.0-alpha.7",
+    "@burnt-labs/abstraxion": "^1.0.0-alpha.66",
+    "@burnt-labs/constants": "^0.1.0-alpha.18",
+    "@burnt-labs/ui": "^0.1.0-alpha.17",
     "@chain-registry/types": "^0.50.56",
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
     "@cosmjs/proto-signing": "^0.32.4",
