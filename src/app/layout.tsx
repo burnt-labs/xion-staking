@@ -4,7 +4,6 @@ import { AbstraxionProvider } from "@burnt-labs/abstraxion";
 import "@burnt-labs/abstraxion/dist/index.css";
 import "@burnt-labs/ui/dist/index.css";
 import type { Chain } from "@chain-registry/types";
-import { GasPrice } from "@cosmjs/stargate";
 import type { SignerOptions } from "@cosmos-kit/core";
 import { wallets as metamaskWallets } from "@cosmos-kit/cosmos-extension-metamask";
 import { wallets as keplrWallets } from "@cosmos-kit/keplr-extension";
@@ -56,8 +55,8 @@ const signerOptions: SignerOptions = {
     const { denom, fixed_min_gas_price } = chain?.fees?.fee_tokens[0];
 
     return {
-      gasPrice: GasPrice.fromString(`${fixed_min_gas_price}${denom}`),
-    };
+      gasPrice: `${fixed_min_gas_price}${denom}`,
+    } as any;
   },
   signingStargate: (chain: Chain | string) => {
     if (typeof chain === "string") return undefined;
@@ -71,8 +70,8 @@ const signerOptions: SignerOptions = {
     const { denom, fixed_min_gas_price } = chain?.fees?.fee_tokens[0];
 
     return {
-      gasPrice: GasPrice.fromString(`${fixed_min_gas_price}${denom}`),
-    };
+      gasPrice: `${fixed_min_gas_price}${denom}`,
+    } as any;
   },
 };
 
