@@ -98,17 +98,7 @@ export const getRewards = async (address: string, validatorAddress: string) => {
   );
 
   const rewardsData = await Promise.all(
-    rewards.rewards.map(async (reward) => {
-      // if (reward.denom.indexOf("ibc/") == 0) {
-      //   const coin = await queryClient.ibc.transfer.denomTrace(
-      //     reward.denom.substring(4),
-      //   );
-
-      //   reward.denom = coin.denomTrace?.baseDenom || reward.denom;
-      // }
-
-      return reward;
-    }),
+    rewards.rewards.map(async (reward) => reward),
   );
 
   return rewardsData
