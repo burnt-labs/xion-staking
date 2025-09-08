@@ -2,6 +2,7 @@ import type {
   Coin,
   DeliverTxResponse,
   MsgBeginRedelegateEncodeObject,
+  MsgCancelUnbondingDelegationEncodeObject,
   MsgDelegateEncodeObject,
   MsgUndelegateEncodeObject,
   MsgWithdrawDelegatorRewardEncodeObject,
@@ -189,13 +190,6 @@ export const cancelUnbonding = async (
   unbonding: Unbonding,
   client: SigningClient,
 ) => {
-  if ("registry" in client) {
-    client.registry.register(
-      MsgCancelUnbondingDelegation.typeUrl,
-      MsgCancelUnbondingDelegation,
-    );
-  }
-
   const msg = MsgCancelUnbondingDelegation.fromPartial({
     amount: unbonding.balance,
     creationHeight: unbonding.creationHeight,
@@ -203,15 +197,13 @@ export const cancelUnbonding = async (
     validatorAddress: addresses.validator,
   });
 
-  const messageWrapper = [
-    {
-      typeUrl: "/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation",
-      value: msg,
-    },
-  ];
+  const messageWrapper: MsgCancelUnbondingDelegationEncodeObject = {
+    typeUrl: "/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation",
+    value: msg,
+  };
 
   return await client
-    .signAndBroadcast(addresses.delegator, messageWrapper, "auto", "")
+    .signAndBroadcast(addresses.delegator, [messageWrapper], "auto", "")
     .then(getTxVerifier("cancel_unbonding_delegation"))
     .catch(handleTxError);
 };
