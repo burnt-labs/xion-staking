@@ -1,6 +1,5 @@
 "use client";
 
-import { Abstraxion, useModal } from "@burnt-labs/abstraxion";
 import Link from "next/link";
 
 import XionLogo from "@/components/XionLogo";
@@ -15,8 +14,7 @@ export default function BaseWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const { getLink, isProMode } = useProMode();
-  const [, setShowAbstraxion] = useModal();
+  const { getLink } = useProMode();
 
   return (
     <main className="flex min-h-screen flex-col items-center">
@@ -54,13 +52,6 @@ export default function BaseWrapper({
         </div>
       </nav>
       {children}
-      {!isProMode && (
-        <Abstraxion
-          onClose={() => {
-            setShowAbstraxion(false);
-          }}
-        />
-      )}
     </main>
   );
 }

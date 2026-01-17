@@ -192,7 +192,7 @@ export const cancelUnbonding = async (
   if ("registry" in client) {
     client.registry.register(
       MsgCancelUnbondingDelegation.typeUrl,
-      MsgCancelUnbondingDelegation,
+      MsgCancelUnbondingDelegation as any,
     );
   }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
 /**
@@ -29,7 +30,7 @@ const ProModeContext = createContext<ProModeContextType | undefined>(undefined);
  * Pro mode is determined by whether the current path starts with '/pro'.
  * In pro mode, staking functionality uses CosmosKit instead of Abstraxion.
  */
-export function ProModeProvider({ children }: { children: React.ReactNode }) {
+export function ProModeProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isProMode = pathname?.startsWith("/pro") ?? false;
 

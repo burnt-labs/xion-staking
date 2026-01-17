@@ -21,8 +21,10 @@ enum Step {
   Submitting = "submitting",
 }
 
-interface FormValues
-  extends Omit<StoreCodeProposalValues, "description" | "wasmByteCodes"> {
+interface FormValues extends Omit<
+  StoreCodeProposalValues,
+  "description" | "wasmByteCodes"
+> {
   // Audit Information
   auditProcessDescription: string;
   auditReportLink: string;
