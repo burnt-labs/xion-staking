@@ -92,6 +92,7 @@ const fetchPrices = async (
  */
 const usePrices = (assets: Asset[]) =>
   useQuery({
+    enabled: false, // Disabled - price fetching commented out
     queryFn: () => fetchPrices(assets),
     queryKey: ["prices", assets.map((a) => a.coingecko_id).filter(Boolean)],
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes

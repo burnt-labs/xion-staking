@@ -1,11 +1,9 @@
 "use client";
 
-import { Abstraxion, useModal } from "@burnt-labs/abstraxion";
 import Link from "next/link";
 
 import XionLogo from "@/components/XionLogo";
 import { IS_MAINNET, mainNavItems } from "@/config";
-import { useProMode } from "@/features/core/context/pro-mode";
 
 import NavAccount from "./nav-account";
 import NavLink from "./nav-link";
@@ -15,9 +13,6 @@ export default function BaseWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const { getLink, isProMode } = useProMode();
-  const [, setShowAbstraxion] = useModal();
-
   return (
     <main className="flex min-h-screen flex-col items-center">
       <nav
@@ -28,7 +23,7 @@ export default function BaseWrapper({
           <div className="flex w-[200px] flex-row items-center">
             <Link
               className="flex cursor-pointer items-center"
-              href={getLink("staking")}
+              href="/staking"
             >
               <XionLogo height={32} width={87} />
               <span
@@ -54,13 +49,6 @@ export default function BaseWrapper({
         </div>
       </nav>
       {children}
-      {!isProMode && (
-        <Abstraxion
-          onClose={() => {
-            setShowAbstraxion(false);
-          }}
-        />
-      )}
     </main>
   );
 }

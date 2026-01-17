@@ -16,7 +16,6 @@ import {
   HeaderTitleBase,
   ValidatorLogo,
 } from "@/features/core/components/table";
-import { useProMode } from "@/features/core/context/pro-mode";
 import { sortUtil } from "@/features/core/utils";
 
 import { useStaking } from "../context/hooks";
@@ -60,7 +59,6 @@ const ValidatorRow = ({
   staking,
   validator,
 }: ValidatorItemProps) => {
-  const { getLink } = useProMode();
   const { identity } = validator.description;
   const logo = useValidatorLogo(identity, validator.operatorAddress);
 
@@ -82,7 +80,7 @@ const ValidatorRow = ({
   );
 
   const detailsEl = (
-    <NavLink href={getLink(`validator?address=${validator.operatorAddress}`)}>
+    <NavLink href={`/validator?address=${validator.operatorAddress}`}>
       Details
     </NavLink>
   );
