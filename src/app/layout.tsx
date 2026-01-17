@@ -1,8 +1,7 @@
 "use client";
 
 import { AbstraxionProvider } from "@burnt-labs/abstraxion";
-import "@burnt-labs/abstraxion/dist/index.css";
-import "@burnt-labs/ui/dist/index.css";
+import "@burnt-labs/abstraxion/src/styles.css";
 import type { Chain } from "@chain-registry/types";
 import { GasPrice } from "@cosmjs/stargate";
 import type { SignerOptions } from "@cosmos-kit/core";
@@ -19,7 +18,7 @@ import React from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { IS_MAINNET, REST_API_URL, RPC_URL } from "@/config";
+import { CHAIN_ID, IS_MAINNET, REST_API_URL, RPC_URL } from "@/config";
 import BaseWrapper from "@/features/core/components/base-wrapper";
 import { ProModeProvider } from "@/features/core/context/pro-mode";
 import { CoreProvider } from "@/features/core/context/provider";
@@ -30,6 +29,7 @@ import "./globals.css";
 
 // Abstraxion config
 const abstraxionConfig = {
+  chainId: CHAIN_ID,
   restUrl: REST_API_URL,
   rpcUrl: RPC_URL,
   stake: true,
@@ -57,7 +57,7 @@ const signerOptions: SignerOptions = {
 
     return {
       gasPrice: GasPrice.fromString(`${fixed_min_gas_price}${denom}`),
-    };
+    } as any;
   },
   signingStargate: (chain: Chain | string) => {
     if (typeof chain === "string") return undefined;
@@ -72,7 +72,7 @@ const signerOptions: SignerOptions = {
 
     return {
       gasPrice: GasPrice.fromString(`${fixed_min_gas_price}${denom}`),
-    };
+    } as any;
   },
 };
 
@@ -99,13 +99,14 @@ export default function RootLayout({
                     rest: [REST_API_URL],
                     rpc: [RPC_URL],
                   },
-                  xiontestnet: {
+                  xiontestnet2: {
                     rest: [REST_API_URL],
                     rpc: [RPC_URL],
                   },
                 },
               }}
               signerOptions={signerOptions}
+              throwErrors={false}
               wallets={[
                 ...(IS_MAINNET ? [] : testnetProWallets),
                 ...proWallets,
