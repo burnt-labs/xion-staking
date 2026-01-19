@@ -1,0 +1,49 @@
+name: Deploy Mainnet
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "20"
+  CLOUDFLARE_API_TOKEN: ${{ secrets.BURNT_CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.BURNT_CLOUDFLARE_ACCOUNT_ID }}
+
+jobs:
+  deploy:
+    name: Deploy to Mainnet
+    runs-on: ubuntu-latest
+    environment: mainnet
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Build Next.js app
+        run: npm run build
+        env:
+          NEXT_PUBLIC_CHAIN_ID: "xion-mainnet-1"
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --env=mainnet
