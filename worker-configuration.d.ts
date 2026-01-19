@@ -3,12 +3,11 @@
 // Runtime types generated with workerd@1.20250428.0 2025-03-01 nodejs_compat
 declare namespace Cloudflare {
 	interface Env {
-		NEXT_PUBLIC_CHAIN_ID: "xion-mainnet-1" | "xion-testnet-2";
-		NEXT_PUBLIC_IS_DEPLOYMENT: "false";
-		NEXT_PUBLIC_IS_PRO_MODE: "false";
-		NEXT_PUBLIC_RPC_ENDPOINT: "https://rpc.xion-mainnet-1.burnt.com:443" | "https://rpc.xion-testnet-2.burnt.com:443";
-		VITE_FEE_GRANTER_ADDRESS: "xion1aqpmfnr9uxatc9yfhmutenwtqlpyhk8s3csdkm" | "xion1xrqz2wpt4rw8rtdvrc4n4yn5h54jm0nn4evn2x";
-		ASSETS: Fetcher;
+		NEXT_PUBLIC_CHAIN_ID: string;
+		NEXT_PUBLIC_IS_DEPLOYMENT: string;
+		NEXT_PUBLIC_IS_PRO_MODE: string;
+		NEXT_PUBLIC_RPC_ENDPOINT: string;
+		VITE_FEE_GRANTER_ADDRESS: string;
 	}
 }
 interface Env extends Cloudflare.Env {}

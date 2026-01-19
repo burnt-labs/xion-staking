@@ -13,8 +13,8 @@
     "type-check": "tsc --noEmit",
     "start": "next start",
     "workers:dev": "wrangler dev",
-    "deploy:mainnet": "wrangler pages deploy --env mainnet",
-    "deploy:testnet": "wrangler pages deploy --env testnet"
+    "deploy:mainnet": "wrangler deploy --env mainnet",
+    "deploy:testnet": "wrangler deploy --env testnet"
   },
   "dependencies": {
     "@burnt-labs/abstraxion": "^1.0.0-alpha.73",
