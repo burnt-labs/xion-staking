@@ -57,5 +57,16 @@
         },
       ],
     },
+    "staging": {
+      "vars": {
+        "NEXT_PUBLIC_CHAIN_ID": "xion-testnet-2",
+      },
+      "routes": [
+        {
+          "pattern": "staking.staging.burnt.com",
+          "custom_domain": true,
+        },
+      ],
+    },
   },
 }
