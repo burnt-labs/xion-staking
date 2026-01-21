@@ -21,7 +21,7 @@ jobs:
     uses: ./.github/workflows/test.yml
 
   preview:
-    name: Deploy Preview to Staging
+    name: Deploy Preview to Testnet
     runs-on: ubuntu-latest
     needs: test
     environment: staging
