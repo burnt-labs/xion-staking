@@ -2,8 +2,8 @@
 
 set -e
 
-npm run lint
-npm run type-check
-npm run test
+pnpm run lint
+pnpm run type-check
+pnpm run test
 
-QUICK_BUILD=true npm run build
+QUICK_BUILD=true pnpm run build
