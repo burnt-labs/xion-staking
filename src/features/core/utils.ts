@@ -43,8 +43,8 @@ export async function fetchFromAPI<T>(
     );
 
     return response.data;
-  } catch (error) {
-    console.error(`Failed to fetch from API: ${endpoint}`, error);
-    throw error;
+  } catch (_error) {
+    console.error(`Failed to fetch from API: ${endpoint}`, _error);
+    throw _error;
   }
 }

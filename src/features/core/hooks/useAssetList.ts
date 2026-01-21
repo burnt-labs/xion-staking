@@ -24,9 +24,9 @@ const fetchAssetList = async (): Promise<AssetList> => {
     }
 
     return response.data;
-  } catch (error) {
-    console.error("Error fetching asset list:", error);
-    throw error;
+  } catch (_error) {
+    console.error("Error fetching asset list:", _error);
+    throw _error;
   }
 };
 
@@ -79,9 +79,9 @@ const fetchPrices = async (
     });
 
     return prices;
-  } catch (error) {
-    console.error("Error fetching prices:", error);
-    throw error;
+  } catch (_error) {
+    console.error("Error fetching prices:", _error);
+    throw _error;
   }
 };
 

@@ -128,8 +128,8 @@ export const getInflation = async () => {
     const data = (await response.json()) as unknown as { inflation: string };
 
     return Number(data.inflation);
-  } catch (error) {
-    console.error("Failed to fetch inflation:", error);
+  } catch (_error) {
+    console.error("Failed to fetch inflation:", _error);
 
     return null;
   }
@@ -151,8 +151,8 @@ export const getDistributionParams = async () => {
     };
 
     return Number(data.params.community_tax);
-  } catch (error) {
-    console.error("Failed to fetch distribution params:", error);
+  } catch (_error) {
+    console.error("Failed to fetch distribution params:", _error);
 
     return null;
   }

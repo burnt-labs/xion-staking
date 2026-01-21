@@ -83,8 +83,8 @@ export const fetchStakingDataAction = async (staking: StakingContextType) => {
     }
 
     staking.dispatch(setIsInfoLoading(false));
-  } catch (error) {
-    console.error("error fetching staking data:", error);
+  } catch (_error) {
+    console.error("error fetching staking data:", _error);
   }
 };
 
@@ -206,8 +206,8 @@ export const fetchUserDataAction = async (
     );
 
     staking.dispatch(setIsInfoLoading(false));
-  } catch (error) {
-    console.error("error fetching staking data:", error);
+  } catch (_error) {
+    console.error("error fetching staking data:", _error);
   }
 };
 

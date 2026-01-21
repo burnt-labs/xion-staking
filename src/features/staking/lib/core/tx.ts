@@ -54,7 +54,6 @@ export const getTxVerifier =
   };
 
 export const handleTxError = (err: unknown) => {
-  // eslint-disable-next-line no-console
   console.error(err);
 
   throw err;

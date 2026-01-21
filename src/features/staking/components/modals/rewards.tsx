@@ -69,7 +69,7 @@ const claimRewardsLoop = async (
 
     await fetchUserDataAction(delegatorAddress, staking);
     setStep("completed");
-  } catch (error) {
+  } catch (_error) {
     toast(
       "There was an unexpected error claiming your rewards. Please try again later.",
       { type: "error" },

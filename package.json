@@ -32,20 +32,24 @@
   },
   "scripts": {
     "build": "next build",
+    "build:quick": "QUICK_BUILD=true next build",
+    "changeset": "changeset",
+    "changeset:publish": "changeset publish",
+    "changeset:version": "changeset version",
+    "ci": "pnpm run lint && pnpm run type-check && pnpm run test && pnpm run build:quick",
+    "deploy:mainnet": "wrangler deploy --env mainnet",
+    "deploy:testnet": "wrangler deploy --env testnet",
     "dev": "PORT=4000 next dev",
-    "lint": "bash ./scripts/check_unused_exports.sh && npm run lint:eslint && npm run lint:prettier",
+    "lint": "pnpm run lint:unused-exports && pnpm run lint:eslint && pnpm run lint:prettier",
     "lint:eslint": "eslint . --ext .ts,.tsx",
     "lint:prettier": "prettier --check .",
     "lint:prettier:fix": "prettier --write .",
+    "lint:unused-exports": "ts-unused-exports tsconfig.json --excludePathsFromReport='next.config' --excludePathsFromReport='tailwind.config' --excludePathsFromReport='eslint.config' --excludePathsFromReport='.*/app/.*' --excludePathsFromReport='.*\\.next\\.*' --excludePathsFromReport='/server/index.ts'",
+    "start": "next start",
     "test": "echo No tests yet",
     "type-check": "tsc --noEmit",
-    "start": "next start",
-    "workers:dev": "wrangler dev",
-    "deploy:mainnet": "wrangler deploy --env mainnet",
-    "deploy:testnet": "wrangler deploy --env testnet",
-    "changeset": "changeset",
-    "changeset:version": "changeset version",
-    "changeset:publish": "changeset publish"
+    "update:burnt-deps": "pnpm add -D @burnt-labs/abstraxion@latest @burnt-labs/ui@latest @burnt-labs/constants@latest",
+    "workers:dev": "wrangler dev"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",
@@ -84,6 +88,8 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.28.1",
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.39.2",
     "@stylistic/eslint-plugin": "^2.13.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^20.11.21",
@@ -108,6 +114,7 @@
     "tailwindcss": "^3.4.1",
     "ts-unused-exports": "^10.0.1",
     "typescript": "^5.3.3",
+    "typescript-eslint": "^8.53.1",
     "wrangler": "^4.10.0"
   }
 }

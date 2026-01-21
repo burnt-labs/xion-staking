@@ -17,9 +17,9 @@ const fetchBalances = async (address?: string): Promise<Coin[]> => {
     }
 
     return response.data.balances;
-  } catch (error) {
-    console.error("Error fetching bank balances:", error);
-    throw error;
+  } catch (_error) {
+    console.error("Error fetching bank balances:", _error);
+    throw _error;
   }
 };
 

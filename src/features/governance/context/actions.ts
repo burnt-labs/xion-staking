@@ -67,9 +67,9 @@ export const fetchProposals = async ({
       allProposals = allProposals.concat(data.proposals);
       nextKey = data.pagination.next_key;
       paginationParams["pagination.key"] = nextKey || undefined;
-    } catch (error) {
-      console.error("Failed to fetch proposals:", error);
-      throw error;
+    } catch (_error) {
+      console.error("Failed to fetch proposals:", _error);
+      throw _error;
     }
   } while (nextKey);
 

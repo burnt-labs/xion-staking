@@ -128,7 +128,7 @@ const StakingModal = () => {
 
         return true;
       }
-    } catch (error) {
+    } catch (_error) {
       setFormError({
         ...formError,
         amount: "Failed to estimate transaction fees",
@@ -178,7 +178,7 @@ const StakingModal = () => {
       );
 
       setStep("completed");
-    } catch (error) {
+    } catch (_error) {
       toast("Staking error", {
         type: "error",
       });
