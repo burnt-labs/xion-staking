@@ -13,7 +13,6 @@ import { wallets as okxWallets } from "@cosmos-kit/okxwallet-extension";
 import { ChainProvider } from "@cosmos-kit/react";
 import "@interchain-ui/react/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Analytics } from "@vercel/analytics/react";
 import React from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -116,7 +115,6 @@ export default function RootLayout({
                 <CoreProvider>
                   <StakingProvider>
                     <BaseWrapper>{children}</BaseWrapper>
-                    <Analytics />
                   </StakingProvider>
                 </CoreProvider>
               </AbstraxionProvider>
