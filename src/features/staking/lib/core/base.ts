@@ -97,21 +97,11 @@ export const getRewards = async (address: string, validatorAddress: string) => {
     validatorAddress,
   );
 
-  const rewardsData = await Promise.all(
-    rewards.rewards.map(async (reward) => {
-      if (reward.denom.indexOf("ibc/") == 0) {
-        const coin = await queryClient.ibc.transfer.denomTrace(
-          reward.denom.substring(4),
-        );
+  // Note: We skip IBC denom resolution since we only care about UXION rewards.
+  // The denomTrace query was removed in ibc-go v10 (used by Xion mainnet).
+  // IBC denoms like "ibc/..." won't match "UXION" and get filtered out below.
 
-        reward.denom = coin.denomTrace?.baseDenom || reward.denom;
-      }
-
-      return reward;
-    }),
-  );
-
-  return rewardsData
+  return rewards.rewards
     .filter((reward) => reward.denom?.toUpperCase() === "UXION")
     .map((reward) => ({
       amount: new BigNumber(reward.amount)
