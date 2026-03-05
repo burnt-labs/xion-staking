@@ -13,8 +13,7 @@ const nextConfig = {
       },
     ],
   },
-  output: "export",
-  trailingSlash: true, // This is important when deploying in GH pages
+  output: "standalone",
 };
 
 export default nextConfig;
