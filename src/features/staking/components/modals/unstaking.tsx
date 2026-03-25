@@ -220,7 +220,7 @@ const UnstakingModal = () => {
                         .finally(() => {
                           setIsLoading(false);
                         });
-                    } catch (error) {
+                    } catch (_error) {
                       toast("Staking error", {
                         type: "error",
                       });

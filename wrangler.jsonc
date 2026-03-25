@@ -29,12 +29,16 @@
       },
       "routes": [
         {
-          "pattern": "xion.burnt.com/staking*",
-          "custom_domain": false,
+          "pattern": "staking.burnt.com",
+          "custom_domain": true,
         },
         {
-          "pattern": "xion.burnt.com/governance",
-          "custom_domain": false,
+          "pattern": "staking.xion.burnt.com",
+          "custom_domain": true,
+        },
+        {
+          "pattern": "staking.mainnet.burnt.com",
+          "custom_domain": true,
         },
       ],
     },
@@ -42,6 +46,16 @@
       "vars": {
         "NEXT_PUBLIC_CHAIN_ID": "xion-testnet-2",
       },
+      "routes": [
+        {
+          "pattern": "staking.testnet.burnt.com",
+          "custom_domain": true,
+        },
+        {
+          "pattern": "staking.testnet2.burnt.com",
+          "custom_domain": true,
+        },
+      ],
     },
   },
 }

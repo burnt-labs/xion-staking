@@ -54,7 +54,6 @@ export const getTxVerifier =
   };
 
 export const handleTxError = (err: unknown) => {
-  // eslint-disable-next-line no-console
   console.error(err);
 
   throw err;
@@ -192,7 +191,7 @@ export const cancelUnbonding = async (
   if ("registry" in client) {
     client.registry.register(
       MsgCancelUnbondingDelegation.typeUrl,
-      MsgCancelUnbondingDelegation,
+      MsgCancelUnbondingDelegation as any,
     );
   }
 

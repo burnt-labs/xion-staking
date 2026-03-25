@@ -9,9 +9,9 @@ The only dependency to run the project locally is Node.js. It has been tested
 with Node.js v20. Once you have it installed, you can run:
 
 ```bash
-npm install
+pnpm install
 
-npm run dev
+pnpm run dev
 ```
 
 It integrates the `@burnt-labs/abstraxion` library from

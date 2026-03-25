@@ -1,7 +1,6 @@
 import {
   useAbstraxionAccount,
   useAbstraxionSigningClient,
-  useModal,
 } from "@burnt-labs/abstraxion";
 import { useChain } from "@cosmos-kit/react";
 import { useEffect, useState } from "react";
@@ -36,13 +35,14 @@ export function useChainAccount(): ChainAccount {
   const { isProMode } = useProMode();
 
   // Standard mode hooks
-  const { data: abstraxionData, isConnected: abstraxionIsConnected } =
-    useAbstraxionAccount();
+  const {
+    data: abstraxionData,
+    isConnected: abstraxionIsConnected,
+    login: abstraxionLogin,
+    logout: abstraxionLogout,
+  } = useAbstraxionAccount();
 
-  const [, setModalOpen] = useModal();
-
-  const { client: abstraxionClient, logout: abstraxionLogout } =
-    useAbstraxionSigningClient();
+  const { client: abstraxionClient } = useAbstraxionSigningClient();
 
   // Pro mode hooks
   const {
@@ -51,7 +51,7 @@ export function useChainAccount(): ChainAccount {
     disconnect,
     getSigningCosmWasmClient,
     status,
-  } = useChain(IS_MAINNET ? "xion" : "xiontestnet");
+  } = useChain(IS_MAINNET ? "xion" : "xiontestnet2");
 
   const cosmosKitIsConnected = status === "Connected";
 
@@ -75,7 +75,7 @@ export function useChainAccount(): ChainAccount {
     if (isProMode) {
       await cosmosKitConnect();
     } else {
-      setModalOpen(true);
+      await abstraxionLogin();
     }
   };
 

@@ -1,3 +1,4 @@
 *.svg
 .yarn
 worker-configuration.d.ts
+.changeset

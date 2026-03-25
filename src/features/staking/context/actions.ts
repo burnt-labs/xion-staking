@@ -73,12 +73,18 @@ export const fetchStakingDataAction = async (staking: StakingContextType) => {
     });
 
     staking.dispatch(setPool(pool));
-    staking.dispatch(setInflation(inflation.toString()));
-    staking.dispatch(setCommunityTax(communityTax.toString()));
+
+    if (inflation !== null) {
+      staking.dispatch(setInflation(inflation.toString()));
+    }
+
+    if (communityTax !== null) {
+      staking.dispatch(setCommunityTax(communityTax.toString()));
+    }
 
     staking.dispatch(setIsInfoLoading(false));
-  } catch (error) {
-    console.error("error fetching staking data:", error);
+  } catch (_error) {
+    console.error("error fetching staking data:", _error);
   }
 };
 
@@ -200,8 +206,8 @@ export const fetchUserDataAction = async (
     );
 
     staking.dispatch(setIsInfoLoading(false));
-  } catch (error) {
-    console.error("error fetching staking data:", error);
+  } catch (_error) {
+    console.error("error fetching staking data:", _error);
   }
 };
 

@@ -79,7 +79,7 @@ export interface ProposalTallyResult {
   yes_count: string;
 }
 
-interface ProposalDeposit extends Coin {}
+type ProposalDeposit = Coin;
 
 export interface Proposal {
   deposit_end_time: string;

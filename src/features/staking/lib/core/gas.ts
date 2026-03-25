@@ -178,8 +178,8 @@ async function estimateGasViaRest(
     const gasPrice = new BigNumber(GAS_CONFIG.price);
 
     return new BigNumber(gasUsed).multipliedBy(gasPrice).dividedBy(1e6);
-  } catch (error) {
-    console.warn("Gas estimation via REST failed:", error);
+  } catch (_error) {
+    console.warn("Gas estimation via REST failed:", _error);
 
     return estimateGasStatic();
   }
@@ -190,7 +190,7 @@ export async function estimateGas(
 ): Promise<BigNumber> {
   try {
     return await estimateGasViaRest(params);
-  } catch (error) {
+  } catch (_error) {
     console.warn("All gas estimation methods failed, using static fallback");
 
     return estimateGasStatic();

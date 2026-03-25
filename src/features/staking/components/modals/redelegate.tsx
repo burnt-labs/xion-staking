@@ -216,7 +216,7 @@ const RedelegateModal = () => {
 
         return true;
       }
-    } catch (error) {
+    } catch (_error) {
       setFormError({
         ...formError,
         amount: "Failed to estimate transaction fees",
