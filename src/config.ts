@@ -28,7 +28,7 @@ export const ASSET_ENDPOINT = process.env.NEXT_PUBLIC_ASSET_ENDPOINT
   : ASSET_ENDPOINTS[CHAIN_ID];
 
 export const COINGECKO_API_URL =
-  "https://api.coingecko.com/api/v3/simple/price";
+  "https://coingecko-proxy.burnt.com/api/v3/simple/price";
 
 const RPC_URLS = {
   "xion-devnet-1": "http://localhost:26657",
