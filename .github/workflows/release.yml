@@ -1,31 +1,68 @@
 name: Release
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - Deploy Testnet
+      - Preview Mainnet
     branches: [main]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: write
 
 jobs:
   draft-release:
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]' && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+          fetch-depth: 0
+
+      - name: Ensure deploy and preview succeeded for this commit
+        if: github.event_name == 'workflow_run'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          DEPLOY_STATUS=$(gh run list --workflow "Deploy Testnet" --branch main --commit "$SHA" --json conclusion --jq '.[0].conclusion // ""')
+          PREVIEW_STATUS=$(gh run list --workflow "Preview Mainnet" --branch main --commit "$SHA" --json conclusion --jq '.[0].conclusion // ""')
+
+          echo "Deploy Testnet conclusion: $DEPLOY_STATUS"
+          echo "Preview Mainnet conclusion: $PREVIEW_STATUS"
+
+          if [ "$DEPLOY_STATUS" != "success" ] || [ "$PREVIEW_STATUS" != "success" ]; then
+            echo "Both Deploy Testnet and Preview Mainnet must succeed before creating a release."
+            exit 1
+          fi
+
+      - name: Skip if release already exists for this commit
+        id: existing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          COUNT=$(gh release list --limit 100 --json isDraft,targetCommitish --jq --arg sha "$SHA" '[.[] | select(.isDraft == true and .targetCommitish == $sha)] | length')
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@v4
+        if: steps.existing.outputs.count == '0'
         with:
           node-version: lts/*
 
       - uses: pnpm/action-setup@v4
+        if: steps.existing.outputs.count == '0'
 
       - run: pnpm install --frozen-lockfile
+        if: steps.existing.outputs.count == '0'
 
       - name: Bump patch version
+        if: steps.existing.outputs.count == '0'
         id: version
         run: |
           npm version patch --no-git-tag-version
@@ -35,6 +72,7 @@ jobs:
           echo "name=v$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Commit version bump
+        if: steps.existing.outputs.count == '0'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -43,6 +81,7 @@ jobs:
           git push
 
       - name: Create draft GitHub Release
+        if: steps.existing.outputs.count == '0'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
