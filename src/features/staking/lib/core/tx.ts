@@ -40,7 +40,7 @@ const getUxionAmount = (coin: Coin) => {
   throw new Error("Invalid coin denom");
 };
 
-type BroadcastResult = DeliverTxResponse | { transactionHash: string };
+type BroadcastResult = { transactionHash: string } | DeliverTxResponse;
 
 export const getTxVerifier =
   (eventType: string) => (result: BroadcastResult) => {
