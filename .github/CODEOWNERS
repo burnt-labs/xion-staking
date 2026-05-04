@@ -27,7 +27,6 @@
 # # Assign a role as a Code Owner:
 # /config/ @@maintainer
 
-* @burnt-labs/burnt-engineering/burnt-frontend
-
-.github/ @burnt-labs/burnt-engineering/burnt-devops
-wrangler.jsonc @burnt-labs/burnt-engineering/burnt-devops
+* @burnt-labs/burnt-frontend
+.github/ @burnt-labs/burnt-devops
+wrangler.jsonc @burnt-labsx/burnt-devops

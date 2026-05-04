@@ -1,14 +1,17 @@
-name: Preview Testnet
+name: Preview Mainnet
 
 on:
-  pull_request:
+  push:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
 
 jobs:
   check:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,15 +23,12 @@ jobs:
       - run: pnpm run type-check
       - run: pnpm run test
 
-  preview-testnet:
+  preview-mainnet:
     needs: check
     runs-on: ubuntu-latest
     environment:
-      name: preview-testnet
+      name: preview-mainnet
       url: ${{ steps.extract.outputs.preview_url }}
-    permissions:
-      contents: read
-      deployments: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,17 +36,17 @@ jobs:
           node-version: lts/*
       - uses: pnpm/action-setup@v4
       - run: pnpm install --frozen-lockfile
-      - name: Build testnet app
+      - name: Build mainnet app
         run: pnpm run build
         env:
-          NEXT_PUBLIC_CHAIN_ID: "xion-testnet-2"
-      - name: Upload testnet preview version
+          NEXT_PUBLIC_CHAIN_ID: "xion-mainnet-1"
+      - name: Upload mainnet preview version
         id: preview
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.BURNT_CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.BURNT_CLOUDFLARE_ACCOUNT_ID }}
-          command: versions upload --env testnet --message "PR #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}"
+          command: versions upload --env mainnet --message "Main preview ${{ github.sha }}"
           packageManager: pnpm
       - name: Extract version ID and preview URL
         id: extract

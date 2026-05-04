@@ -33,9 +33,6 @@
   "scripts": {
     "build": "next build",
     "build:quick": "QUICK_BUILD=true next build",
-    "changeset": "changeset",
-    "changeset:publish": "changeset publish",
-    "changeset:version": "changeset version",
     "ci": "pnpm run lint && pnpm run type-check && pnpm run test && pnpm run build:quick",
     "deploy:mainnet": "wrangler deploy --env mainnet",
     "deploy:testnet": "wrangler deploy --env testnet",
@@ -53,9 +50,6 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",
-    "@burnt-labs/abstraxion": "^1.0.0-alpha.73",
-    "@burnt-labs/constants": "^0.1.0-alpha.20",
-    "@burnt-labs/ui": "^1.0.0-alpha.21",
     "@chain-registry/types": "^0.50.56",
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
     "@cosmjs/proto-signing": "^0.32.4",
@@ -87,7 +81,9 @@
     "react-tooltip": "^5.26.3"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.28.1",
+    "@burnt-labs/abstraxion": "1.0.0-alpha.78",
+    "@burnt-labs/constants": "0.1.0-alpha.24",
+    "@burnt-labs/ui": "1.0.0-alpha.26",
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.2",
     "@stylistic/eslint-plugin": "^2.13.0",
