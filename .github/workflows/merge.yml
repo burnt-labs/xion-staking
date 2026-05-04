@@ -1,0 +1,30 @@
+name: Merge
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+  deployments: write
+
+jobs:
+  deploy-testnet:
+    if: github.actor != 'github-actions[bot]'
+    uses: ./.github/workflows/deploy-testnet.yml
+    secrets: inherit
+
+  preview-mainnet:
+    if: github.actor != 'github-actions[bot]'
+    uses: ./.github/workflows/preview-mainnet.yml
+    secrets: inherit
+
+  release:
+    if: github.actor != 'github-actions[bot]'
+    needs:
+      - deploy-testnet
+      - preview-mainnet
+    uses: ./.github/workflows/release.yml
+    secrets: inherit

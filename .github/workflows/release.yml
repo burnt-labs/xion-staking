@@ -1,21 +1,15 @@
 name: Release
 
 on:
-  workflow_run:
-    workflows:
-      - Deploy Testnet
-      - Preview Mainnet
-    branches: [main]
-    types: [completed]
+  workflow_call:
   workflow_dispatch:
 
 permissions:
-  actions: read
   contents: write
 
 jobs:
   draft-release:
-    if: github.actor != 'github-actions[bot]' && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,29 +18,12 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Ensure deploy and preview succeeded for this commit
-        if: github.event_name == 'workflow_run'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SHA: ${{ github.event.workflow_run.head_sha }}
-        run: |
-          DEPLOY_STATUS=$(gh run list --workflow "Deploy Testnet" --branch main --commit "$SHA" --json conclusion --jq '.[0].conclusion // ""')
-          PREVIEW_STATUS=$(gh run list --workflow "Preview Mainnet" --branch main --commit "$SHA" --json conclusion --jq '.[0].conclusion // ""')
-
-          echo "Deploy Testnet conclusion: $DEPLOY_STATUS"
-          echo "Preview Mainnet conclusion: $PREVIEW_STATUS"
-
-          if [ "$DEPLOY_STATUS" != "success" ] || [ "$PREVIEW_STATUS" != "success" ]; then
-            echo "Both Deploy Testnet and Preview Mainnet must succeed before creating a release."
-            exit 1
-          fi
-
-      - name: Skip if release already exists for this commit
+      - name: Skip if draft release already exists for HEAD
         id: existing
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
         run: |
+          SHA=$(git rev-parse HEAD)
           COUNT=$(gh release list --limit 100 --json isDraft,targetCommitish --jq --arg sha "$SHA" '[.[] | select(.isDraft == true and .targetCommitish == $sha)] | length')
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
 
