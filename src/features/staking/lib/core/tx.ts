@@ -40,10 +40,16 @@ const getUxionAmount = (coin: Coin) => {
   throw new Error("Invalid coin denom");
 };
 
+type BroadcastResult = { transactionHash: string } | DeliverTxResponse;
+
 export const getTxVerifier =
-  (eventType: string) => (result: DeliverTxResponse) => {
+  (eventType: string) => (result: BroadcastResult) => {
     // eslint-disable-next-line no-console
     console.log("debug: base.ts: result", result);
+
+    if (!("events" in result)) {
+      return result;
+    }
 
     if (!result.events.find((e) => e.type === eventType)) {
       console.error(result);
