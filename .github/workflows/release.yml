@@ -1,50 +1,53 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
+  workflow_dispatch:
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+permissions:
+  contents: write
 
 jobs:
-  release:
-    name: Release
+  draft-release:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
         with:
-          node-version: 20
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
+      - name: Compute next version
+        id: version
         run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+          CURRENT=$(node -p "require('./package.json').version")
+          NEXT=$(npx --yes semver "$CURRENT" -i patch)
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "version=$NEXT" >> "$GITHUB_OUTPUT"
+          echo "tag=v$NEXT" >> "$GITHUB_OUTPUT"
 
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Create Release Pull Request
-        uses: changesets/action@v1
-        with:
-          # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: pnpm run changeset:publish
-          version: pnpm run changeset:version
+      - name: Check if release already exists
+        id: existing
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "${{ steps.version.outputs.tag }}" > /dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create draft GitHub Release
+        if: steps.existing.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: main
+          name: ${{ steps.version.outputs.tag }}
+          draft: true
+          prerelease: false
+          generate_release_notes: true
