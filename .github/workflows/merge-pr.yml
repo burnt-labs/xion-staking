@@ -1,0 +1,41 @@
+name: Merge PR
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+  deployments: write
+
+jobs:
+  check:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+      - run: pnpm run type-check
+      - run: pnpm run test
+
+  deploy-testnet:
+    needs: check
+    uses: ./.github/workflows/deploy-testnet.yml
+    secrets: inherit
+
+  preview-mainnet:
+    needs: deploy-testnet
+    uses: ./.github/workflows/preview-mainnet.yml
+    secrets: inherit
+
+  release:
+    needs: preview-mainnet
+    uses: ./.github/workflows/release.yml
+    secrets: inherit
