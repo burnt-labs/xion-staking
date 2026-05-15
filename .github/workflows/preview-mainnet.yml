@@ -35,8 +35,9 @@ jobs:
           packageManager: pnpm
       - name: Extract version ID and preview URL
         id: extract
+        env:
+          OUTPUT: ${{ steps.preview.outputs.command-output }}
         run: |
-          OUTPUT='${{ steps.preview.outputs.command-output }}'
           VERSION_ID=$(echo "$OUTPUT" | grep -oP 'Version ID:\s+\K[a-f0-9-]+' || echo '')
           PREVIEW_URL=$(echo "$OUTPUT" | grep -oP 'https://[^\s]+\.workers\.dev[^\s]*' | head -1 || echo '')
 

@@ -46,12 +46,13 @@ jobs:
         with:
           apiToken: ${{ secrets.BURNT_CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.BURNT_CLOUDFLARE_ACCOUNT_ID }}
-          command: versions upload --env testnet --message "PR #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}"
+          command: versions upload --env testnet --message "PR preview ${{ github.sha }}"
           packageManager: pnpm
       - name: Extract version ID and preview URL
         id: extract
+        env:
+          OUTPUT: ${{ steps.preview.outputs.command-output }}
         run: |
-          OUTPUT='${{ steps.preview.outputs.command-output }}'
           VERSION_ID=$(echo "$OUTPUT" | grep -oP 'Version ID:\s+\K[a-f0-9-]+' || echo '')
           PREVIEW_URL=$(echo "$OUTPUT" | grep -oP 'https://[^\s]+\.workers\.dev[^\s]*' | head -1 || echo '')
 
