@@ -25,7 +25,7 @@ jobs:
         id: version
         run: |
           CURRENT=$(node -p "require('./package.json').version")
-          NEXT=$(npx --yes semver "$CURRENT" -i patch)
+          NEXT=$(node -p "((v)=>{const m=v.match(/^(\d+)\.(\d+)\.(\d+)$/);if(!m)throw new Error('version not M.M.P: '+v);return [m[1],m[2],parseInt(m[3],10)+1].join('.')})(require('./package.json').version)")
           echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
           echo "version=$NEXT" >> "$GITHUB_OUTPUT"
           echo "tag=v$NEXT" >> "$GITHUB_OUTPUT"
