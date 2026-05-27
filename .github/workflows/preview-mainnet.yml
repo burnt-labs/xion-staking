@@ -15,7 +15,14 @@ permissions:
 
 jobs:
   preview-mainnet:
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    # Skip draft PRs (not ready for review) AND fork PRs (would run with
+    # mainnet secrets in scope from any forked branch — DO-315 fork-PR
+    # guard sweep). workflow_call from merge-pr.yml leaves pull_request
+    # context empty, so the first disjunct holds and the job runs.
+    if: >
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.draft == false &&
+       github.event.pull_request.head.repo.fork == false)
     runs-on: ubuntu-latest
     environment:
       name: preview-mainnet
