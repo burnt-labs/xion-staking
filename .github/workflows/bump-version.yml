@@ -1,0 +1,101 @@
+name: Bump version
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Bump package.json to match published release
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          # Strip leading 'v' from tag (v0.0.2 -> 0.0.2)
+          VERSION="${RELEASE_TAG#v}"
+
+          # Only proceed if the tag is a clean MAJOR.MINOR.PATCH.
+          # Prereleases / build metadata are out of scope; the standard's
+          # release.yml only drafts clean M.M.P tags, so this should be a no-op
+          # for anything else (e.g. manually-published v1.0.0-rc.1).
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag '$RELEASE_TAG' is not a clean M.M.P version; skipping bump."
+            exit 0
+          fi
+
+          # Downgrade guard: refuse to write if the published tag is strictly
+          # less than the current package.json version. Catches the case where
+          # a stale draft (created before main advanced past a newer version)
+          # is published — without this guard, the bump would silently regress
+          # package.json and the next release.yml dispatch would stall on the
+          # same tag via the gh-release-view "exists" short-circuit.
+          # DO-315: equality must fall through to the no-op block below
+          # (which logs correctly), so the comparison is strict less-than.
+          # Earlier cohort versions used GREATER which fired on both less-than
+          # AND equal-to, producing a misleading "stale draft" log on equality.
+          CURRENT=$(node -p "require('./package.json').version")
+          LESS=$(node -p "((a,b)=>{const pa=a.split('.').map(Number),pb=b.split('.').map(Number);for(let i=0;i<3;i++){if(pa[i]!==pb[i])return pa[i]<pb[i];}return false})('${VERSION}','${CURRENT}')")
+          if [ "$LESS" = "true" ]; then
+            echo "Published tag '${VERSION}' is less than current package.json version '${CURRENT}'; refusing to write. This usually means a stale draft was published after main moved forward."
+            exit 0
+          fi
+
+          # Update package.json
+          node -e "const p=require('./package.json'); p.version='${VERSION}'; require('fs').writeFileSync('./package.json', JSON.stringify(p, null, 2) + '\n')"
+
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "package.json version is now: ${NEW_VERSION}"
+
+          # No-op if package.json was already at the target version (e.g. the
+          # release was published from a state where someone already bumped manually)
+          if git diff --quiet package.json; then
+            echo "package.json already at ${VERSION}; nothing to commit."
+            exit 0
+          fi
+
+          # Configure git as the github-actions bot
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # [skip ci] prevents the push from re-triggering merge-pr.yml
+          git add package.json
+          git commit -m "chore: bump package.json to ${VERSION} [skip ci]"
+
+          # Retry on non-fast-forward push: if main receives any commit between
+          # the checkout step and this push, the bare push fails and the bump
+          # is lost silently. Three attempts with rebase-on-failure handles
+          # any realistic contention window (chore push, parallel devops push)
+          # without making the job flaky.
+          PUSHED=false
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              PUSHED=true
+              break
+            fi
+            echo "Push attempt ${attempt} failed; rebasing on origin/main and retrying"
+            git fetch origin main
+            git rebase origin/main || { echo "rebase failed; bailing"; exit 1; }
+          done
+
+          # Fail loudly if all three attempts dropped the push. Without this,
+          # the workflow exits successfully while package.json on main is
+          # still at the pre-release version — the next release.yml run will
+          # then short-circuit on the gh-release-view "exists" check and the
+          # bump silently stalls forever.
+          if [ "$PUSHED" != "true" ]; then
+            echo "::error::All 3 push attempts failed after rebase; bump-version did not land on main."
+            exit 1
+          fi
