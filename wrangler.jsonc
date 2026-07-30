@@ -30,18 +30,18 @@
         "NEXT_PUBLIC_CHAIN_ID": "xion-mainnet-1",
       },
       "routes": [
-        {
-          "pattern": "staking.burnt.com",
-          "custom_domain": true,
-        },
-        {
-          "pattern": "staking.xion.burnt.com",
-          "custom_domain": true,
-        },
-        {
-          "pattern": "staking.mainnet.burnt.com",
-          "custom_domain": true,
-        },
+        // {
+        //   "pattern": "staking.burnt.com",
+        //   "custom_domain": true,
+        // },
+        // {
+        //   "pattern": "staking.xion.burnt.com",
+        //   "custom_domain": true,
+        // },
+        // {
+        //   "pattern": "staking.mainnet.burnt.com",
+        //   "custom_domain": true,
+        // },
       ],
     },
     "testnet": {
@@ -49,14 +49,14 @@
         "NEXT_PUBLIC_CHAIN_ID": "xion-testnet-2",
       },
       "routes": [
-        {
-          "pattern": "staking.testnet.burnt.com",
-          "custom_domain": true,
-        },
-        {
-          "pattern": "staking.testnet2.burnt.com",
-          "custom_domain": true,
-        },
+        // {
+        //   "pattern": "staking.testnet.burnt.com",
+        //   "custom_domain": true,
+        // },
+        // {
+        //   "pattern": "staking.testnet2.burnt.com",
+        //   "custom_domain": true,
+        // },
       ],
     },
   },
