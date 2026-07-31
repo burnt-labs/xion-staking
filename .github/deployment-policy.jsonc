@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "topology": "chain",
+  "promotionMode": "manual",
+  "packageManager": "pnpm",
+  "workingDirectory": ".",
+  "versionFile": "package.json",
+  "targets": {
+    "candidate": {
+      "wranglerEnv": "testnet",
+      "githubEnvironment": "testnet",
+      "url": "https://staking.testnet.burnt.com",
+    },
+    "release": {
+      "wranglerEnv": "mainnet",
+      "githubEnvironment": "mainnet",
+      "url": "https://staking.burnt.com",
+    },
+  },
+}

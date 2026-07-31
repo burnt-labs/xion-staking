@@ -8,11 +8,6 @@
   "main": "server/index.ts",
   "compatibility_date": "2025-03-01",
   "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "binding": "ASSETS",
-    "directory": "./out",
-    "not_found_handling": "single-page-application",
-  },
   "observability": {
     "enabled": true,
   },
@@ -26,6 +21,11 @@
 
   "env": {
     "mainnet": {
+      "assets": {
+        "binding": "ASSETS",
+        "directory": "./dist/mainnet",
+        "not_found_handling": "single-page-application",
+      },
       "vars": {
         "NEXT_PUBLIC_CHAIN_ID": "xion-mainnet-1",
       },
@@ -45,6 +45,11 @@
       ],
     },
     "testnet": {
+      "assets": {
+        "binding": "ASSETS",
+        "directory": "./dist/testnet",
+        "not_found_handling": "single-page-application",
+      },
       "vars": {
         "NEXT_PUBLIC_CHAIN_ID": "xion-testnet-2",
       },

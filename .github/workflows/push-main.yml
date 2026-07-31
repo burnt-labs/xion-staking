@@ -1,0 +1,14 @@
+name: Push to Main
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  deployments: write
+
+jobs:
+  cloudflare:
+    uses: burnt-labs/github-workflows/.github/workflows/cloudflare-main.yml@511b72fad7c0bd937e2820b8e4165b075a875cf9 # v1.2.8
+    secrets: inherit
