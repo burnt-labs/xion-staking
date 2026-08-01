@@ -8,6 +8,11 @@
   "main": "server/index.ts",
   "compatibility_date": "2025-03-01",
   "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./out",
+    "not_found_handling": "single-page-application",
+  },
   "observability": {
     "enabled": true,
   },
