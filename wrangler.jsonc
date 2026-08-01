@@ -26,6 +26,11 @@
 
   "env": {
     "mainnet": {
+      "assets": {
+        "binding": "ASSETS",
+        "directory": "./dist/mainnet",
+        "not_found_handling": "single-page-application",
+      },
       "vars": {
         "NEXT_PUBLIC_CHAIN_ID": "xion-mainnet-1",
       },
@@ -45,6 +50,11 @@
       ],
     },
     "testnet": {
+      "assets": {
+        "binding": "ASSETS",
+        "directory": "./dist/testnet",
+        "not_found_handling": "single-page-application",
+      },
       "vars": {
         "NEXT_PUBLIC_CHAIN_ID": "xion-testnet-2",
       },

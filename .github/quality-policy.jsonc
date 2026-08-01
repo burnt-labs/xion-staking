@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workingDirectory": ".",
+  "commands": {
+    "install": "pnpm install --frozen-lockfile",
+    "lint": "pnpm run lint",
+    "prettier": "pnpm run format:check",
+    "typeCheck": "pnpm run type-check",
+    "test": "pnpm test",
+    "coverage": "pnpm run test:coverage",
+    "build": "pnpm run build:deploy",
+  },
+  "coverageThresholds": {
+    "lines": 100,
+    "functions": 100,
+    "branches": 100,
+  },
+}
